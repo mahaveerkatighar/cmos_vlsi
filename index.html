@@ -263,6 +263,20 @@
     .ap-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--text-muted);transition:transform .25s,background .25s;}
     .ap-track.on .ap-thumb{transform:translateX(14px);background:#07090f;}
 
+    /* WATCH TIMER BAR — shows under player while 60s counts down */
+    .watch-timer-bar{
+      height:3px;border-radius:99px;background:var(--surface3);
+      overflow:hidden;margin-top:-6px;/* pull up close to player */
+      transition:opacity .4s;
+    }
+    .watch-timer-bar.hidden{opacity:0;pointer-events:none;}
+    .watch-timer-fill{
+      height:100%;border-radius:99px;
+      background:linear-gradient(90deg,var(--green),var(--accent));
+      width:100%;
+      transform-origin:left;
+    }
+
     /* TIP */
     .tip{
       background:var(--surface2);border:1px solid var(--border);
@@ -388,8 +402,8 @@
           </svg>
         </div>
 
-        <p class="lock-title">Free video used up!</p>
-        <p class="lock-desc">Subscribe to <strong>@mahaveerkatighar</strong> on YouTube — it's completely free — to unlock all 16 lessons.</p>
+        <p class="lock-title">Subscribe to keep watching!</p>
+        <p class="lock-desc">You've watched <strong>1 minute</strong> of free content. Subscribe to <strong>@mahaveerkatighar</strong> on YouTube — it's free — to unlock all 16 lessons.</p>
 
         <div class="steps">
           <div class="stp active" id="stp1"><div class="stp-n">1</div><span>Tap Subscribe</span></div>
@@ -425,6 +439,11 @@
         </div>
       </div><!-- /lock-overlay -->
     </div><!-- /player-shell -->
+
+    <!-- 60s free watch timer — only shown to non-subscribers -->
+    <div class="watch-timer-bar" id="watch-bar">
+      <div class="watch-timer-fill" id="watch-fill"></div>
+    </div>
 
     <!-- Controls -->
     <div class="controls">
@@ -464,8 +483,8 @@
 /* ══════════════════════════════════════════════════════
    CONFIG
 ══════════════════════════════════════════════════════ */
-const FREE_LIMIT   = 1;   // videos accessible before subscribe gate
-const UNLOCK_WAIT  = 20;  // seconds countdown after clicking Subscribe
+const WATCH_TRIGGER = 60;  // seconds on page before subscribe gate fires
+const UNLOCK_WAIT   = 20;  // seconds countdown after clicking Subscribe
 
 const VIDEOS = [
   { id:'1h3a_r-mHPo', title:'Introduction & Overview'  },
@@ -519,13 +538,15 @@ function saveState(){
 
 let st = loadState();
 let autoplay         = true;
-let cdActive         = false;   // countdown running?
+let cdActive         = false;   // unlock countdown running?
 let cdTimer          = null;    // setInterval handle
+let gateTriggered    = false;   // has the 60s gate fired this session?
 
-/* A video is gated if user hasn't subscribed AND
-   it's beyond the free limit AND they haven't already watched it */
+/* A video is gated if: 60s timer fired AND user not subscribed AND it's not video 0 (first).
+   Video 0 is always accessible since user already watched part of it.
+   All other videos (1-15) are locked until subscribe. */
 function isGated(i){
-  return !st.subscribed && i >= FREE_LIMIT && !st.watched.includes(i);
+  return !st.subscribed && gateTriggered && i > 0;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -541,6 +562,8 @@ const EL = {
   cdN:       document.getElementById('cd-n'),
   progFill:  document.getElementById('nav-prog-fill'),
   progCt:    document.getElementById('nav-prog-ct'),
+  watchBar:  document.getElementById('watch-bar'),
+  watchFill: document.getElementById('watch-fill'),
   watchedCt: document.getElementById('watched-ct'),
   nowTitle:  document.getElementById('now-title'),
   badgeNum:  document.getElementById('badge-num'),
@@ -640,9 +663,8 @@ function loadVideo(i, withAutoplay){
   st.idx = i;
   saveState();
 
-  const v = VIDEOS[i];
-
   if(isGated(i)){
+    // Timer already fired and user not subscribed — show lock, don't change video
     showLock();
     updateUI();
     return;
@@ -650,7 +672,7 @@ function loadVideo(i, withAutoplay){
 
   EL.overlay.classList.remove('visible');
   const ap = withAutoplay ? '&autoplay=1' : '';
-  EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1${ap}`;
+  EL.iframe.src = `https://www.youtube.com/embed/${VIDEOS[i].id}?enablejsapi=1&rel=0&modestbranding=1&controls=1${ap}`;
   updateUI();
 }
 
@@ -792,10 +814,12 @@ EL.unlockBtn.addEventListener('click', function(){
   setTimeout(() => {
     // Grant permanent access
     st.subscribed = true;
+    gateTriggered = false;  // no longer gated
     saveState();
     cdActive = false;
     sessionStorage.removeItem('mk_cd_start');
     sessionStorage.removeItem('mk_cd_dur');
+    EL.watchBar.classList.add('hidden'); // hide timer bar permanently
 
     // Show success state
     EL.unlockBtn.className = 'btn btn-unlock btn-unlocked';
@@ -893,21 +917,59 @@ async function fetchRealTitles(){
 }
 
 /* ══════════════════════════════════════════════════════
+   60-SECOND GATE TIMER
+   Starts as soon as the page loads. After WATCH_TRIGGER
+   seconds, the subscribe overlay fires automatically for
+   any user who hasn't already subscribed.
+   Uses wall-clock (Date.now) so it's immune to tab
+   throttling on mobile browsers.
+══════════════════════════════════════════════════════ */
+function startWatchTimer(){
+  if(st.subscribed){
+    // Already subscribed — hide the bar entirely
+    EL.watchBar.classList.add('hidden');
+    return;
+  }
+
+  const startTime = Date.now();
+  const totalMs   = WATCH_TRIGGER * 1000;
+
+  // Animate the fill bar shrinking over WATCH_TRIGGER seconds
+  // (starts full green, drains to nothing = gate fires)
+  EL.watchFill.style.transition = 'none';
+  EL.watchFill.style.transform  = 'scaleX(1)';
+  void EL.watchFill.offsetWidth;
+  EL.watchFill.style.transition = `transform ${WATCH_TRIGGER}s linear`;
+  EL.watchFill.style.transform  = 'scaleX(0)';
+
+  const tick = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    if(elapsed >= totalMs){
+      clearInterval(tick);
+      if(!st.subscribed){
+        gateTriggered = true;
+        EL.watchBar.classList.add('hidden');
+        showLock();
+        updateUI(); // re-render playlist with locks
+      }
+    }
+  }, 500); // check every 500ms — lightweight
+}
+
+/* ══════════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════════ */
 (function init(){
-  // Sync iframe src to saved state
+  // Sync iframe to saved video
   const v = VIDEOS[st.idx];
-  if(!isGated(st.idx)){
-    EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1`;
-  }
+  EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1`;
 
   updateUI();
 
-  // Show lock if returning to a gated video
-  if(isGated(st.idx)) showLock();
+  // Start the 60s gate timer immediately
+  startWatchTimer();
 
-  // Fetch real video titles asynchronously
+  // Fetch real titles in background
   fetchRealTitles();
 })();
 </script>
