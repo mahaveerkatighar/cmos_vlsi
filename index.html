@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── CSS Variables ─────────────────────────────────── */
+    :root {
+      --bg:          #0a0a0f;
+      --surface:     #12121a;
+      --surface2:    #1c1c2a;
+      --border:      rgba(255,255,255,0.07);
+      --accent:      #e63946;
+      --accent-dim:  rgba(230,57,70,0.15);
+      --gold:        #f4a261;
+      --text:        #e8e8f0;
+      --muted:       #6b6b80;
+      --radius:      16px;
+      --player-max:  860px;
+    }
+
+    /* ─── Reset & Base ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ─── Ambient Background ────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(230,57,70,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 80%, rgba(67,56,202,0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Header ────────────────────────────────────────── */
+    header {
+      width: 100%;
+      max-width: var(--player-max);
+      padding: 36px 24px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--text);
+    }
+    h1 span { color: var(--accent); }
+
+    /* ─── Progress Bar ──────────────────────────────────── */
+    .progress-bar-wrap {
+      max-width: var(--player-max);
+      width: 100%;
+      padding: 0 24px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .progress-count {
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .progress-count .num { color: var(--accent); }
+    .progress-count .denom { color: var(--muted); }
+
+    .track {
+      height: 4px;
+      background: var(--surface2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ─── Player Wrapper ─────────────────────────────────── */
+    .player-section {
+      width: 100%;
+      max-width: var(--player-max);
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .player-shell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #000;
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 60px rgba(230,57,70,0.06);
+    }
+
+    /* The actual YouTube iframe */
+    #yt-player {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ─── Lock Overlay ────────────────────────────────────── */
+    #lock-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px;
+
+      /* Frosted-glass dark overlay */
+      background: rgba(8, 8, 15, 0.82);
+      backdrop-filter: blur(18px) saturate(1.2);
+      -webkit-backdrop-filter: blur(18px) saturate(1.2);
+
+      /* Hidden by default */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #lock-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Padlock icon SVG */
+    .lock-icon {
+      width: 56px;
+      height: 56px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 18px rgba(230,57,70,0.5));
+      animation: pulse-lock 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-lock {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(230,57,70,0.5)); }
+      50%       { transform: scale(1.06); filter: drop-shadow(0 0 28px rgba(230,57,70,0.8)); }
+    }
+
+    .lock-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(16px, 3vw, 22px);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .lock-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 340px;
+      margin-bottom: 28px;
+    }
+
+    /* Button group */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 24px;
+      border-radius: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    /* Primary — Subscribe Now */
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(230,57,70,0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 32px rgba(230,57,70,0.5); }
+
+    /* Secondary — I have subscribed */
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--surface); }
+
+    /* Checking state */
+    .btn-secondary.checking {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: var(--text);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .btn-secondary.checking .spinner { display: block; }
+    .btn-secondary.checking .btn-text-idle { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Video Info Strip ───────────────────────────────── */
+    .info-strip {
+      max-width: var(--player-max);
+      width: 100%;
+      padding: 20px 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .now-playing {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+    #locked-state .dot { background: var(--muted); animation: none; }
+
+    .now-label {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .videos-left {
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 99px;
+    }
+    .videos-left.locked {
+      color: var(--accent);
+      border-color: var(--accent-dim);
+      background: var(--accent-dim);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <p class="header-label">Free Preview</p>
+    <h1>Watch the First <span>3 Videos</span> Free</h1>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-wrap">
+    <div class="progress-meta">
+      <span class="progress-label">Videos watched</span>
+      <span class="progress-count">
+        <span class="num" id="count-display">0</span>
+        <span class="denom"> / 3 free</span>
+      </span>
+    </div>
+    <div class="track">
+      <div class="fill" id="progress-fill" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- Video Player -->
+  <div class="player-section">
+    <div class="player-shell">
+      <!-- YouTube IFrame API mounts the player here -->
+      <div id="yt-player"></div>
+
+      <!-- ── Lock Overlay ── -->
+      <div id="lock-overlay">
+        <!-- Padlock SVG icon -->
+        <svg class="lock-icon" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="24" width="36" height="26" rx="5" fill="#e63946" fill-opacity="0.15" stroke="#e63946" stroke-width="2"/>
+          <path d="M19 24v-7a9 9 0 0 1 18 0v7" stroke="#e63946" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="28" cy="37" r="3.5" fill="#e63946"/>
+          <line x1="28" y1="40.5" x2="28" y2="45" stroke="#e63946" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+
+        <p class="lock-title">You've used your 3 free videos</p>
+        <p class="lock-desc">
+          Subscribe to the channel to unlock all remaining videos in this playlist — it's completely free!
+        </p>
+
+        <div class="btn-group">
+          <!-- Opens the YouTube channel in a new tab -->
+          <a
+            class="btn btn-primary"
+            href="https://www.youtube.com/@mahaveerkatighar"
+            target="_blank"
+            rel="noopener noreferrer"
+            id="subscribe-link"
+          >
+            <!-- YouTube icon -->
+            <svg width="18" height="13" viewBox="0 0 18 13" fill="none"><path d="M17.6 2.03A2.25 2.25 0 0 0 16.02.44C14.63 0 9 0 9 0S3.37 0 1.98.44A2.25 2.25 0 0 0 .4 2.03C0 3.43 0 6.5 0 6.5s0 3.07.4 4.47a2.25 2.25 0 0 0 1.58 1.59C3.37 13 9 13 9 13s5.63 0 7.02-.44a2.25 2.25 0 0 0 1.58-1.59C18 9.57 18 6.5 18 6.5s0-3.07-.4-4.47ZM7.14 9.29V3.71L11.86 6.5 7.14 9.29Z" fill="#fff"/></svg>
+            Subscribe Now
+          </a>
+
+          <!-- Soft-gate unlock button -->
+          <button class="btn btn-secondary" id="unlock-btn" onclick="handleUnlockClick()">
+            <div class="spinner"></div>
+            <span class="btn-text-idle">✓ I've Subscribed — Unlock</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Strip (now playing + status) -->
+  <div class="info-strip">
+    <div class="now-playing" id="playing-state">
+      <div class="dot"></div>
+      <span class="now-label">Now Playing</span>
+    </div>
+    <span class="videos-left" id="videos-left-badge">3 free videos remaining</span>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       JAVASCRIPT — YouTube IFrame API + Content Gate Logic
+  ════════════════════════════════════════════════════════ -->
+  <script>
+    /* ─────────────────────────────────────────────────────
+       CONFIGURATION — change these to match your use case
+    ───────────────────────────────────────────────────── */
+    const PLAYLIST_ID    = 'PLz3J3lDdzCnwqCm5xJpoP_Kd8RCCksyr9'; // your playlist
+    const CHANNEL_URL    = 'https://www.youtube.com/@mahaveerkatighar'; // your channel
+    const FREE_VIDEO_LIMIT = 3;   // videos allowed before the gate triggers
+
+    /* ─────────────────────────────────────────────────────
+       STORAGE HELPERS — read/write to localStorage
+    ───────────────────────────────────────────────────── */
+    function loadState() {
+      return {
+        videoCount:    parseInt(localStorage.getItem('yt_gate_count')   || '0', 10),
+        isSubscribed:  localStorage.getItem('yt_gate_subscribed') === 'true',
+        // Track the last playlist index so we can detect forward-skipping
+        lastIndex:     parseInt(localStorage.getItem('yt_gate_index')   || '0', 10),
+      };
+    }
+
+    function saveState(count, subscribed, index) {
+      localStorage.setItem('yt_gate_count',      count);
+      localStorage.setItem('yt_gate_subscribed', subscribed);
+      localStorage.setItem('yt_gate_index',      index);
+    }
+
+    /* ─────────────────────────────────────────────────────
+       UI HELPERS
+    ───────────────────────────────────────────────────── */
+    const lockOverlay  = document.getElementById('lock-overlay');
+    const progressFill = document.getElementById('progress-fill');
+    const countDisplay = document.getElementById('count-display');
+    const badge        = document.getElementById('videos-left-badge');
+    const subLink      = document.getElementById('subscribe-link');
+
+    subLink.href = CHANNEL_URL; // set real channel URL
+
+    function updateUI(count, locked) {
+      const clamped = Math.min(count, FREE_VIDEO_LIMIT);
+      countDisplay.textContent = clamped;
+      progressFill.style.width = (clamped / FREE_VIDEO_LIMIT * 100) + '%';
+
+      if (locked) {
+        badge.textContent = '🔒 Locked';
+        badge.classList.add('locked');
+        lockOverlay.classList.add('visible');
+      } else {
+        const remaining = Math.max(FREE_VIDEO_LIMIT - clamped, 0);
+        badge.textContent = remaining === 0 ? 'Subscribed ✓' : `${remaining} free video${remaining !== 1 ? 's' : ''} remaining`;
+        badge.classList.remove('locked');
+        lockOverlay.classList.remove('visible');
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────
+       CONTENT-GATE STATE
+    ───────────────────────────────────────────────────── */
+    let state = loadState();
+
+    // Determine locked status on page load
+    let isLocked = !state.isSubscribed && state.videoCount >= FREE_VIDEO_LIMIT;
+    updateUI(state.videoCount, isLocked);
+
+
+    /* ─────────────────────────────────────────────────────
+       YOUTUBE IFRAME API
+       Step 1 — Load the IFrame Player API script dynamically.
+       The API calls window.onYouTubeIframeAPIReady when ready.
+    ───────────────────────────────────────────────────── */
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+
+    let player;           // will hold the YT.Player instance
+    let lastSeenIndex = state.lastIndex; // playlist index tracking
+
+    /* ─────────────────────────────────────────────────────
+       Step 2 — Called automatically by the YouTube API
+       once the script finishes loading.
+    ───────────────────────────────────────────────────── */
+    window.onYouTubeIframeAPIReady = function () {
+      player = new YT.Player('yt-player', {
+        height: '100%',
+        width:  '100%',
+        playerVars: {
+          listType:   'playlist',
+          list:       PLAYLIST_ID,       // load the full playlist
+          autoplay:   0,
+          rel:        0,                 // no related videos
+          modestbranding: 1,
+          index:      state.lastIndex,   // resume from last watched position
+          controls:   1,
+        },
+        events: {
+          onReady:       onPlayerReady,
+          onStateChange: onPlayerStateChange,
+        },
+      });
+    };
+
+    /* ─────────────────────────────────────────────────────
+       Step 3 — Player is ready. If we're already locked,
+       show the overlay immediately (player is paused behind it).
+    ───────────────────────────────────────────────────── */
+    function onPlayerReady(event) {
+      if (isLocked) {
+        event.target.pauseVideo();
+        lockOverlay.classList.add('visible');
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────
+       Step 4 — Monitor player state changes.
+       This is the core of the content-gate logic.
+
+       YT.PlayerState values:
+         -1 = UNSTARTED
+          0 = ENDED
+          1 = PLAYING
+          2 = PAUSED
+          3 = BUFFERING
+          5 = VIDEO_CUED
+    ───────────────────────────────────────────────────── */
+    function onPlayerStateChange(event) {
+      const ytState = event.data;
+
+      // --- Detect playlist navigation (user skipping to a different video) ---
+      if (ytState === YT.PlayerState.PLAYING || ytState === YT.PlayerState.BUFFERING) {
+        const currentIndex = player.getPlaylistIndex();
+
+        // If the user jumped FORWARD to a new video we haven't counted yet
+        if (currentIndex > lastSeenIndex) {
+          // Each new video index visited counts as consuming one free video
+          state.videoCount += (currentIndex - lastSeenIndex);
+          lastSeenIndex     = currentIndex;
+          saveState(state.videoCount, state.isSubscribed, lastSeenIndex);
+
+          // Check if the limit is now exceeded
+          if (!state.isSubscribed && state.videoCount >= FREE_VIDEO_LIMIT) {
+            triggerLock();
+          } else {
+            updateUI(state.videoCount, false);
+          }
+        }
+
+        // If locked, always pause and show overlay (prevents API workarounds)
+        if (isLocked) {
+          player.pauseVideo();
+          lockOverlay.classList.add('visible');
+        }
+      }
+
+      // --- Video finished naturally (ENDED state) ---
+      if (ytState === YT.PlayerState.ENDED) {
+        if (!state.isSubscribed) {
+          state.videoCount++;
+          lastSeenIndex = player.getPlaylistIndex();
+          saveState(state.videoCount, state.isSubscribed, lastSeenIndex);
+
+          if (state.videoCount >= FREE_VIDEO_LIMIT) {
+            triggerLock();
+          } else {
+            updateUI(state.videoCount, false);
+            // Let the playlist auto-advance naturally
+          }
+        }
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────
+       triggerLock — pauses the player and shows the overlay
+    ───────────────────────────────────────────────────── */
+    function triggerLock() {
+      isLocked = true;
+      player.pauseVideo();
+      updateUI(state.videoCount, true);
+    }
+
+
+    /* ─────────────────────────────────────────────────────
+       SOFT GATE — "I've Subscribed" button handler
+    ───────────────────────────────────────────────────── */
+    function handleUnlockClick() {
+      const btn = document.getElementById('unlock-btn');
+      if (btn.classList.contains('checking')) return; // prevent double-click
+
+      // Show "Checking..." loading state
+      btn.classList.add('checking');
+      btn.querySelector('.btn-text-idle').textContent = 'Checking…';
+
+      // Simulate a 2-second verification delay, then unlock
+      setTimeout(() => {
+        // Persist the subscribed state so refreshes don't re-lock
+        state.isSubscribed = true;
+        isLocked           = false;
+        saveState(state.videoCount, true, lastSeenIndex);
+
+        // Reset button
+        btn.classList.remove('checking');
+        btn.querySelector('.btn-text-idle').textContent = '✓ I\'ve Subscribed — Unlock';
+
+        // Hide overlay & update UI
+        updateUI(FREE_VIDEO_LIMIT, false);
+        badge.textContent = 'Subscribed ✓';
+
+        // Let the video resume
+        player.playVideo();
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
