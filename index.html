@@ -362,7 +362,7 @@
     <div class="now-playing-header">
       <div>
         <p class="now-eyebrow">Now Playing</p>
-        <h1 class="now-playing-title" id="now-title">Introduction &amp; Overview</h1>
+        <h1 class="now-playing-title" id="now-title">Loading…</h1>
       </div>
       <div class="vid-badge">Video <em id="badge-num">1</em> / 16</div>
     </div>
@@ -479,6 +479,35 @@ const VIDEOS = [
   { id:'omjFedQt508', title:'Q&A and Clarifications'        },
   { id:'0vbNQhZCsY8', title:'Final Recap & Next Steps'      },
 ];
+
+/* ════════ FETCH REAL YOUTUBE TITLES ════════ */
+async function fetchRealTitles(){
+  const cacheKey = 'mk_titles_v2';
+  const cached = localStorage.getItem(cacheKey);
+  if(cached){
+    try{
+      const saved = JSON.parse(cached);
+      if(saved.length === VIDEOS.length){
+        saved.forEach((t,i)=>{ if(t) VIDEOS[i].title = t; });
+        updateUI(); return;
+      }
+    }catch(e){}
+  }
+  const results = await Promise.allSettled(
+    VIDEOS.map(v =>
+      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.id}&format=json`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null)
+    )
+  );
+  results.forEach((r,i)=>{
+    if(r.status==='fulfilled' && r.value && r.value.title){
+      VIDEOS[i].title = r.value.title;
+    }
+  });
+  localStorage.setItem(cacheKey, JSON.stringify(VIDEOS.map(v => v.title)));
+  updateUI();
+}
 
 const TIPS = [
   'Take notes as you watch. Writing down key concepts improves retention by up to 40%.',
@@ -671,7 +700,15 @@ function handleUnlockClick(){
     EL.unlockBtn.querySelector('.btn-text-idle').textContent='🎉 Unlocked! Enjoy!';
     document.getElementById('step3').classList.remove('active');
     document.getElementById('step3').classList.add('done');
-    setTimeout(()=>{ EL.overlay.classList.remove('visible'); loadVideo(st.idx, true); },900);
+    // Re-render playlist immediately so all lock icons disappear
+    renderPlaylist();
+    setTimeout(()=>{
+      EL.overlay.classList.remove('visible');
+      // Load the current video without lock — st.subscribed is now true
+      const v = VIDEOS[st.idx];
+      EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1&autoplay=1`;
+      updateUI();
+    },900);
   },1800);
 }
 
@@ -700,6 +737,7 @@ EL.iframe.addEventListener('load',()=>{
 /* ════════ INIT ════════ */
 updateUI();
 if(isGated(st.idx)) showLock();
+fetchRealTitles();
 </script>
 </body>
 </html>
