@@ -1988,6 +1988,27 @@
         height: auto !important; /* Prevent vertical stretching on mobile */
         flex-shrink: 0;
       }
+      
+      /* Float footer cleanly as a centered glass pill above the bottom dock on mobile */
+      .system-footer {
+        bottom: 74px !important;
+        background: rgba(9, 13, 26, 0.75) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 20px !important;
+        padding: 6px 16px !important;
+        width: fit-content !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4) !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+      }
+      .system-footer a {
+        color: var(--accent) !important;
+      }
     }
     
     @media(max-width: 600px) {
@@ -3900,7 +3921,7 @@
   
   <!-- ════ SYSTEM FOOTER ════ -->
   <footer class="system-footer" style="flex-wrap: wrap; justify-content: center; gap: 8px; font-size: 10px; color: var(--tm); line-height: 1.4; padding: 4px 8px; z-index: 9; pointer-events: auto;">
-    <span>CMOS VLSI DESIGN SYNOPSIS — Educational masterclass for junior engineering students to master CMOS & VLSI concepts.</span>
+    <span class="desktop-only">CMOS VLSI DESIGN SYNOPSIS — Educational masterclass for junior engineering students to master CMOS & VLSI concepts.</span>
     <span class="desktop-only">•</span>
     <a href="privacy.html" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: none;">Privacy Policy</a>
     <span>•</span>
