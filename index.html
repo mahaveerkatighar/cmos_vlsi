@@ -1,490 +1,646 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Course Player — Mahaveer Katighar</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#07090f;
-      --surface:#0d1120;
-      --surface2:#121828;
-      --surface3:#182030;
-      --border:rgba(90,130,210,0.10);
-      --border-md:rgba(90,130,210,0.18);
-      --accent:#f0a500;
-      --accent-dim:rgba(240,165,0,0.10);
-      --blue:#5b8fff;
-      --green:#2ecc8a;
-      --green-dim:rgba(46,204,138,0.10);
-      --text:#d8e4f8;
-      --text-soft:#7a96c0;
-      --text-muted:#3e4f6a;
-      --r:14px;
-      --r-sm:10px;
-      --r-xs:7px;
-      --nav-h:52px;
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-    body{
-      font-family:'Outfit',sans-serif;
-      background:var(--bg);color:var(--text);
-      min-height:100vh;min-height:100dvh;
-      overflow-x:hidden;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>MK Course Player — Mahaveer Katighar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Google Identity Services — for YouTube OAuth like -->
+<script src="https://accounts.google.com/gsi/client" async></script>
+<style>
+:root{
+  --bg:#060810;
+  --s1:#0b0f1d;
+  --s2:#101624;
+  --s3:#161e30;
+  --s4:#1c2540;
+  --border:rgba(80,120,220,.09);
+  --bmd:rgba(80,120,220,.16);
+  --bhi:rgba(80,120,220,.28);
+  --gold:#f5a623;
+  --gold2:#ffc947;
+  --gold-d:rgba(245,166,35,.10);
+  --gold-d2:rgba(245,166,35,.18);
+  --blue:#5b8cff;
+  --blue-d:rgba(91,140,255,.10);
+  --red:#ff4f6a;
+  --red-d:rgba(255,79,106,.10);
+  --red-d2:rgba(255,79,106,.20);
+  --green:#22d3a0;
+  --green-d:rgba(34,211,160,.10);
+  --text:#ccd9f0;
+  --ts:#8099c0;
+  --tm:#3d4f6a;
+  --white:#e8f0ff;
+  --r:16px;--rsm:11px;--rxs:7px;
+  --nav:56px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100dvh;overflow-x:hidden;
+}
 
-    /* TOPNAV */
-    .topnav{
-      position:sticky;top:0;z-index:200;
-      background:rgba(7,9,15,0.96);
-      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-      border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 16px;height:var(--nav-h);gap:10px;
-    }
-    .nav-brand{display:flex;align-items:center;gap:9px;flex-shrink:0;}
-    .nav-logo{
-      width:28px;height:28px;border-radius:7px;
-      background:linear-gradient(135deg,var(--accent),#ffcc44);
-      display:flex;align-items:center;justify-content:center;
-      font-size:11px;font-weight:900;color:#07090f;flex-shrink:0;
-    }
-    .nav-name{font-size:13px;font-weight:700;color:var(--text);}
-    .nav-name span{color:var(--accent);}
-    .nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-    .nav-prog{display:flex;align-items:center;gap:7px;}
-    .nav-prog-bar{width:70px;height:3px;background:var(--surface3);border-radius:99px;overflow:hidden;}
-    .nav-prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#ffcc44);transition:width .5s ease;}
-    .nav-prog-ct{font-size:11px;font-weight:700;color:var(--accent);}
-    .study-pill{
-      display:inline-flex;align-items:center;gap:5px;
-      background:var(--accent-dim);border:1px solid rgba(240,165,0,0.20);
-      border-radius:99px;padding:3px 10px 3px 7px;
-      font-size:9.5px;font-weight:700;color:var(--accent);letter-spacing:.07em;text-transform:uppercase;
-    }
-    .sdot{width:5px;height:5px;border-radius:50%;background:var(--accent);animation:sdot 2s ease-in-out infinite;}
-    @keyframes sdot{0%,100%{opacity:1}50%{opacity:.25}}
+/* ─── ANIMATED BACKGROUND ─── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 0%,rgba(91,140,255,.06),transparent),
+    radial-gradient(ellipse 50% 40% at 90% 100%,rgba(245,166,35,.05),transparent);
+}
 
-    /* LAYOUT */
-    .layout{
-      display:flex;max-width:1240px;margin:0 auto;
-      padding:16px 14px 60px;gap:16px;
-    }
-    .player-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
+/* ─── TOPNAV ─── */
+.topnav{
+  position:sticky;top:0;z-index:300;height:var(--nav);
+  background:rgba(6,8,16,.92);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 18px;gap:12px;
+}
+.nav-logo{
+  width:32px;height:32px;border-radius:9px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:900;color:#060810;
+  box-shadow:0 0 16px rgba(245,166,35,.35);
+}
+.nav-brand{
+  font-size:14px;font-weight:700;color:var(--white);
+  display:flex;gap:5px;align-items:center;
+}
+.nav-brand span{color:var(--gold);}
+.nav-sep{width:1px;height:20px;background:var(--border);margin:0 4px;}
+.nav-course{font-size:11px;font-weight:600;color:var(--ts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto;}
+.nav-prog-wrap{display:flex;align-items:center;gap:7px;}
+.nav-prog-bar{width:72px;height:3px;background:var(--s3);border-radius:99px;overflow:hidden;}
+.nav-prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .6s ease;}
+.nav-prog-ct{font-size:11px;font-weight:800;color:var(--gold);min-width:32px;}
+.study-badge{
+  display:flex;align-items:center;gap:5px;padding:4px 11px 4px 8px;
+  border-radius:99px;border:1px solid rgba(245,166,35,.22);
+  background:var(--gold-d);
+  font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;
+}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-    /* NOW PLAYING HEADER */
-    .nph{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-    .eyebrow{
-      font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-      color:var(--blue);margin-bottom:4px;
-      display:flex;align-items:center;gap:7px;
-    }
-    .eyebrow::before{content:'';width:12px;height:1px;background:var(--blue);}
-    .now-title{
-      font-size:clamp(14px,3.5vw,20px);font-weight:700;
-      letter-spacing:-.02em;line-height:1.25;color:var(--text);
-    }
-    .vid-badge{
-      flex-shrink:0;background:var(--surface2);
-      border:1px solid var(--border-md);border-radius:var(--r-xs);
-      padding:5px 11px;font-size:11px;font-weight:700;color:var(--text-soft);white-space:nowrap;
-    }
-    .vid-badge em{font-style:normal;color:var(--accent);}
+/* ─── LAYOUT ─── */
+.layout{
+  position:relative;z-index:1;
+  display:flex;max-width:1280px;margin:0 auto;
+  padding:20px 16px 80px;gap:18px;
+}
+.player-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;}
 
-    /* PLAYER SHELL */
-    .player-shell{
-      position:relative;width:100%;aspect-ratio:16/9;
-      border-radius:var(--r);overflow:hidden;background:#000;
-      box-shadow:0 0 0 1px var(--border-md),0 24px 60px rgba(0,0,0,.6);
-    }
-    .player-shell::before{
-      content:'';position:absolute;top:0;left:10%;right:10%;height:1px;
-      background:linear-gradient(90deg,transparent,rgba(240,165,0,.45),transparent);
-      z-index:2;pointer-events:none;
-    }
-    #yt-player{position:absolute;inset:0;width:100%;height:100%;border:none;display:block;}
+/* ─── VIDEO HEADER ─── */
+.vid-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.vh-left{}
+.eyebrow{
+  font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:5px;
+  display:flex;align-items:center;gap:6px;
+}
+.eyebrow::before{content:'';width:14px;height:1px;background:var(--blue);border-radius:1px;}
+.now-title{
+  font-size:clamp(15px,3.2vw,22px);font-weight:800;letter-spacing:-.025em;
+  line-height:1.2;color:var(--white);
+}
+.vh-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.vid-counter{
+  background:var(--s2);border:1px solid var(--bmd);border-radius:var(--rxs);
+  padding:5px 12px;font-size:11px;font-weight:700;color:var(--ts);white-space:nowrap;
+}
+.vid-counter em{font-style:normal;color:var(--gold);}
 
-    /*
-      LOCK OVERLAY
-      ─────────────────────────────────────────────────────────────
-      DESKTOP: sits inside the player shell (position:absolute)
-      MOBILE (<= 680px): becomes a full-screen fixed modal
-        so content is NEVER clipped by the small player height.
-        This is the root fix for "I've Subscribed button not showing"
-        on phones.
-    */
-    #lock-overlay{
-      position:absolute;inset:0;z-index:20;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      text-align:center;padding:20px 16px;
-      background:rgba(7,9,15,0.95);
-      backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-      opacity:0;pointer-events:none;
-      transition:opacity .35s ease;
-      overflow-y:auto;-webkit-overflow-scrolling:touch;
-    }
-    #lock-overlay.visible{opacity:1;pointer-events:all;}
+/* ─── PLAYER SHELL ─── */
+.player-shell{
+  position:relative;width:100%;aspect-ratio:16/9;
+  border-radius:var(--r);overflow:hidden;background:#000;
+  box-shadow:0 0 0 1px var(--bmd),0 32px 80px rgba(0,0,0,.7);
+}
+.player-shell::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--gold) 30%,var(--gold2) 50%,var(--gold) 70%,transparent 100%);
+  opacity:.6;z-index:3;pointer-events:none;
+}
+#yt-player{position:absolute;inset:0;width:100%;height:100%;border:none;display:block;}
 
-    @media(max-width:680px){
-      #lock-overlay{
-        position:fixed;
-        top:var(--nav-h);left:0;right:0;bottom:0;
-        z-index:500;
-        border-radius:0;
-        justify-content:flex-start;
-        padding:32px 22px 48px;
-      }
-    }
+/* ─── OVERLAYS (shared base) ─── */
+.overlay{
+  position:absolute;inset:0;z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px 18px;
+  background:rgba(6,8,16,.96);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.overlay.visible{opacity:1;pointer-events:all;}
+@media(max-width:680px){
+  .overlay{
+    position:fixed;
+    top:var(--nav);left:0;right:0;bottom:0;
+    z-index:500;border-radius:0;
+    justify-content:flex-start;
+    padding:28px 20px 50px;
+  }
+}
 
-    /* Lock overlay content */
-    .lock-badge{
-      display:inline-flex;align-items:center;gap:6px;
-      background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.2);
-      border-radius:99px;padding:4px 14px;
-      font-size:9px;font-weight:700;color:var(--accent);letter-spacing:.14em;text-transform:uppercase;
-      margin-bottom:20px;flex-shrink:0;
-    }
-    .lock-icon{
-      width:58px;height:58px;margin-bottom:16px;
-      flex-shrink:0;position:relative;
-    }
-    .lock-icon::before{
-      content:'';position:absolute;inset:-12px;border-radius:50%;
-      background:radial-gradient(circle,rgba(240,165,0,.12),transparent 70%);
-      animation:halo 3s ease-in-out infinite;
-    }
-    @keyframes halo{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:1}}
-    .lock-icon svg{width:58px;height:58px;filter:drop-shadow(0 0 12px rgba(240,165,0,.5));animation:floatup 3.5s ease-in-out infinite;}
-    @keyframes floatup{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+/* ─── SUBSCRIBE OVERLAY ─── */
+.ov-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 14px;border-radius:99px;
+  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:18px;flex-shrink:0;
+}
+.ov-badge.gold{background:var(--gold-d2);border:1px solid rgba(245,166,35,.25);color:var(--gold);}
+.ov-badge.red{background:var(--red-d);border:1px solid rgba(255,79,106,.25);color:var(--red);}
 
-    .lock-title{font-size:clamp(17px,5vw,22px);font-weight:800;letter-spacing:-.02em;margin-bottom:8px;color:var(--text);}
-    .lock-desc{
-      font-size:13.5px;color:var(--text-soft);line-height:1.65;
-      max-width:300px;margin-bottom:24px;
-    }
-    .lock-desc strong{font-weight:700;color:var(--text);}
+.ov-icon{
+  width:62px;height:62px;margin-bottom:16px;flex-shrink:0;position:relative;
+}
+.ov-icon::before{
+  content:'';position:absolute;inset:-14px;border-radius:50%;
+  animation:halo 3s ease-in-out infinite;
+}
+.ov-icon.lock-icon::before{background:radial-gradient(circle,rgba(245,166,35,.14),transparent 68%);}
+.ov-icon.like-icon::before{background:radial-gradient(circle,rgba(255,79,106,.14),transparent 68%);}
+@keyframes halo{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.22);opacity:1}}
+.ov-icon svg{width:62px;height:62px;animation:bob 3.5s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 
-    /* Steps */
-    .steps{display:flex;align-items:center;margin-bottom:26px;gap:0;}
-    .stp{
-      display:flex;flex-direction:column;align-items:center;gap:4px;
-      font-size:9px;font-weight:500;color:var(--text-muted);
-      width:74px;line-height:1.3;text-align:center;
-    }
-    .stp-n{
-      width:30px;height:30px;border-radius:50%;
-      background:var(--surface2);border:1.5px solid var(--border-md);
-      font-size:12px;font-weight:700;color:var(--text-muted);
-      display:flex;align-items:center;justify-content:center;
-      transition:all .3s ease;
-    }
-    .stp.active .stp-n{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);box-shadow:0 0 10px rgba(240,165,0,.3);}
-    .stp.done   .stp-n{background:var(--green-dim);border-color:var(--green);color:var(--green);}
-    .stp-line{width:22px;height:1px;background:var(--border-md);margin-bottom:18px;flex-shrink:0;}
+.ov-title{font-size:clamp(18px,5vw,24px);font-weight:900;letter-spacing:-.03em;margin-bottom:8px;color:var(--white);}
+.ov-desc{font-size:13.5px;color:var(--ts);line-height:1.7;max-width:300px;margin-bottom:22px;}
+.ov-desc strong{font-weight:700;color:var(--white);}
 
-    /* Buttons inside overlay */
-    .btn-group{display:flex;flex-direction:column;align-items:center;gap:11px;width:100%;max-width:310px;}
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:8px;
-      width:100%;padding:15px 20px;border-radius:var(--r-sm);
-      font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;
-      letter-spacing:.01em;cursor:pointer;text-decoration:none;border:none;
-      transition:transform .15s,box-shadow .15s,opacity .15s;
-      -webkit-tap-highlight-color:transparent;
-      touch-action:manipulation;user-select:none;
-    }
-    .btn:active{transform:scale(0.97);}
+/* Steps (subscribe flow) */
+.steps{display:flex;align-items:center;margin-bottom:24px;gap:0;}
+.stp{display:flex;flex-direction:column;align-items:center;gap:5px;width:76px;font-size:9px;font-weight:500;color:var(--tm);line-height:1.3;text-align:center;}
+.stp-n{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--s2);border:1.5px solid var(--bmd);
+  font-size:12px;font-weight:800;color:var(--tm);
+  display:flex;align-items:center;justify-content:center;transition:all .3s;
+}
+.stp.active .stp-n{background:var(--gold-d2);border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(245,166,35,.3);}
+.stp.done   .stp-n{background:var(--green-d);border-color:var(--green);color:var(--green);}
+.stp-line{width:22px;height:1px;background:var(--bmd);margin-bottom:18px;flex-shrink:0;}
 
-    .btn-yt{
-      background:linear-gradient(135deg,#f0a500,#ffcc44 50%,#f0a500);
-      background-size:200% 100%;
-      color:#07090f;font-weight:800;
-      box-shadow:0 4px 20px rgba(240,165,0,.4);
-      animation:shimmer 3.5s linear infinite;
-    }
-    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* Button group */
+.btn-group{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:320px;}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:15px 20px;border-radius:var(--rsm);
+  font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;text-decoration:none;border:none;
+  transition:transform .13s,box-shadow .13s,opacity .13s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;
+}
+.btn:active{transform:scale(.965);}
 
-    .btn-unlock{
-      background:rgba(13,17,32,0.9);color:var(--text);
-      border:1.5px solid var(--border-md);
-      position:relative;overflow:hidden;
-    }
-    .btn-unlock.locked{opacity:.38;cursor:not-allowed;}
-    .btn-unlock.checking{opacity:.7;cursor:not-allowed;}
-    .btn-fill{
-      position:absolute;left:0;top:0;bottom:0;
-      background:rgba(240,165,0,.10);
-      width:0%;pointer-events:none;
-    }
-    .spinner{
-      width:14px;height:14px;border:2px solid rgba(255,255,255,.1);
-      border-top-color:var(--text);border-radius:50%;
-      animation:spin .7s linear infinite;display:none;flex-shrink:0;
-    }
-    .btn-unlock.checking .spinner{display:block;}
-    .btn-unlock.checking .btn-label{display:none;}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .btn-unlocked{border-color:var(--green)!important;color:var(--green)!important;}
+/* Gold subscribe button */
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 50%,var(--gold) 100%);
+  background-size:200% 100%;color:#060810;font-weight:900;
+  box-shadow:0 4px 22px rgba(245,166,35,.42);
+  animation:shimmer 3.5s linear infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-    .cd-hint{
-      font-size:11.5px;color:var(--text-muted);
-      display:flex;align-items:center;gap:5px;
-      transition:opacity .3s;
-    }
-    .cd-hint.hidden{opacity:0;pointer-events:none;}
-    .cd-n{font-weight:800;color:var(--accent);font-size:13px;min-width:20px;text-align:center;}
+/* Red like button */
+.btn-red{
+  background:linear-gradient(135deg,var(--red) 0%,#ff7896 50%,var(--red) 100%);
+  background-size:200% 100%;color:#fff;font-weight:900;
+  box-shadow:0 4px 22px rgba(255,79,106,.40);
+  animation:shimmer 3s linear infinite;
+}
+.btn-red.liked{
+  background:linear-gradient(135deg,#22d3a0,#34e8b6,#22d3a0)!important;
+  box-shadow:0 4px 22px rgba(34,211,160,.35)!important;
+  animation:none!important;
+}
 
-    /* CONTROLS */
-    .controls{
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      background:var(--surface2);border:1px solid var(--border-md);
-      border-radius:var(--r-sm);padding:9px 14px;
-    }
-    .ctrl-l{display:flex;align-items:center;gap:7px;}
-    .cbtn{
-      display:flex;align-items:center;justify-content:center;
-      width:36px;height:36px;border-radius:8px;
-      background:var(--surface3);border:1px solid var(--border-md);
-      color:var(--text-soft);cursor:pointer;
-      transition:all .15s ease;
-      -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-    }
-    .cbtn:disabled{opacity:.3;cursor:not-allowed;}
-    .cbtn:not(:disabled):active{transform:scale(.92);}
-    .ctrl-info{font-size:12px;font-weight:600;color:var(--text-soft);}
-    .ctrl-info em{font-style:normal;color:var(--accent);font-weight:700;}
-    .ap-wrap{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
-    .ap-label{font-size:11px;font-weight:600;color:var(--text-muted);}
-    .ap-track{width:32px;height:18px;border-radius:99px;background:var(--surface3);border:1px solid var(--border-md);position:relative;transition:background .25s,border-color .25s;flex-shrink:0;}
-    .ap-track.on{background:var(--accent);border-color:var(--accent);}
-    .ap-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--text-muted);transition:transform .25s,background .25s;}
-    .ap-track.on .ap-thumb{transform:translateX(14px);background:#07090f;}
+/* Ghost unlock button */
+.btn-ghost{
+  background:rgba(11,15,29,.9);color:var(--text);
+  border:1.5px solid var(--bmd);
+  position:relative;overflow:hidden;
+}
+.btn-ghost.locked{opacity:.35;cursor:not-allowed;}
+.btn-ghost.checking{opacity:.65;cursor:not-allowed;}
+.btn-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(245,166,35,.09);width:0%;pointer-events:none;}
+.spinner{
+  width:14px;height:14px;border:2px solid rgba(255,255,255,.08);
+  border-top-color:var(--text);border-radius:50%;
+  animation:spin .7s linear infinite;display:none;flex-shrink:0;
+}
+.btn-ghost.checking .spinner{display:block;}
+.btn-ghost.checking .blabel{display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-done{border-color:var(--green)!important;color:var(--green)!important;}
 
-    /* WATCH TIMER BAR — shows under player while 60s counts down */
-    .watch-timer-bar{
-      height:3px;border-radius:99px;background:var(--surface3);
-      overflow:hidden;margin-top:-6px;/* pull up close to player */
-      transition:opacity .4s;
-    }
-    .watch-timer-bar.hidden{opacity:0;pointer-events:none;}
-    .watch-timer-fill{
-      height:100%;border-radius:99px;
-      background:linear-gradient(90deg,var(--green),var(--accent));
-      width:100%;
-      transform-origin:left;
-    }
+.cd-hint{font-size:11px;color:var(--tm);display:flex;align-items:center;gap:5px;transition:opacity .3s;}
+.cd-hint.gone{opacity:0;pointer-events:none;}
+.cd-n{font-weight:900;color:var(--gold);font-size:13px;min-width:22px;text-align:center;}
 
-    /* TIP */
-    .tip{
-      background:var(--surface2);border:1px solid var(--border);
-      border-left:3px solid var(--accent);border-radius:var(--r-sm);
-      padding:12px 14px;font-size:12.5px;color:var(--text-soft);line-height:1.6;
-    }
-    .tip strong{font-weight:700;color:var(--text);}
+/* ─── LIKE OVERLAY extras ─── */
+.like-stats{
+  display:flex;gap:16px;margin-bottom:20px;
+}
+.like-stat{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:var(--s2);border:1px solid var(--bmd);border-radius:var(--rsm);
+  padding:10px 18px;
+}
+.like-stat-n{font-size:20px;font-weight:900;color:var(--white);}
+.like-stat-l{font-size:9px;font-weight:600;color:var(--ts);letter-spacing:.07em;text-transform:uppercase;}
 
-    /* SIDEBAR */
-    .sidebar{width:272px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
-    .sb-hd{display:flex;align-items:center;justify-content:space-between;}
-    .sb-title{font-size:11px;font-weight:700;color:var(--text-soft);letter-spacing:.07em;text-transform:uppercase;}
-    .sb-ct{font-size:11px;font-weight:700;color:var(--text-muted);}
-    .sb-ct em{font-style:normal;color:var(--accent);}
-    .sb-done{
-      background:var(--green-dim);border:1px solid rgba(46,204,138,.2);
-      border-radius:var(--r-sm);padding:9px 13px;
-      font-size:11.5px;font-weight:700;color:var(--green);text-align:center;display:none;
-    }
-    .sb-done.show{display:block;}
-    .pl-scroll{
-      display:flex;flex-direction:column;gap:2px;
-      max-height:calc(100vh - 170px);overflow-y:auto;padding-right:2px;
-    }
-    .pl-scroll::-webkit-scrollbar{width:3px;}
-    .pl-scroll::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:99px;}
+/* ─── WATCH TIMER BAR ─── */
+.timer-wrap{
+  display:flex;align-items:center;gap:10px;padding:0 2px;
+  transition:opacity .4s;
+}
+.timer-wrap.gone{opacity:0;pointer-events:none;}
+.timer-label{font-size:10px;font-weight:700;color:var(--ts);white-space:nowrap;flex-shrink:0;}
+.timer-bar{flex:1;height:4px;border-radius:99px;background:var(--s3);overflow:hidden;}
+.timer-fill{height:100%;border-radius:99px;transform-origin:left;background:linear-gradient(90deg,var(--green),var(--gold));}
+.timer-ct{font-size:11px;font-weight:800;color:var(--gold);min-width:28px;text-align:right;flex-shrink:0;}
 
-    /* Playlist items */
-    .pi{
-      display:flex;align-items:center;gap:8px;padding:8px 10px;
-      border-radius:var(--r-sm);border:1px solid transparent;
-      cursor:pointer;transition:background .15s,border-color .15s;
-      -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-    }
-    .pi:active:not(.pi-locked){background:var(--surface2);}
-    .pi.pi-active{background:var(--accent-dim);border-color:rgba(240,165,0,.22);}
-    .pi.pi-locked{cursor:default;opacity:.5;}
-    .pi-num{font-size:10px;font-weight:700;color:var(--text-muted);min-width:16px;text-align:center;flex-shrink:0;}
-    .pi-active .pi-num{color:var(--accent);}
-    .pi-thumb{
-      width:46px;height:30px;border-radius:4px;
-      background:var(--surface3);border:1px solid var(--border);
-      overflow:hidden;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;position:relative;
-    }
-    .pi-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-    .pi-play{
-      position:absolute;inset:0;display:none;
-      align-items:center;justify-content:center;background:rgba(0,0,0,.5);
-    }
-    .pi-active .pi-play{display:flex;}
-    .pi-info{flex:1;min-width:0;}
-    .pi-ttl{
-      font-size:11px;font-weight:600;color:var(--text-soft);
-      line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-    }
-    .pi-active .pi-ttl{color:var(--accent);font-weight:700;}
-    .pi-locked .pi-ttl{color:var(--text-muted);}
-    .pi-sub{font-size:9.5px;font-weight:600;color:var(--text-muted);margin-top:1px;}
-    .pi-sub.sw{color:var(--green);}
-    .pi-sub.sp{color:var(--accent);}
-    .pi-lk{font-size:10px;flex-shrink:0;}
+/* ─── CONTROLS BAR ─── */
+.controls{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s1);border:1px solid var(--bmd);border-radius:var(--rsm);
+  padding:10px 14px;
+}
+.ctrl-btns{display:flex;align-items:center;gap:6px;}
+.cbtn{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:9px;
+  background:var(--s3);border:1px solid var(--bmd);
+  color:var(--ts);cursor:pointer;transition:all .15s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.cbtn:disabled{opacity:.28;cursor:not-allowed;}
+.cbtn:not(:disabled):hover{background:var(--s4);border-color:var(--bhi);color:var(--text);}
+.cbtn:not(:disabled):active{transform:scale(.91);}
+.ctrl-mid{flex:1;display:flex;align-items:center;justify-content:center;}
+.ctrl-info{font-size:12px;font-weight:700;color:var(--ts);}
+.ctrl-info em{font-style:normal;color:var(--gold);}
 
-    /* RESPONSIVE */
-    @media(max-width:900px){ .sidebar{width:240px;} }
-    @media(max-width:680px){
-      .layout{flex-direction:column;padding:12px 12px 80px;gap:12px;}
-      .sidebar{width:100%;}
-      .pl-scroll{max-height:none;}
-      .nav-prog{display:none;}
-    }
-    @media(max-width:360px){ .study-pill{display:none;} }
-  </style>
+/* LIKE BUTTON in controls bar */
+.like-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--rxs);
+  background:var(--red-d);border:1.5px solid rgba(255,79,106,.22);
+  color:var(--red);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .18s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;
+}
+.like-btn:hover{background:var(--red-d2);border-color:rgba(255,79,106,.4);}
+.like-btn:active{transform:scale(.93);}
+.like-btn.liked{
+  background:var(--green-d);border-color:rgba(34,211,160,.3);color:var(--green);
+}
+.like-btn svg{transition:transform .25s;}
+.like-btn:active svg{transform:scale(1.35);}
+.like-ct{font-size:10px;font-weight:800;}
+
+/* Autoplay */
+.ap-wrap{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.ap-lbl{font-size:10px;font-weight:600;color:var(--tm);}
+.ap-track{width:30px;height:17px;border-radius:99px;background:var(--s3);border:1px solid var(--bmd);position:relative;transition:background .25s,border-color .25s;flex-shrink:0;}
+.ap-track.on{background:var(--gold);border-color:var(--gold);}
+.ap-thumb{position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:var(--ts);transition:transform .25s,background .25s;}
+.ap-track.on .ap-thumb{transform:translateX(13px);background:#060810;}
+
+/* ─── INFO ROW (below controls) ─── */
+.info-row{display:flex;gap:10px;}
+.info-card{
+  flex:1;background:var(--s1);border:1px solid var(--border);border-radius:var(--rsm);
+  padding:11px 14px;display:flex;align-items:center;gap:9px;
+}
+.ic-icon{font-size:18px;flex-shrink:0;}
+.ic-body{}
+.ic-label{font-size:9px;font-weight:700;color:var(--tm);letter-spacing:.09em;text-transform:uppercase;margin-bottom:2px;}
+.ic-val{font-size:13px;font-weight:700;color:var(--text);}
+
+/* ─── SIDEBAR ─── */
+.sidebar{width:280px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+
+/* Stats strip */
+.stats-strip{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;
+}
+.stat-card{
+  background:var(--s1);border:1px solid var(--border);border-radius:var(--rsm);
+  padding:10px 8px;text-align:center;
+}
+.stat-n{font-size:18px;font-weight:900;color:var(--white);line-height:1;}
+.stat-n.gold{color:var(--gold);}
+.stat-n.red{color:var(--red);}
+.stat-n.green{color:var(--green);}
+.stat-l{font-size:8.5px;font-weight:600;color:var(--tm);letter-spacing:.07em;text-transform:uppercase;margin-top:3px;}
+
+.sb-hd{display:flex;align-items:center;justify-content:space-between;padding:0 2px;}
+.sb-title{font-size:10px;font-weight:700;color:var(--ts);letter-spacing:.08em;text-transform:uppercase;}
+.sb-done-banner{
+  background:var(--green-d);border:1px solid rgba(34,211,160,.22);
+  border-radius:var(--rsm);padding:10px 14px;
+  font-size:12px;font-weight:700;color:var(--green);text-align:center;display:none;
+}
+.sb-done-banner.show{display:block;}
+
+.pl-wrap{
+  display:flex;flex-direction:column;gap:2px;
+  max-height:calc(100vh - 210px);overflow-y:auto;padding-right:2px;
+}
+.pl-wrap::-webkit-scrollbar{width:3px;}
+.pl-wrap::-webkit-scrollbar-thumb{background:var(--bmd);border-radius:99px;}
+
+/* Playlist item */
+.pi{
+  display:flex;align-items:center;gap:8px;padding:9px 10px;
+  border-radius:var(--rsm);border:1px solid transparent;
+  cursor:pointer;transition:background .15s,border-color .15s;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+}
+.pi.active{background:var(--gold-d2);border-color:rgba(245,166,35,.25);}
+.pi.pi-lock{cursor:default;opacity:.45;}
+.pi:not(.active):not(.pi-lock):hover{background:var(--s2);}
+.pi:active:not(.pi-lock){background:var(--s2);}
+.pi-n{font-size:10px;font-weight:800;color:var(--tm);min-width:18px;text-align:center;flex-shrink:0;}
+.pi.active .pi-n{color:var(--gold);}
+.pi-thumb{
+  width:48px;height:30px;border-radius:5px;background:var(--s3);border:1px solid var(--border);
+  overflow:hidden;flex-shrink:0;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.pi-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.pi-play-ico{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.55);}
+.pi.active .pi-play-ico{display:flex;}
+.pi-info{flex:1;min-width:0;}
+.pi-ttl{font-size:11px;font-weight:600;color:var(--ts);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pi.active .pi-ttl{color:var(--gold);font-weight:700;}
+.pi.pi-lock .pi-ttl{color:var(--tm);}
+.pi-sub{font-size:9px;font-weight:600;color:var(--tm);margin-top:2px;display:flex;align-items:center;gap:4px;}
+.pi-sub.liked{color:var(--red);}
+.pi-sub.played{color:var(--green);}
+.pi-sub.playing{color:var(--gold);}
+.pi-badges{display:flex;gap:3px;flex-shrink:0;}
+.pi-badge{font-size:10px;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:960px){.sidebar{width:248px;}}
+@media(max-width:680px){
+  .layout{flex-direction:column;padding:14px 13px 90px;gap:14px;}
+  .sidebar{width:100%;}
+  .pl-wrap{max-height:none;}
+  .nav-prog-wrap{display:none;}
+  .info-row{flex-direction:column;}
+  .controls{flex-wrap:wrap;gap:10px;}
+  .ctrl-mid{order:3;width:100%;}
+}
+@media(max-width:400px){.study-badge{display:none;}}
+</style>
 </head>
 <body>
 
-<!-- TOPNAV -->
+<!-- ════ TOPNAV ════ -->
 <nav class="topnav">
-  <div class="nav-brand">
-    <div class="nav-logo">MK</div>
-    <span class="nav-name">Mahaveer <span>Katighar</span></span>
-  </div>
+  <div class="nav-logo">MK</div>
+  <div class="nav-brand">Mahaveer <span>Katighar</span></div>
+  <div class="nav-sep"></div>
+  <div class="nav-course" id="nav-course">Loading…</div>
   <div class="nav-right">
-    <div class="nav-prog">
-      <div class="nav-prog-bar"><div class="nav-prog-fill" id="nav-prog-fill" style="width:0%"></div></div>
-      <span class="nav-prog-ct" id="nav-prog-ct">0/16</span>
+    <div class="nav-prog-wrap">
+      <div class="nav-prog-bar"><div class="nav-prog-fill" id="npf" style="width:0%"></div></div>
+      <span class="nav-prog-ct" id="npct">0/16</span>
     </div>
-    <div class="study-pill"><span class="sdot"></span>Study Mode</div>
+    <div class="study-badge"><span class="sdot"></span>Study Mode</div>
+    <!-- Google sign-in status -->
+    <div id="g-status" style="display:none;align-items:center;gap:6px;padding:3px 10px 3px 6px;border-radius:99px;border:1px solid rgba(34,211,160,.22);background:rgba(34,211,160,.08);cursor:pointer;" title="Signed in with Google — click to sign out">
+      <img id="g-avatar" src="" alt="" width="20" height="20" style="border-radius:50%;display:block;">
+      <span id="g-name" style="font-size:10px;font-weight:700;color:var(--green);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    </div>
   </div>
 </nav>
 
-<!-- MAIN -->
+<!-- ════ MAIN ════ -->
 <div class="layout">
 
-  <!-- PLAYER COLUMN -->
-  <div class="player-col">
+<!-- ══ PLAYER COLUMN ══ -->
+<div class="player-col">
 
-    <div class="nph">
-      <div>
-        <p class="eyebrow">Now Playing</p>
-        <h1 class="now-title" id="now-title">Loading…</h1>
-      </div>
-      <div class="vid-badge">Video <em id="badge-num">1</em> / 16</div>
+  <!-- Video header -->
+  <div class="vid-header">
+    <div class="vh-left">
+      <p class="eyebrow">Now Playing</p>
+      <h1 class="now-title" id="now-title">Loading…</h1>
     </div>
-
-    <!-- Player + Overlay -->
-    <div class="player-shell">
-      <iframe id="yt-player"
-        src="https://www.youtube.com/embed/1h3a_r-mHPo?enablejsapi=1&rel=0&modestbranding=1&controls=1"
-        allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
-        allowfullscreen></iframe>
-
-      <!-- LOCK OVERLAY -->
-      <div id="lock-overlay">
-        <div class="lock-badge">🔒 Subscription Required</div>
-
-        <div class="lock-icon">
-          <svg viewBox="0 0 64 64" fill="none">
-            <rect x="10" y="28" width="44" height="30" rx="7" fill="#f0a500" fill-opacity=".10" stroke="#f0a500" stroke-width="2.2"/>
-            <path d="M21 28V20a11 11 0 0 1 22 0v8" stroke="#f0a500" stroke-width="2.4" stroke-linecap="round"/>
-            <circle cx="32" cy="43" r="4" fill="#f0a500"/>
-            <line x1="32" y1="47" x2="32" y2="52" stroke="#f0a500" stroke-width="2.4" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <p class="lock-title">Subscribe to keep watching!</p>
-        <p class="lock-desc">You've watched <strong>1 minute</strong> of free content. Subscribe to <strong>@mahaveerkatighar</strong> on YouTube — it's free — to unlock all 16 lessons.</p>
-
-        <div class="steps">
-          <div class="stp active" id="stp1"><div class="stp-n">1</div><span>Tap Subscribe</span></div>
-          <div class="stp-line"></div>
-          <div class="stp" id="stp2"><div class="stp-n">2</div><span>Subscribe on YouTube</span></div>
-          <div class="stp-line"></div>
-          <div class="stp" id="stp3"><div class="stp-n">3</div><span>Come back &amp; Unlock</span></div>
-        </div>
-
-        <div class="btn-group">
-          <!-- Step 1: Opens YouTube, starts countdown -->
-          <a class="btn btn-yt" id="sub-btn"
-             href="https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1"
-             target="_blank" rel="noopener noreferrer">
-            <svg width="17" height="12" viewBox="0 0 18 13" fill="none">
-              <path d="M17.6 2.03A2.25 2.25 0 0 0 16.02.44C14.63 0 9 0 9 0S3.37 0 1.98.44A2.25 2.25 0 0 0 .4 2.03C0 3.43 0 6.5 0 6.5s0 3.07.4 4.47a2.25 2.25 0 0 0 1.58 1.59C3.37 13 9 13 9 13s5.63 0 7.02-.44a2.25 2.25 0 0 0 1.58-1.59C18 9.57 18 6.5 18 6.5s0-3.07-.4-4.47ZM7.14 9.29V3.71L11.86 6.5 7.14 9.29Z" fill="#07090f"/>
-            </svg>
-            <span>Subscribe Now — It's Free!</span>
-          </a>
-
-          <!-- Step 3: Enabled after countdown -->
-          <button class="btn btn-unlock locked" id="unlock-btn" disabled>
-            <div class="btn-fill" id="btn-fill"></div>
-            <div class="spinner"></div>
-            <span class="btn-label">🔒 I've Subscribed — Unlock</span>
-          </button>
-
-          <div class="cd-hint" id="cd-hint">
-            <span>Unlock available in</span>
-            <span class="cd-n" id="cd-n">20</span>
-            <span>sec</span>
-          </div>
-        </div>
-      </div><!-- /lock-overlay -->
-    </div><!-- /player-shell -->
-
-    <!-- 60s free watch timer — only shown to non-subscribers -->
-    <div class="watch-timer-bar" id="watch-bar">
-      <div class="watch-timer-fill" id="watch-fill"></div>
+    <div class="vh-right">
+      <div class="vid-counter">Video <em id="badge-num">1</em> / 16</div>
     </div>
-
-    <!-- Controls -->
-    <div class="controls">
-      <div class="ctrl-l">
-        <button class="cbtn" id="prev-btn" title="Previous" disabled>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
-        </button>
-        <button class="cbtn" id="next-btn" title="Next">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-        </button>
-        <span class="ctrl-info">Video <em id="ctrl-num">1</em> of 16</span>
-      </div>
-      <div class="ap-wrap" id="ap-wrap">
-        <span class="ap-label">Autoplay</span>
-        <div class="ap-track on" id="ap-track"><div class="ap-thumb"></div></div>
-      </div>
-    </div>
-
-    <!-- Tip -->
-    <div class="tip" id="tip-el"><strong>Study Tip:</strong> Take notes as you watch — writing improves retention by up to 40%.</div>
-
-  </div><!-- /player-col -->
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sb-hd">
-      <span class="sb-title">Course Playlist</span>
-      <span class="sb-ct"><em id="watched-ct">0</em> / 16 done</span>
-    </div>
-    <div class="sb-done" id="sb-done">🎉 Course Complete! Well done!</div>
-    <div class="pl-scroll" id="playlist-el"></div>
   </div>
+
+  <!-- Player + overlays -->
+  <div class="player-shell">
+    <iframe id="yt-player"
+      src="about:blank"
+      allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share"
+      allowfullscreen></iframe>
+
+    <!-- ══ SUBSCRIBE OVERLAY ══ -->
+    <div class="overlay" id="sub-overlay">
+      <div class="ov-badge gold">🔒 Subscription Required</div>
+      <div class="ov-icon lock-icon">
+        <svg viewBox="0 0 64 64" fill="none">
+          <rect x="10" y="28" width="44" height="30" rx="7" fill="#f5a623" fill-opacity=".1" stroke="#f5a623" stroke-width="2.2"/>
+          <path d="M21 28V20a11 11 0 0 1 22 0v8" stroke="#f5a623" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="32" cy="43" r="4" fill="#f5a623"/>
+          <line x1="32" y1="47" x2="32" y2="52" stroke="#f5a623" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="ov-title">Subscribe to keep watching!</p>
+      <p class="ov-desc">You've watched <strong>1 minute</strong> of free content. Subscribe to <strong>@mahaveerkatighar</strong> on YouTube — it's free — to unlock all 16 lessons.</p>
+
+      <div class="steps">
+        <div class="stp active" id="stp1"><div class="stp-n">1</div><span>Tap Subscribe</span></div>
+        <div class="stp-line"></div>
+        <div class="stp" id="stp2"><div class="stp-n">2</div><span>Subscribe on YouTube</span></div>
+        <div class="stp-line"></div>
+        <div class="stp" id="stp3"><div class="stp-n">3</div><span>Come back &amp; Unlock</span></div>
+      </div>
+
+      <div class="btn-group">
+        <a class="btn btn-gold" id="sub-btn"
+           href="https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1"
+           target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="12" viewBox="0 0 18 13" fill="none">
+            <path d="M17.6 2.03A2.25 2.25 0 0 0 16.02.44C14.63 0 9 0 9 0S3.37 0 1.98.44A2.25 2.25 0 0 0 .4 2.03C0 3.43 0 6.5 0 6.5s0 3.07.4 4.47a2.25 2.25 0 0 0 1.58 1.59C3.37 13 9 13 9 13s5.63 0 7.02-.44a2.25 2.25 0 0 0 1.58-1.59C18 9.57 18 6.5 18 6.5s0-3.07-.4-4.47ZM7.14 9.29V3.71L11.86 6.5 7.14 9.29Z" fill="#060810"/>
+          </svg>
+          <span>Subscribe Now — It's Free!</span>
+        </a>
+
+        <button class="btn btn-ghost locked" id="unlock-btn" disabled>
+          <div class="btn-fill" id="sub-fill"></div>
+          <div class="spinner"></div>
+          <span class="blabel">🔒 I've Subscribed — Unlock</span>
+        </button>
+
+        <div class="cd-hint" id="cd-hint">
+          <span>Unlock available in</span>
+          <span class="cd-n" id="cd-n">20</span>
+          <span>sec</span>
+        </div>
+      </div>
+    </div><!-- /sub-overlay -->
+
+    <!-- ══ LIKE OVERLAY ══ -->
+    <div class="overlay" id="like-overlay">
+      <div class="ov-badge red">❤️ Like Required</div>
+      <div class="ov-icon like-icon">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M32 54S8 40 8 23a12 12 0 0 1 24-2 12 12 0 0 1 24 2C56 40 32 54 32 54Z"
+            fill="#ff4f6a" fill-opacity=".15" stroke="#ff4f6a" stroke-width="2.4" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <p class="ov-title">Enjoying the lesson?</p>
+      <p class="ov-desc">Give this video a <strong>Like</strong> on YouTube to continue. You'll sign in with Google once — then it's one tap forever. Counts as a real YouTube like on your account!</p>
+
+      <div class="like-stats" id="like-stats-row">
+        <div class="like-stat">
+          <span class="like-stat-n" id="ls-liked">0</span>
+          <span class="like-stat-l">Liked</span>
+        </div>
+        <div class="like-stat">
+          <span class="like-stat-n" id="ls-total">16</span>
+          <span class="like-stat-l">Total</span>
+        </div>
+        <div class="like-stat">
+          <span class="like-stat-n" id="ls-left">16</span>
+          <span class="like-stat-l">To Like</span>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-red" id="like-overlay-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span id="like-overlay-label">Like This Video on YouTube</span>
+        </button>
+        <p style="font-size:10px;color:var(--tm);max-width:260px;line-height:1.5;text-align:center;">
+          Tap Like → sign in with Google once → like is counted on YouTube ✅
+        </p>
+      </div>
+    </div><!-- /like-overlay -->
+
+  </div><!-- /player-shell -->
+
+  <!-- Watch timer bar -->
+  <div class="timer-wrap" id="timer-wrap">
+    <span class="timer-label">Free preview</span>
+    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+    <span class="timer-ct" id="timer-ct">1:00</span>
+  </div>
+
+  <!-- Controls bar -->
+  <div class="controls">
+    <div class="ctrl-btns">
+      <button class="cbtn" id="prev-btn" disabled title="Previous">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+      </button>
+      <button class="cbtn" id="next-btn" title="Next">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </button>
+    </div>
+
+    <div class="ctrl-mid">
+      <span class="ctrl-info">Video <em id="ctrl-num">1</em> of 16</span>
+    </div>
+
+    <!-- ❤️ Like button — always visible in controls -->
+    <button class="like-btn" id="like-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <span class="like-ct" id="like-ct-label">Like</span>
+    </button>
+
+    <div class="ap-wrap" id="ap-wrap">
+      <span class="ap-lbl">Auto</span>
+      <div class="ap-track on" id="ap-track"><div class="ap-thumb"></div></div>
+    </div>
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-row">
+    <div class="info-card">
+      <span class="ic-icon">📚</span>
+      <div class="ic-body">
+        <div class="ic-label">Course</div>
+        <div class="ic-val">16 Video Masterclass</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <span class="ic-icon">💡</span>
+      <div class="ic-body">
+        <div class="ic-label">Study Tip</div>
+        <div class="ic-val" id="tip-val">Take notes as you watch.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /player-col -->
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-n gold" id="st-watched">0</div>
+      <div class="stat-l">Watched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n red" id="st-liked">0</div>
+      <div class="stat-l">Liked</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-n green" id="st-pct">0%</div>
+      <div class="stat-l">Done</div>
+    </div>
+  </div>
+
+  <div class="sb-hd">
+    <span class="sb-title">Course Playlist</span>
+  </div>
+  <div class="sb-done-banner" id="sb-done">🎉 Course Complete! Amazing work!</div>
+  <div class="pl-wrap" id="playlist"></div>
+</div>
 
 </div><!-- /layout -->
 
 <script>
-/* ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════
    CONFIG
-══════════════════════════════════════════════════════ */
-const WATCH_TRIGGER = 60;  // seconds on page before subscribe gate fires
-const UNLOCK_WAIT   = 20;  // seconds countdown after clicking Subscribe
+══════════════════════════════════════════════════════════════════ */
+const WATCH_TRIGGER  = 60;
+const UNLOCK_WAIT    = 20;
+
+/* ── YouTube OAuth ──
+   CLIENT_ID: safe to be public (it is just an identifier).
+   CLIENT_SECRET must NEVER appear here — it is server-side only.
+   This flow uses the implicit grant (token in browser) which needs
+   only the CLIENT_ID.                                              */
+const YT_CLIENT_ID = '1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com';
+const YT_SCOPE     = 'https://www.googleapis.com/auth/youtube.force-ssl';
+const YT_LIKE_URL  = 'https://www.googleapis.com/youtube/v3/videos/rate';
 
 const VIDEOS = [
   { id:'1h3a_r-mHPo', title:'Introduction & Overview'  },
@@ -506,332 +662,548 @@ const VIDEOS = [
 ];
 
 const TIPS = [
-  'Take notes as you watch — writing improves retention by up to 40%.',
-  'Pause and rewind whenever something is unclear. There\'s no rush.',
-  'Try explaining what you just learned out loud — if you can teach it, you know it.',
-  'Take a short break every 25 minutes to keep your focus sharp.',
-  'Review your notes within 24 hours to lock in what you learned.',
+  'Take notes as you watch — writing improves retention by 40%.',
+  'Pause and rewind freely. There\'s no rush.',
+  'Explain what you learned out loud — if you can teach it, you know it.',
+  'Take a 5-min break every 25 mins to stay sharp.',
+  'Review notes within 24 hours to lock in learning.',
 ];
 
-/* ══════════════════════════════════════════════════════
-   PERSISTENT STATE  (localStorage — per device/browser)
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   STATE — localStorage per device
+══════════════════════════════════════════════════════════════════ */
 function loadState(){
   try {
-    const idx  = Math.min(parseInt(localStorage.getItem('mk_idx') || '0', 10), VIDEOS.length - 1);
-    const sub  = localStorage.getItem('mk_sub') === 'true';
-    const raw  = localStorage.getItem('mk_watched');
-    const wtch = (() => { try { const a = JSON.parse(raw || '[]'); return Array.isArray(a) ? a : []; } catch(_){ return []; } })();
-    return { idx, subscribed: sub, watched: wtch };
+    const idx      = Math.min(parseInt(ls('mk_idx')||'0',10), VIDEOS.length-1);
+    const sub      = ls('mk_sub') === 'true';
+    const watched  = safeArr(ls('mk_watched'));
+    const liked    = safeArr(ls('mk_liked'));
+    return { idx, subscribed:sub, watched, liked };
   } catch(_) {
-    return { idx: 0, subscribed: false, watched: [] };
+    return { idx:0, subscribed:false, watched:[], liked:[] };
   }
 }
-
 function saveState(){
   try {
-    localStorage.setItem('mk_idx',     st.idx);
-    localStorage.setItem('mk_sub',     String(st.subscribed));
-    localStorage.setItem('mk_watched', JSON.stringify(st.watched));
+    set('mk_idx',     st.idx);
+    set('mk_sub',     st.subscribed);
+    set('mk_watched', JSON.stringify(st.watched));
+    set('mk_liked',   JSON.stringify(st.liked));
   } catch(_) {}
 }
+function ls(k){ return localStorage.getItem(k); }
+function set(k,v){ localStorage.setItem(k, String(v)); }
+function safeArr(s){ try{ const a=JSON.parse(s||'[]'); return Array.isArray(a)?a:[]; }catch(_){return[];} }
 
-let st = loadState();
-let autoplay         = true;
-let cdActive         = false;   // unlock countdown running?
-let cdTimer          = null;    // setInterval handle
-let gateTriggered    = false;   // has the 60s gate fired this session?
+let st            = loadState();
+let autoplay      = true;
+let gateTriggered = false;
+let cdActive      = false;
+let cdTimer       = null;
+let pendingIdx    = null;
 
-/* A video is gated if: 60s timer fired AND user not subscribed AND it's not video 0 (first).
-   Video 0 is always accessible since user already watched part of it.
-   All other videos (1-15) are locked until subscribe. */
-function isGated(i){
-  return !st.subscribed && gateTriggered && i > 0;
-}
+/* ── YouTube OAuth state ── */
+let ytToken       = null;   // access token (in memory only — never persisted)
+let ytUser        = null;   // { name, picture }
+let tokenClient   = null;   // Google Identity Services token client
 
-/* ══════════════════════════════════════════════════════
+/* ── Gating rules ──
+   Subscribe gate: fires 60s after page load for all non-subscribed users.
+                   Locks videos 2-16 (video 1 stays playable).
+   Like gate:      when switching FROM video i to any other, if i is not liked → show like overlay.
+                   Until they like current video, the switch is blocked.
+*/
+function isSubGated(i){ return !st.subscribed && gateTriggered && i > 0; }
+function isLiked(i)   { return st.liked.includes(i); }
+function likedCount()  { return st.liked.length; }
+
+/* ══════════════════════════════════════════════════════════════════
    ELEMENT REFS
-══════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════ */
 const EL = {
-  iframe:    document.getElementById('yt-player'),
-  overlay:   document.getElementById('lock-overlay'),
-  subBtn:    document.getElementById('sub-btn'),
-  unlockBtn: document.getElementById('unlock-btn'),
-  btnFill:   document.getElementById('btn-fill'),
-  cdHint:    document.getElementById('cd-hint'),
-  cdN:       document.getElementById('cd-n'),
-  progFill:  document.getElementById('nav-prog-fill'),
-  progCt:    document.getElementById('nav-prog-ct'),
-  watchBar:  document.getElementById('watch-bar'),
-  watchFill: document.getElementById('watch-fill'),
-  watchedCt: document.getElementById('watched-ct'),
-  nowTitle:  document.getElementById('now-title'),
-  badgeNum:  document.getElementById('badge-num'),
-  ctrlNum:   document.getElementById('ctrl-num'),
-  prevBtn:   document.getElementById('prev-btn'),
-  nextBtn:   document.getElementById('next-btn'),
-  playlist:  document.getElementById('playlist-el'),
-  sbDone:    document.getElementById('sb-done'),
-  tipEl:     document.getElementById('tip-el'),
-  apTrack:   document.getElementById('ap-track'),
-  apWrap:    document.getElementById('ap-wrap'),
-  stp1:      document.getElementById('stp1'),
-  stp2:      document.getElementById('stp2'),
-  stp3:      document.getElementById('stp3'),
+  iframe:       document.getElementById('yt-player'),
+  subOverlay:   document.getElementById('sub-overlay'),
+  likeOverlay:  document.getElementById('like-overlay'),
+  subBtn:       document.getElementById('sub-btn'),
+  unlockBtn:    document.getElementById('unlock-btn'),
+  subFill:      document.getElementById('sub-fill'),
+  cdHint:       document.getElementById('cd-hint'),
+  cdN:          document.getElementById('cd-n'),
+  likeOvBtn:    document.getElementById('like-overlay-btn'),
+  likeOvLabel:  document.getElementById('like-overlay-label'),
+  lsLiked:      document.getElementById('ls-liked'),
+  lsTotal:      document.getElementById('ls-total'),
+  lsLeft:       document.getElementById('ls-left'),
+  likeBtn:      document.getElementById('like-btn'),
+  likeCt:       document.getElementById('like-ct-label'),
+  npf:          document.getElementById('npf'),
+  npct:         document.getElementById('npct'),
+  navCourse:    document.getElementById('nav-course'),
+  nowTitle:     document.getElementById('now-title'),
+  badgeNum:     document.getElementById('badge-num'),
+  ctrlNum:      document.getElementById('ctrl-num'),
+  prevBtn:      document.getElementById('prev-btn'),
+  nextBtn:      document.getElementById('next-btn'),
+  timerWrap:    document.getElementById('timer-wrap'),
+  timerFill:    document.getElementById('timer-fill'),
+  timerCt:      document.getElementById('timer-ct'),
+  playlist:     document.getElementById('playlist'),
+  sbDone:       document.getElementById('sb-done'),
+  tipVal:       document.getElementById('tip-val'),
+  apTrack:      document.getElementById('ap-track'),
+  apWrap:       document.getElementById('ap-wrap'),
+  stWatched:    document.getElementById('st-watched'),
+  stLiked:      document.getElementById('st-liked'),
+  stPct:        document.getElementById('st-pct'),
+  stp1:         document.getElementById('stp1'),
+  stp2:         document.getElementById('stp2'),
+  stp3:         document.getElementById('stp3'),
+  gStatus:      document.getElementById('g-status'),
+  gAvatar:      document.getElementById('g-avatar'),
+  gName:        document.getElementById('g-name'),
 };
 
-/* ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════
    RENDER PLAYLIST
-══════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════ */
 function renderPlaylist(){
   EL.playlist.innerHTML = '';
-
   VIDEOS.forEach((v, i) => {
-    const active  = i === st.idx;
-    const watched = st.watched.includes(i);
-    const gated   = isGated(i);
+    const active   = i === st.idx;
+    const watched  = st.watched.includes(i);
+    const liked    = st.liked.includes(i);
+    const subLock  = isSubGated(i);
 
     const el = document.createElement('div');
-    el.className = 'pi' + (active ? ' pi-active' : '') + (gated ? ' pi-locked' : '');
+    el.className = 'pi' + (active?' active':'') + (subLock?' pi-lock':'');
 
-    let subTxt = '', subCls = '';
-    if(active)       { subTxt = '▶ Playing';   subCls = 'sp'; }
-    else if(watched) { subTxt = '✓ Watched';   subCls = 'sw'; }
-    else if(gated)   { subTxt = '🔒 Locked';   subCls = ''; }
+    let subTxt='', subCls='', badges='';
+    if(active)         { subTxt='▶ Playing';   subCls='playing'; }
+    else if(subLock)   { subTxt='🔒 Locked';   subCls=''; }
+    else if(watched)   { subTxt='✓ Watched';   subCls='played'; }
 
-    el.innerHTML = `
-      <span class="pi-num">${String(i + 1).padStart(2, '0')}</span>
+    if(liked)   badges += '<span class="pi-badge">❤️</span>';
+    if(subLock) badges += '<span class="pi-badge">🔒</span>';
+
+    el.innerHTML=`
+      <span class="pi-n">${String(i+1).padStart(2,'0')}</span>
       <div class="pi-thumb">
         <img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" loading="lazy" alt=""
              onerror="this.style.display='none'">
-        <div class="pi-play">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg>
+        <div class="pi-play-ico">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21"/></svg>
         </div>
       </div>
       <div class="pi-info">
         <div class="pi-ttl">${esc(v.title)}</div>
         <div class="pi-sub ${subCls}">${subTxt}</div>
       </div>
-      ${gated ? '<span class="pi-lk">🔒</span>' : ''}
+      <div class="pi-badges">${badges}</div>
     `;
 
-    // Tap handler
     el.addEventListener('click', () => {
-      if(gated) { showLock(); return; }
-      selectVideo(i);
+      if(subLock){ showSubOverlay(); return; }
+      trySwitch(i);
     });
 
     EL.playlist.appendChild(el);
   });
 
-  // Scroll active item into view
-  const activeEl = EL.playlist.querySelector('.pi-active');
-  if(activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  const act = EL.playlist.querySelector('.pi.active');
+  if(act) act.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
-function esc(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-/* ══════════════════════════════════════════════════════
-   UPDATE ALL UI
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   UPDATE UI
+══════════════════════════════════════════════════════════════════ */
 function updateUI(){
-  const w   = st.watched.length;
-  const pct = (w / VIDEOS.length * 100).toFixed(1);
+  const w    = st.watched.length;
+  const lk   = likedCount();
+  const pct  = Math.round(w / VIDEOS.length * 100);
 
-  EL.progFill.style.width  = pct + '%';
-  EL.progCt.textContent    = w + '/16';
-  EL.watchedCt.textContent = w;
+  EL.npf.style.width   = pct + '%';
+  EL.npct.textContent  = w + '/16';
+  EL.stWatched.textContent = w;
+  EL.stLiked.textContent   = lk;
+  EL.stPct.textContent     = pct + '%';
   if(w === VIDEOS.length) EL.sbDone.classList.add('show');
 
   const v = VIDEOS[st.idx];
-  EL.nowTitle.textContent = v.title;
-  EL.badgeNum.textContent = st.idx + 1;
-  EL.ctrlNum.textContent  = st.idx + 1;
-  EL.prevBtn.disabled     = st.idx === 0;
-  EL.nextBtn.disabled     = st.idx === VIDEOS.length - 1;
-  EL.tipEl.innerHTML      = `<strong>Study Tip:</strong> ${TIPS[st.idx % TIPS.length]}`;
+  EL.nowTitle.textContent  = v.title;
+  EL.navCourse.textContent = v.title;
+  EL.badgeNum.textContent  = st.idx + 1;
+  EL.ctrlNum.textContent   = st.idx + 1;
+  EL.prevBtn.disabled      = st.idx === 0;
+  EL.nextBtn.disabled      = st.idx === VIDEOS.length - 1;
+  EL.tipVal.textContent    = TIPS[st.idx % TIPS.length];
+
+  // Like button state
+  const thisLiked = isLiked(st.idx);
+  EL.likeBtn.className = 'like-btn' + (thisLiked?' liked':'');
+  EL.likeCt.textContent = thisLiked ? 'Liked ❤️' : 'Like';
+
+  // Like overlay stats
+  EL.lsLiked.textContent = lk;
+  EL.lsLeft.textContent  = VIDEOS.length - lk;
 
   renderPlaylist();
 }
 
-/* ══════════════════════════════════════════════════════
-   LOAD / SELECT VIDEO
-══════════════════════════════════════════════════════ */
-function loadVideo(i, withAutoplay){
+/* ══════════════════════════════════════════════════════════════════
+   PLAY VIDEO
+══════════════════════════════════════════════════════════════════ */
+function playVideo(i, withAP){
   st.idx = i;
   saveState();
 
-  if(isGated(i)){
-    // Timer already fired and user not subscribed — show lock, don't change video
-    showLock();
+  if(isSubGated(i)){
+    showSubOverlay();
     updateUI();
     return;
   }
 
-  EL.overlay.classList.remove('visible');
-  const ap = withAutoplay ? '&autoplay=1' : '';
+  hideSubOverlay();
+  hideLikeOverlay();
+
+  const ap = withAP ? '&autoplay=1' : '';
   EL.iframe.src = `https://www.youtube.com/embed/${VIDEOS[i].id}?enablejsapi=1&rel=0&modestbranding=1&controls=1${ap}`;
   updateUI();
 }
 
-function selectVideo(i){
-  if(isGated(i)){ showLock(); return; }
-  const isNew = i !== st.idx;
-  loadVideo(i, autoplay && isNew);
+/* ══════════════════════════════════════════════════════════════════
+   SWITCH GUARD — like gate
+   When user wants to switch FROM current video TO another,
+   check if current video is liked. If not, show like overlay first.
+══════════════════════════════════════════════════════════════════ */
+function trySwitch(toIdx){
+  if(toIdx === st.idx) return; // already on it
+
+  const fromIdx = st.idx;
+
+  // If current video is not liked, gate the switch
+  if(!isLiked(fromIdx)){
+    pendingIdx = toIdx;
+    showLikeOverlay(fromIdx);
+    return;
+  }
+
+  // Already liked — switch freely
+  playVideo(toIdx, autoplay);
 }
 
-function prevVideo(){ if(st.idx > 0) loadVideo(st.idx - 1, true); }
-function nextVideo(){ if(st.idx < VIDEOS.length - 1) loadVideo(st.idx + 1, true); }
+function prevVideo(){ if(st.idx > 0) trySwitch(st.idx - 1); }
+function nextVideo(){ if(st.idx < VIDEOS.length - 1) trySwitch(st.idx + 1); }
 
-/* ══════════════════════════════════════════════════════
-   LOCK OVERLAY — SHOW / HIDE
-══════════════════════════════════════════════════════ */
-function showLock(){
-  EL.overlay.classList.add('visible');
-  EL.overlay.scrollTop = 0;   // ensure user sees top of overlay on mobile
+/* ══════════════════════════════════════════════════════════════════
+   YOUTUBE OAUTH — LIKE SYSTEM
+   Flow:
+   1. User taps Like (dashboard or overlay)
+   2. If no token → requestToken() → Google popup opens
+   3. Google returns access token → stored in memory (ytToken)
+   4. callYTLike() sends POST to YouTube API with token
+   5. Like registered on YouTube under user's account ✅
+   6. Dashboard marks video as liked locally
+══════════════════════════════════════════════════════════════════ */
 
-  // Only reset the steps/button if no countdown is running
+/* Initialise the GIS token client — called once GIS script loads */
+function initGIS(){
+  if(!window.google || !window.google.accounts) return;
+  tokenClient = window.google.accounts.oauth2.initTokenClient({
+    client_id: YT_CLIENT_ID,
+    scope:     YT_SCOPE,
+    /* callback receives the token after user approves */
+    callback: (resp) => {
+      if(resp.error){ onLikeFailed('Sign-in cancelled'); return; }
+      ytToken = resp.access_token;
+      /* Also fetch user profile to show avatar */
+      fetchGoogleProfile();
+      /* Now send the actual like */
+      callYTLike(st.idx);
+    },
+  });
+}
+
+/* Called when GIS script has fully loaded */
+window.addEventListener('load', () => {
+  /* GIS may load async — poll until ready */
+  const waitGIS = setInterval(() => {
+    if(window.google && window.google.accounts){
+      clearInterval(waitGIS);
+      initGIS();
+    }
+  }, 200);
+});
+
+/* Fetch user's Google profile (name + avatar) */
+async function fetchGoogleProfile(){
+  if(!ytToken) return;
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: 'Bearer ' + ytToken }
+    });
+    if(!r.ok) return;
+    ytUser = await r.json();
+    EL.gAvatar.src = ytUser.picture || '';
+    EL.gName.textContent = (ytUser.given_name || ytUser.name || '').split(' ')[0];
+    EL.gStatus.style.display = 'flex';
+  } catch(_) {}
+}
+
+/* Sign out — clear token and avatar */
+EL.gStatus.addEventListener('click', () => {
+  if(!confirm('Sign out of Google?')) return;
+  ytToken = null;
+  ytUser  = null;
+  EL.gStatus.style.display = 'none';
+  if(window.google && window.google.accounts && window.google.accounts.oauth2){
+    window.google.accounts.oauth2.revoke(ytToken, () => {});
+  }
+});
+
+/* Main entry point — call this when user taps Like */
+function requestLike(videoIdx){
+  if(isLiked(videoIdx)){
+    /* Already liked on this device — nothing to do */
+    return;
+  }
+
+  if(ytToken){
+    /* Already have a token — go straight to like */
+    callYTLike(videoIdx);
+  } else {
+    /* Need to sign in first — show Google popup */
+    if(!tokenClient){ onLikeFailed('Google sign-in not ready yet. Please try again.'); return; }
+    setLikeBtnState('signing-in');
+    tokenClient.requestAccessToken({ prompt: '' });
+    /* callback() on tokenClient handles the rest */
+  }
+}
+
+/* POST to YouTube API to like the video */
+async function callYTLike(videoIdx){
+  const videoId = VIDEOS[videoIdx].id;
+  setLikeBtnState('liking');
+  try {
+    const r = await fetch(`${YT_LIKE_URL}?rating=like&id=${videoId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + ytToken,
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if(r.status === 204 || r.ok){
+      /* ✅ Successfully liked on YouTube */
+      onLikeSuccess(videoIdx);
+    } else if(r.status === 401){
+      /* Token expired — request a new one */
+      ytToken = null;
+      tokenClient.requestAccessToken({ prompt: '' });
+    } else {
+      const err = await r.json().catch(()=>({}));
+      onLikeFailed(err?.error?.message || 'YouTube error ' + r.status);
+    }
+  } catch(e){
+    onLikeFailed('Network error. Check your connection.');
+  }
+}
+
+function onLikeSuccess(videoIdx){
+  /* Mark as liked locally */
+  if(!st.liked.includes(videoIdx)){
+    st.liked.push(videoIdx);
+    saveState();
+  }
+  setLikeBtnState('liked');
+  updateUI();
+
+  /* Pulse animation */
+  EL.likeBtn.style.transform = 'scale(1.3)';
+  setTimeout(() => EL.likeBtn.style.transform = '', 300);
+
+  /* If triggered from overlay, proceed to pending video */
+  if(EL.likeOverlay.classList.contains('visible')){
+    EL.likeOvBtn.className = 'btn btn-red liked';
+    EL.likeOvLabel.textContent = '❤️ Liked on YouTube! Unlocking…';
+    setTimeout(() => {
+      hideLikeOverlay();
+      const goTo = pendingIdx !== null ? pendingIdx : st.idx;
+      pendingIdx = null;
+      EL.likeOvBtn.className = 'btn btn-red';
+      EL.likeOvLabel.textContent = 'Like This Video';
+      if(goTo !== st.idx) playVideo(goTo, autoplay);
+    }, 900);
+  }
+}
+
+function onLikeFailed(msg){
+  setLikeBtnState('error');
+  /* Show brief error in like overlay if open, else in like button */
+  if(EL.likeOverlay.classList.contains('visible')){
+    EL.likeOvLabel.textContent = '⚠️ ' + (msg || 'Try again');
+    setTimeout(() => {
+      EL.likeOvLabel.textContent = 'Like This Video';
+      setLikeBtnState(isLiked(st.idx) ? 'liked' : 'idle');
+    }, 2500);
+  } else {
+    const prev = EL.likeCt.textContent;
+    EL.likeCt.textContent = '⚠️ Try again';
+    setTimeout(() => {
+      EL.likeCt.textContent = prev;
+      setLikeBtnState(isLiked(st.idx) ? 'liked' : 'idle');
+    }, 2500);
+  }
+}
+
+function setLikeBtnState(state){
+  const btn = EL.likeBtn;
+  if(state === 'idle'){
+    btn.className = 'like-btn'; EL.likeCt.textContent = 'Like';
+  } else if(state === 'signing-in'){
+    btn.className = 'like-btn'; EL.likeCt.textContent = 'Signing in…';
+  } else if(state === 'liking'){
+    btn.className = 'like-btn'; EL.likeCt.textContent = 'Liking…';
+  } else if(state === 'liked'){
+    btn.className = 'like-btn liked'; EL.likeCt.textContent = 'Liked ❤️';
+  } else if(state === 'error'){
+    btn.className = 'like-btn'; EL.likeCt.textContent = '⚠️ Error';
+  }
+}
+
+/* ── Like button in controls bar ── */
+EL.likeBtn.addEventListener('click', () => {
+  requestLike(st.idx);
+});
+
+/* ── Like button inside the like overlay ── */
+EL.likeOvBtn.addEventListener('click', () => {
+  requestLike(st.idx);
+});
+
+/* Legacy local fallback — kept for edge cases but requestLike() is now primary */
+function likeCurrentVideo(){
+  requestLike(st.idx);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   OVERLAY SHOW / HIDE
+══════════════════════════════════════════════════════════════════ */
+function showSubOverlay(){
+  hideSubOverlay_clean(false); // don't clear steps
+  EL.subOverlay.classList.add('visible');
+  EL.subOverlay.scrollTop = 0;
+
   if(!cdActive){
     EL.stp1.className = 'stp active';
     EL.stp2.className = 'stp';
     EL.stp3.className = 'stp';
-
     EL.unlockBtn.disabled = true;
-    EL.unlockBtn.className = 'btn btn-unlock locked';
-    EL.unlockBtn.style.borderColor = '';
-    EL.unlockBtn.style.color = '';
-    EL.unlockBtn.querySelector('.btn-label').textContent = "🔒 I've Subscribed — Unlock";
-
-    EL.btnFill.style.transition = 'none';
-    EL.btnFill.style.width = '0%';
-
-    EL.cdHint.classList.remove('hidden');
+    EL.unlockBtn.className = 'btn btn-ghost locked';
+    EL.unlockBtn.style.borderColor='';
+    EL.unlockBtn.style.color='';
+    EL.unlockBtn.querySelector('.blabel').textContent = "🔒 I've Subscribed — Unlock";
+    EL.subFill.style.transition='none';
+    EL.subFill.style.width='0%';
+    EL.cdHint.classList.remove('gone');
     EL.cdN.textContent = UNLOCK_WAIT;
   }
 }
+function hideSubOverlay(){ EL.subOverlay.classList.remove('visible'); }
+function hideSubOverlay_clean(clear){ if(clear) hideSubOverlay(); }
 
-function hideLock(){
-  EL.overlay.classList.remove('visible');
+function showLikeOverlay(fromIdx){
+  EL.likeOvBtn.className = 'btn btn-red';
+  EL.likeOvLabel.textContent = 'Like This Video';
+  EL.likeOverlay.classList.add('visible');
+  EL.likeOverlay.scrollTop = 0;
+  updateUI();
 }
+function hideLikeOverlay(){ EL.likeOverlay.classList.remove('visible'); }
 
-/* ══════════════════════════════════════════════════════
-   SUBSCRIBE BUTTON
-   Opens YouTube in new tab and starts countdown timer
-   so user has time to subscribe before unlock appears.
-
-   NOTE: On mobile, YouTube opens in the same app / browser.
-   When the user comes BACK to this tab, the overlay is still
-   visible and the countdown (which ran in the background) has
-   either finished (unlock button enabled) or is still running.
-══════════════════════════════════════════════════════ */
-EL.subBtn.addEventListener('click', function(e){
-  // Allow the link to open YouTube normally
-  // but only start countdown once
+/* ══════════════════════════════════════════════════════════════════
+   SUBSCRIBE BUTTON — opens YouTube, starts countdown
+══════════════════════════════════════════════════════════════════ */
+EL.subBtn.addEventListener('click', () => {
   if(cdActive) return;
   cdActive = true;
 
-  // Step progress: 1 done → 2 active
   EL.stp1.className = 'stp done';
   EL.stp2.className = 'stp active';
 
-  // Animate fill bar
   let rem = UNLOCK_WAIT;
   EL.cdN.textContent = rem;
-  EL.btnFill.style.transition = 'none';
-  EL.btnFill.style.width = '0%';
-  void EL.btnFill.offsetWidth; // force reflow
-  EL.btnFill.style.transition = `width ${UNLOCK_WAIT}s linear`;
-  EL.btnFill.style.width = '100%';
+  EL.subFill.style.transition = 'none';
+  EL.subFill.style.width = '0%';
+  void EL.subFill.offsetWidth;
+  EL.subFill.style.transition = `width ${UNLOCK_WAIT}s linear`;
+  EL.subFill.style.width = '100%';
 
   cdTimer = setInterval(() => {
     rem--;
     EL.cdN.textContent = rem;
-    if(rem <= 0){
-      clearInterval(cdTimer);
-      cdTimer = null;
-      activateUnlockBtn();
-    }
+    if(rem <= 0){ clearInterval(cdTimer); cdTimer=null; activateUnlockBtn(); }
   }, 1000);
 
-  // Handle visibility: if user comes back after switching apps,
-  // the countdown was still running in background — all good.
-  // Also handle the case where the tab was backgrounded and
-  // setInterval was throttled (rare but possible on iOS).
-  // We record the start time so we can check on visibilitychange.
   sessionStorage.setItem('mk_cd_start', Date.now());
   sessionStorage.setItem('mk_cd_dur',   UNLOCK_WAIT * 1000);
 });
 
-// When user returns to the tab (from YouTube on mobile), check if
-// countdown already completed in the background.
+// Resync when user returns from YouTube app on mobile
 document.addEventListener('visibilitychange', () => {
-  if(document.visibilityState !== 'visible') return;
-  if(!cdActive) return;
-
-  const start = parseInt(sessionStorage.getItem('mk_cd_start') || '0', 10);
-  const dur   = parseInt(sessionStorage.getItem('mk_cd_dur')   || '0', 10);
-  if(!start || !dur) return;
-
+  if(document.visibilityState !== 'visible' || !cdActive) return;
+  const start   = parseInt(sessionStorage.getItem('mk_cd_start')||'0',10);
+  const dur     = parseInt(sessionStorage.getItem('mk_cd_dur')||'0',10);
+  if(!start||!dur) return;
   const elapsed = Date.now() - start;
   if(elapsed >= dur){
-    // Countdown finished while tab was hidden — unlock immediately
-    clearInterval(cdTimer);
-    cdTimer = null;
-    EL.btnFill.style.transition = 'none';
-    EL.btnFill.style.width = '100%';
-    EL.cdN.textContent = '0';
+    clearInterval(cdTimer); cdTimer=null;
+    EL.subFill.style.transition='none';
+    EL.subFill.style.width='100%';
+    EL.cdN.textContent='0';
     activateUnlockBtn();
   } else {
-    // Resync remaining time
-    const remaining = Math.ceil((dur - elapsed) / 1000);
-    EL.cdN.textContent = remaining;
+    EL.cdN.textContent = Math.ceil((dur-elapsed)/1000);
   }
 });
 
 function activateUnlockBtn(){
   EL.unlockBtn.disabled = false;
-  EL.unlockBtn.className = 'btn btn-unlock';
-  EL.unlockBtn.style.borderColor = 'var(--accent)';
-  EL.unlockBtn.style.color       = 'var(--accent)';
-  EL.unlockBtn.querySelector('.btn-label').textContent = "✅ I've Subscribed — Unlock Now!";
-  EL.cdHint.classList.add('hidden');
+  EL.unlockBtn.className = 'btn btn-ghost';
+  EL.unlockBtn.style.borderColor = 'var(--gold)';
+  EL.unlockBtn.style.color = 'var(--gold)';
+  EL.unlockBtn.querySelector('.blabel').textContent = "✅ I've Subscribed — Unlock Now!";
+  EL.cdHint.classList.add('gone');
   EL.stp2.className = 'stp done';
   EL.stp3.className = 'stp active';
 }
 
-/* ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════
    UNLOCK BUTTON
-   Grants full access, hides overlay, loads current video.
-══════════════════════════════════════════════════════ */
-EL.unlockBtn.addEventListener('click', function(){
-  if(EL.unlockBtn.disabled)                        return;
-  if(EL.unlockBtn.classList.contains('checking'))  return;
+══════════════════════════════════════════════════════════════════ */
+EL.unlockBtn.addEventListener('click', () => {
+  if(EL.unlockBtn.disabled) return;
+  if(EL.unlockBtn.classList.contains('checking')) return;
 
-  EL.unlockBtn.className = 'btn btn-unlock checking';
+  EL.unlockBtn.className = 'btn btn-ghost checking';
 
   setTimeout(() => {
-    // Grant permanent access
     st.subscribed = true;
-    gateTriggered = false;  // no longer gated
-    saveState();
+    gateTriggered = false;
     cdActive = false;
+    saveState();
     sessionStorage.removeItem('mk_cd_start');
     sessionStorage.removeItem('mk_cd_dur');
-    EL.watchBar.classList.add('hidden'); // hide timer bar permanently
+    EL.timerWrap.classList.add('gone');
 
-    // Show success state
-    EL.unlockBtn.className = 'btn btn-unlock btn-unlocked';
-    EL.unlockBtn.querySelector('.btn-label').textContent = '🎉 Unlocked! Enjoy all 16 videos!';
+    EL.unlockBtn.className = 'btn btn-ghost btn-done';
+    EL.unlockBtn.querySelector('.blabel').textContent = '🎉 Unlocked! Enjoy all 16 videos!';
     EL.stp3.className = 'stp done';
-
-    // Immediately refresh playlist so lock icons vanish
     renderPlaylist();
 
-    // Close overlay and start playing after a brief moment
     setTimeout(() => {
-      hideLock();
+      hideSubOverlay();
       const v = VIDEOS[st.idx];
       EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1&autoplay=1`;
       updateUI();
@@ -839,28 +1211,24 @@ EL.unlockBtn.addEventListener('click', function(){
   }, 1200);
 });
 
-/* ══════════════════════════════════════════════════════
-   AUTOPLAY TOGGLE
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   PREV / NEXT / AUTOPLAY
+══════════════════════════════════════════════════════════════════ */
+EL.prevBtn.addEventListener('click', prevVideo);
+EL.nextBtn.addEventListener('click', nextVideo);
 EL.apWrap.addEventListener('click', () => {
   autoplay = !autoplay;
   EL.apTrack.classList.toggle('on', autoplay);
 });
 
-/* ══════════════════════════════════════════════════════
-   PREV / NEXT BUTTONS
-══════════════════════════════════════════════════════ */
-EL.prevBtn.addEventListener('click', prevVideo);
-EL.nextBtn.addEventListener('click', nextVideo);
-
-/* ══════════════════════════════════════════════════════
-   YOUTUBE VIDEO ENDED  (postMessage API)
-══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════
+   VIDEO ENDED
+══════════════════════════════════════════════════════════════════ */
 window.addEventListener('message', e => {
   if(!e.origin.includes('youtube.com')) return;
   try {
     const d = JSON.parse(e.data);
-    if(d.event === 'infoDelivery' && d.info && d.info.playerState === 0) onEnded();
+    if(d.event==='infoDelivery' && d.info && d.info.playerState===0) onEnded();
   } catch(_) {}
 });
 
@@ -874,103 +1242,88 @@ function onEnded(){
 }
 
 EL.iframe.addEventListener('load', () => {
-  try { EL.iframe.contentWindow.postMessage(JSON.stringify({event:'listening',id:1}), '*'); } catch(_) {}
+  try { EL.iframe.contentWindow.postMessage(JSON.stringify({event:'listening',id:1}),'*'); } catch(_){}
 });
 
-/* ══════════════════════════════════════════════════════
-   FETCH REAL YOUTUBE TITLES  (oEmbed, cached)
-══════════════════════════════════════════════════════ */
-async function fetchRealTitles(){
-  const KEY = 'mk_titles_v3';
+/* ══════════════════════════════════════════════════════════════════
+   60s SUBSCRIBE GATE TIMER
+══════════════════════════════════════════════════════════════════ */
+function startWatchTimer(){
+  if(st.subscribed){ EL.timerWrap.classList.add('gone'); return; }
+
+  const startMs = Date.now();
+  const totalMs = WATCH_TRIGGER * 1000;
+
+  // CSS animation: timer-fill shrinks from 100% → 0% over 60s
+  EL.timerFill.style.transition = 'none';
+  EL.timerFill.style.transform  = 'scaleX(1)';
+  void EL.timerFill.offsetWidth;
+  EL.timerFill.style.transition = `transform ${WATCH_TRIGGER}s linear`;
+  EL.timerFill.style.transform  = 'scaleX(0)';
+
+  const tick = setInterval(() => {
+    const elapsed = Date.now() - startMs;
+    const rem     = Math.max(0, totalMs - elapsed);
+    const secs    = Math.ceil(rem / 1000);
+    const m       = Math.floor(secs / 60);
+    const s       = secs % 60;
+    EL.timerCt.textContent = m + ':' + String(s).padStart(2,'0');
+
+    if(elapsed >= totalMs){
+      clearInterval(tick);
+      if(!st.subscribed){
+        gateTriggered = true;
+        EL.timerWrap.classList.add('gone');
+        showSubOverlay();
+        updateUI();
+      }
+    }
+  }, 500);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FETCH REAL YOUTUBE TITLES
+══════════════════════════════════════════════════════════════════ */
+async function fetchTitles(){
+  const KEY = 'mk_titles_v4';
   try {
     const cached = localStorage.getItem(KEY);
     if(cached){
       const arr = JSON.parse(cached);
       if(Array.isArray(arr) && arr.length === VIDEOS.length){
-        arr.forEach((t, i) => { if(t && typeof t === 'string') VIDEOS[i].title = t; });
-        updateUI();
-        return;
+        arr.forEach((t,i) => { if(t && typeof t==='string') VIDEOS[i].title=t; });
+        updateUI(); return;
       }
     }
-  } catch(_) {}
+  } catch(_){}
 
-  const results = await Promise.allSettled(
+  const res = await Promise.allSettled(
     VIDEOS.map(v =>
       fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${v.id}&format=json`)
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null)
+        .then(r => r.ok ? r.json() : null).catch(()=>null)
     )
   );
-
-  let changed = false;
-  results.forEach((r, i) => {
-    if(r.status === 'fulfilled' && r.value && r.value.title){
-      VIDEOS[i].title = r.value.title;
-      changed = true;
-    }
+  let ok=false;
+  res.forEach((r,i) => {
+    if(r.status==='fulfilled' && r.value?.title){ VIDEOS[i].title=r.value.title; ok=true; }
   });
-
-  if(changed){
-    try { localStorage.setItem(KEY, JSON.stringify(VIDEOS.map(v => v.title))); } catch(_) {}
+  if(ok){
+    try { localStorage.setItem(KEY, JSON.stringify(VIDEOS.map(v=>v.title))); } catch(_){}
     updateUI();
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   60-SECOND GATE TIMER
-   Starts as soon as the page loads. After WATCH_TRIGGER
-   seconds, the subscribe overlay fires automatically for
-   any user who hasn't already subscribed.
-   Uses wall-clock (Date.now) so it's immune to tab
-   throttling on mobile browsers.
-══════════════════════════════════════════════════════ */
-function startWatchTimer(){
-  if(st.subscribed){
-    // Already subscribed — hide the bar entirely
-    EL.watchBar.classList.add('hidden');
-    return;
-  }
-
-  const startTime = Date.now();
-  const totalMs   = WATCH_TRIGGER * 1000;
-
-  // Animate the fill bar shrinking over WATCH_TRIGGER seconds
-  // (starts full green, drains to nothing = gate fires)
-  EL.watchFill.style.transition = 'none';
-  EL.watchFill.style.transform  = 'scaleX(1)';
-  void EL.watchFill.offsetWidth;
-  EL.watchFill.style.transition = `transform ${WATCH_TRIGGER}s linear`;
-  EL.watchFill.style.transform  = 'scaleX(0)';
-
-  const tick = setInterval(() => {
-    const elapsed = Date.now() - startTime;
-    if(elapsed >= totalMs){
-      clearInterval(tick);
-      if(!st.subscribed){
-        gateTriggered = true;
-        EL.watchBar.classList.add('hidden');
-        showLock();
-        updateUI(); // re-render playlist with locks
-      }
-    }
-  }, 500); // check every 500ms — lightweight
-}
-
-/* ══════════════════════════════════════════════════════
+/* ══════════════════════════════════════════════════════════════════
    INIT
-══════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════════ */
 (function init(){
-  // Sync iframe to saved video
+  // Load first video
   const v = VIDEOS[st.idx];
   EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1`;
 
   updateUI();
-
-  // Start the 60s gate timer immediately
   startWatchTimer();
-
-  // Fetch real titles in background
-  fetchRealTitles();
+  fetchTitles();
 })();
 </script>
 </body>
