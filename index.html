@@ -70,7 +70,9 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      min-height: 100dvh;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       user-select: none;
       display: flex;
@@ -188,7 +190,8 @@
       grid-template-columns: 310px 1fr;
       padding: 16px;
       gap: 16px;
-      height: calc(100vh - var(--status-bar-h) - 80px); /* Leave room for bottom dock */
+      height: calc(100vh - var(--status-bar-h) - 80px);
+      height: calc(100dvh - var(--status-bar-h) - 80px); /* Leave room for bottom dock */
       overflow: hidden;
     }
     
@@ -1930,52 +1933,154 @@
     }
     
     /* ════ RESPONSIVE SYSTEM VIEWPORTS ════ */
+    .mobile-only {
+      display: none !important;
+    }
+    .desktop-only {
+      display: flex !important;
+    }
+    
     @media(max-width: 900px) {
+      .mobile-only {
+        display: flex !important;
+      }
+      .desktop-only {
+        display: none !important;
+      }
+      
       .desktop-container {
         grid-template-columns: 1fr;
-        height: calc(100vh - var(--status-bar-h) - 90px);
-        overflow-y: auto;
+        height: calc(100vh - var(--status-bar-h) - 76px);
+        height: calc(100dvh - var(--status-bar-h) - 76px);
+        padding: 10px;
+        gap: 0;
+        overflow: hidden; /* Lock viewport scroll chaining */
       }
+      
       .system-sidebar {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        overflow-y: visible;
+        display: none !important; /* Hide static side column */
       }
-      .course-playlist {
-        grid-column: span 2;
-        min-height: 200px;
-      }
+      
       .system-window {
-        min-height: 380px;
+        height: 100% !important; /* Take full height */
+        border-radius: var(--rsm);
+      }
+      
+      .app-panel {
+        padding: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Make widgets look outstanding in app panels & prevent flex shrinking */
+      .at-a-glance, .quick-settings, .course-playlist {
+        width: 100% !important;
+        margin-bottom: 12px;
+        background: rgba(9, 13, 26, 0.6);
+        box-shadow: none;
+        flex-shrink: 0;
+      }
+      
+      .connect-layout {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        height: auto !important; /* Prevent vertical stretching on mobile */
+        flex-shrink: 0;
       }
     }
+    
     @media(max-width: 600px) {
+      .status-bar {
+        padding: 0 10px;
+        font-size: 11px;
+      }
       .sb-system-tag {
         display: none !important;
       }
-      .desktop-container {
-        padding: 8px;
-        gap: 8px;
+      .sb-clock {
+        font-size: 11px;
       }
-      .system-sidebar {
-        display: flex;
+      
+      /* Prevent greeting text overflow on small viewports */
+      .aag-greet {
+        font-size: 18px !important;
+      }
+      
+      /* Stack player controls cleanly on smaller mobile viewports */
+      .player-controls {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        align-items: stretch;
+        text-align: center;
+      }
+      .pc-nav {
+        justify-content: center;
+      }
+      .pc-details {
+        font-size: 11px;
+      }
+      .pc-actions {
+        justify-content: center;
+        width: 100%;
+      }
+      .pc-like-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+      
+      /* Arrange speed options in a thumb-friendly grid */
+      .pc-speed-row {
         flex-direction: column;
         gap: 8px;
+        padding: 8px 10px;
+        align-items: stretch;
       }
-      .course-playlist {
-        flex: none;
-        height: 250px;
+      .pc-speed-title {
+        justify-content: center;
       }
-      .study-layout {
-        grid-template-columns: 1fr;
+      .pcs-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        width: 100%;
       }
-      .connect-layout {
-        grid-template-columns: 1fr;
+      .pcs-btn {
+        padding: 6px 4px;
+        font-size: 9.5px;
+        text-align: center;
       }
+      
+      /* Arrange audio booster buttons neatly in a thumb-friendly grid */
+      .ab-toggles {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+        width: 100% !important;
+      }
+      .ab-pill {
+        padding: 6px 4px !important;
+        font-size: 8.5px !important;
+        text-align: center !important;
+      }
+      
       .modal-box {
         padding: 20px;
         border-radius: 16px;
+      }
+    }
+    
+    @media(max-width: 360px) {
+      .theme-palette {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .tp-colors {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
@@ -2337,6 +2442,16 @@
         </div>
       </div>
       
+      <!-- 🏠 PANEL 5: SYSTEM DASHBOARD (Mobile only) -->
+      <div class="app-panel" id="panel-dashboard">
+        <!-- Elements moved here dynamically on mobile -->
+      </div>
+      
+      <!-- 📄 PANEL 6: LESSONS PLAYLIST (Mobile only) -->
+      <div class="app-panel" id="panel-playlist">
+        <!-- Elements moved here dynamically on mobile -->
+      </div>
+      
     </section>
     
   </main>
@@ -2344,16 +2459,33 @@
   <!-- ════ FLOATING TASKBAR / DOCK ════ -->
   <nav class="dock-container" id="system-dock-container">
     <div class="dock">
+      <!-- 🏠 Dashboard App (Mobile only) -->
+      <div class="dock-item mobile-only" id="dock-dashboard" data-tooltip="Dashboard" onclick="switchAppPanel('dashboard', this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      </div>
+      
+      <!-- 📄 Playlist/Lessons App (Mobile only) -->
+      <div class="dock-item mobile-only" id="dock-playlist" data-tooltip="Lessons Playlist" onclick="switchAppPanel('playlist', this)">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </div>
+      
+      <!-- 📺 Player App -->
       <div class="dock-item active" data-tooltip="VLSI Video Player" onclick="switchAppPanel('player', this)">
         <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       </div>
+      
+      <!-- 📝 Notes App -->
       <div class="dock-item" data-tooltip="Synopsis Study Notes" onclick="switchAppPanel('study', this)">
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3A2.5 2.5 0 0 1 6.5 0.5H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
       </div>
+      
+      <!-- 💬 Comments App -->
       <div class="dock-item" data-tooltip="YouTube Live Thread" onclick="switchAppPanel('comments', this)">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
-      <div class="dock-item" data-tooltip="Connect & Support" onclick="switchAppPanel('connect', this)">
+      
+      <!-- 💼 Connect App (Desktop only) -->
+      <div class="dock-item desktop-only" data-tooltip="Connect & Support" onclick="switchAppPanel('connect', this)">
         <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M17 11a5 5 0 0 1 4.54 3.46M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
     </div>
@@ -2361,6 +2493,36 @@
   
   <!-- ════ SYSTEM MODALS / OVERLAYS ════ -->
   
+  <!-- Sign-In / Connection Modal -->
+  <div class="modal-overlay" id="modal-login">
+    <div class="modal-box" style="border-radius: var(--r); padding: 24px;">
+      <div class="modal-close" onclick="closeLoginModal()">✕</div>
+      <div class="li-av-wrap" style="background: linear-gradient(135deg, var(--accent), var(--gold)); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#05070f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+      </div>
+      
+      <h3 style="font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Connect Synopsis Account</h3>
+      <p style="font-size: 11.5px; color: var(--ts); line-height: 1.5; margin-bottom: 16px;">
+        Select your study review mode to load direct comments, likes, and curriculum.
+      </p>
+      
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="widget-sub-btn" style="background: #4285F4; color: #fff; padding: 10px 14px; font-size: 12.5px; font-weight: 800; border: none; border-radius: var(--rsm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;" onclick="executeGoogleLoginRedirect()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#fff"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/></svg>
+          Google Cloud Sync
+        </button>
+        
+        <button class="widget-sub-btn" style="background: var(--s3); border: 1px solid var(--border); color: var(--white); padding: 10px 14px; font-size: 12.5px; font-weight: 800; border-radius: var(--rsm); cursor: pointer; transition: all 0.2s;" onclick="executeOfflineGuestLogin()">
+          👤 Offline Student Guest Mode
+        </button>
+      </div>
+      
+      <p style="font-size: 9px; color: var(--tm); margin-top: 12px; line-height: 1.4; text-align: center;">
+        * Offline Guest Mode does not require a Google account, perfect for local study on phones, files, or unstable connections.
+      </p>
+    </div>
+  </div>
+
   <!-- In-Dashboard Subscribe Widget Modal -->
   <div class="modal-overlay" id="modal-subscribe">
     <div class="modal-box">
@@ -2625,7 +2787,10 @@
       if(element) element.classList.add('active');
       else {
         // Triggered programmatically on load
-        const match = Array.from(document.querySelectorAll('.tp-color')).find(c => c.getAttribute('onclick').includes(name));
+        const match = Array.from(document.querySelectorAll('.tp-color')).find(c => {
+          const attr = c.getAttribute('onclick');
+          return attr && attr.includes(name);
+        });
         if(match) match.classList.add('active');
       }
       localStorage.setItem('vlsi_theme_h', h);
@@ -2706,6 +2871,13 @@
       
       document.querySelectorAll('.app-panel').forEach(p => p.classList.remove('active'));
       document.getElementById(`panel-${panelName}`).classList.add('active');
+      
+      // Smoothly auto-scroll active workspace window into view on mobile/tablet viewports
+      if (window.innerWidth <= 900) {
+        setTimeout(() => {
+          document.querySelector('.system-window').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+      }
     }
     
     /* ════ STUDENT NOTEPAD LOGIC ════ */
@@ -3311,6 +3483,17 @@
     /* ════ GOOGLE OAUTH PERSISTENCE ENGINE ════ */
     function initiateGoogleLogin() {
       playUISound('click');
+      document.getElementById('modal-login').classList.add('visible');
+    }
+    
+    function closeLoginModal() {
+      playUISound('click');
+      document.getElementById('modal-login').classList.remove('visible');
+    }
+    
+    function executeGoogleLoginRedirect() {
+      playUISound('click');
+      closeLoginModal();
       showToast("Redirecting securely to Google Sign-In...", "🔑");
       
       // Store pending lesson index
@@ -3328,6 +3511,39 @@
       setTimeout(() => {
         window.location.href = authUrl;
       }, 500);
+    }
+    
+    function executeOfflineGuestLogin() {
+      playUISound('click');
+      closeLoginModal();
+      
+      // Sign in as Guest
+      st.name = localStorage.getItem('vlsi_student_name') || 'Junior Learner';
+      if (st.name === 'Learner' || st.name === 'Junior Learner' || st.name === 'Senior Mentor') {
+        const guestName = prompt("Enter your Name for the CMOS Dashboard:") || "Junior Learner";
+        st.name = guestName.trim() || "Junior Learner";
+      }
+      
+      localStorage.setItem('vlsi_student_name', st.name);
+      
+      // Update UI elements
+      EL.gAvatar.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='%235b8cff'/><text x='5' y='12' font-family='sans-serif' font-size='10' font-weight='bold' fill='%2305070f'>G</text></svg>";
+      EL.gName.textContent = st.name.split(' ')[0];
+      
+      EL.gPill.style.display = 'flex';
+      EL.gTrigger.style.display = 'none';
+      
+      EL.cmAvLetter.textContent = st.name[0].toUpperCase();
+      
+      // Set connected status in Quick Settings
+      document.getElementById('qs-api-sub').textContent = "Guest Active";
+      document.getElementById('qs-api').classList.add('active');
+      
+      // Load simulated comments
+      renderSimulatedComments();
+      updateSystemUI();
+      
+      showToast(`Welcome to Dashboard Guest Mode, ${st.name}!`, "👤");
     }
     
     function processOAuthToken() {
@@ -3367,6 +3583,7 @@
     function restoreOAuthSession() {
       const token = localStorage.getItem('vlsi_yt_token');
       const expires = localStorage.getItem('vlsi_yt_expires');
+      const savedName = localStorage.getItem('vlsi_student_name');
       
       if (token && expires && Date.now() < parseInt(expires, 10)) {
         ytToken = token;
@@ -3374,6 +3591,22 @@
         // Dynamic status check
         document.getElementById('qs-api-sub').textContent = "Connected";
         document.getElementById('qs-api').classList.add('active');
+      } else if (savedName && savedName !== 'Learner' && savedName !== 'Senior Mentor') {
+        // Restore Guest Session!
+        st.name = savedName;
+        
+        EL.gAvatar.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='%235b8cff'/><text x='5' y='12' font-family='sans-serif' font-size='10' font-weight='bold' fill='%2305070f'>G</text></svg>";
+        EL.gName.textContent = st.name.split(' ')[0];
+        
+        EL.gPill.style.display = 'flex';
+        EL.gTrigger.style.display = 'none';
+        
+        EL.cmAvLetter.textContent = st.name[0].toUpperCase();
+        
+        document.getElementById('qs-api-sub').textContent = "Guest Active";
+        document.getElementById('qs-api').classList.add('active');
+        
+        renderSimulatedComments();
       }
     }
     
@@ -3480,6 +3713,108 @@
       } catch (err) {}
     };
     
+    /* ════ DYNAMIC RESPONSIVE LAYOUT ENGINE (SPA Mobile OS Simulation) ════ */
+    function handleResponsiveLayout() {
+      const isMobile = window.innerWidth <= 900;
+      
+      const sidebar = document.querySelector('.system-sidebar');
+      const windowContainer = document.querySelector('.system-window');
+      
+      // Target elements to move
+      const atAGlance = document.querySelector('.at-a-glance');
+      const quickSettings = document.querySelector('.quick-settings');
+      const coursePlaylist = document.querySelector('.course-playlist');
+      
+      // Target panels
+      const panelDashboard = document.getElementById('panel-dashboard');
+      const panelPlaylist = document.getElementById('panel-playlist');
+      const panelConnect = document.getElementById('panel-connect');
+      
+      if (isMobile) {
+        // We are on mobile! Move the widgets to the mobile panels inside .system-window
+        if (panelDashboard && atAGlance && atAGlance.parentNode !== panelDashboard) {
+          panelDashboard.appendChild(atAGlance);
+        }
+        if (panelDashboard && quickSettings && quickSettings.parentNode !== panelDashboard) {
+          panelDashboard.appendChild(quickSettings);
+          
+          // Also append academic support links to bottom of dashboard on mobile!
+          const connectLayout = document.querySelector('#panel-connect .connect-layout');
+          if (connectLayout && connectLayout.parentNode === panelConnect) {
+            panelDashboard.appendChild(connectLayout);
+          }
+        }
+        if (panelPlaylist && coursePlaylist && coursePlaylist.parentNode !== panelPlaylist) {
+          panelPlaylist.appendChild(coursePlaylist);
+          
+          // On mobile, let's style the course playlist to take up full available height
+          coursePlaylist.style.height = '100%';
+          coursePlaylist.style.display = 'flex';
+          coursePlaylist.style.flexDirection = 'column';
+        }
+        
+        // Ensure active dock item is correct for mobile.
+        // If active panel is "connect" (which is merged on mobile), switch to dashboard!
+        const activePanel = document.querySelector('.app-panel.active');
+        if (activePanel && activePanel.id === 'panel-connect') {
+          const dashDockItem = document.getElementById('dock-dashboard');
+          if (dashDockItem) switchAppPanel('dashboard', dashDockItem);
+        }
+      } else {
+        // We are on desktop! Move them back to the sidebar
+        if (sidebar) {
+          if (atAGlance && atAGlance.parentNode !== sidebar) {
+            sidebar.insertBefore(atAGlance, sidebar.firstChild);
+          }
+          if (quickSettings && quickSettings.parentNode !== sidebar) {
+            const secondChild = sidebar.children[1];
+            if (secondChild) {
+              sidebar.insertBefore(quickSettings, secondChild);
+            } else {
+              sidebar.appendChild(quickSettings);
+            }
+          }
+          if (coursePlaylist && coursePlaylist.parentNode !== sidebar) {
+            sidebar.appendChild(coursePlaylist);
+            coursePlaylist.style.height = ''; 
+            coursePlaylist.style.display = '';
+            coursePlaylist.style.flexDirection = '';
+          }
+          
+          // Move connect layout back to panel-connect
+          const connectLayout = panelDashboard ? panelDashboard.querySelector('.connect-layout') : null;
+          if (connectLayout && panelConnect && connectLayout.parentNode !== panelConnect) {
+            panelConnect.appendChild(connectLayout);
+          }
+        }
+        
+        // If active panel is mobile-only, switch to player on desktop!
+        const activePanel = document.querySelector('.app-panel.active');
+        if (activePanel && (activePanel.id === 'panel-dashboard' || activePanel.id === 'panel-playlist')) {
+          const playerDockItem = document.querySelector('[data-tooltip="VLSI Video Player"]');
+          if (playerDockItem) switchAppPanel('player', playerDockItem);
+        }
+      }
+    }
+    
+    // Hide floating dock during virtual keyboard input to prevent overlap
+    function initKeyboardAwareDock() {
+      const textFields = document.querySelectorAll('input, textarea');
+      const dockContainer = document.getElementById('system-dock-container');
+      if (!dockContainer) return;
+      
+      textFields.forEach(field => {
+        field.addEventListener('focus', () => {
+          if (window.innerWidth <= 900) {
+            dockContainer.style.display = 'none';
+          }
+        });
+        field.addEventListener('blur', () => {
+          dockContainer.style.display = '';
+        });
+      });
+    }
+    
     /* ════ SYSTEM LISTENERS ════ */
     window.addEventListener('message', e => {
       if (!e.origin.includes('youtube.com')) return;
@@ -3508,6 +3843,11 @@
       
       // 3. Restore persisted Google account
       restoreOAuthSession();
+      
+      // 4. Initialize Responsive Dynamic Layout and Listeners
+      handleResponsiveLayout();
+      window.addEventListener('resize', handleResponsiveLayout);
+      initKeyboardAwareDock();
       
       // 4. Synthesize dynamically themed palette
       const themeH = localStorage.getItem('vlsi_theme_h');
