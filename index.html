@@ -897,37 +897,117 @@ function prevVideo(){ if(st.idx > 0) trySwitch(st.idx - 1); }
 function nextVideo(){ if(st.idx < VIDEOS.length - 1) trySwitch(st.idx + 1); }
 
 /* ══════════════════════════════════════════════════════════════════
-   YOUTUBE OAUTH — LIKE SYSTEM
-   Flow:
-   1. User taps Like (dashboard or overlay)
-   2. If no token → requestToken() → Google popup opens
-   3. Google returns access token → stored in memory (ytToken)
-   4. callYTLike() sends POST to YouTube API with token
-   5. Like registered on YouTube under user's account ✅
-   6. Dashboard marks video as liked locally
+   YOUTUBE OAUTH — REDIRECT FLOW (mobile-safe)
+   
+   WHY REDIRECT NOT POPUP:
+   Mobile browsers (Chrome Android, Safari iOS, Samsung Browser)
+   block all window.open() popups. GIS tokenClient.requestAccessToken()
+   internally opens a popup — which gets blocked and falls back to
+   redirecting the whole tab, breaking the session.
+   
+   SOLUTION: Manual OAuth redirect flow.
+   1. User taps Like → we redirect to Google's auth URL
+   2. Google redirects BACK to this page with ?code=... in URL
+   3. On page load, we detect the code → exchange it for a token
+      via a CORS-safe implicit grant (token in URL hash fragment)
+   4. Token stored in sessionStorage → like is sent → done ✅
+   
+   We use the IMPLICIT grant (#access_token in URL hash) so there
+   is no server needed — everything runs in the browser.
 ══════════════════════════════════════════════════════════════════ */
 
-/* Initialise the GIS token client — called once GIS script loads */
-function initGIS(){
-  if(!window.google || !window.google.accounts) return;
-  tokenClient = window.google.accounts.oauth2.initTokenClient({
-    client_id: YT_CLIENT_ID,
-    scope:     YT_SCOPE,
-    /* callback receives the token after user approves */
-    callback: (resp) => {
-      if(resp.error){ onLikeFailed('Sign-in cancelled'); return; }
-      ytToken = resp.access_token;
-      /* Also fetch user profile to show avatar */
-      fetchGoogleProfile();
-      /* Now send the actual like */
-      callYTLike(st.idx);
-    },
+const OAUTH_REDIRECT = window.location.origin + window.location.pathname;
+const OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+
+function buildOAuthURL(state){
+  const p = new URLSearchParams({
+    client_id:     YT_CLIENT_ID,
+    redirect_uri:  OAUTH_REDIRECT,
+    response_type: 'token',           // implicit — token comes back in hash
+    scope:         YT_SCOPE + ' https://www.googleapis.com/auth/userinfo.profile',
+    state:         state || '',
+    include_granted_scopes: 'true',
   });
+  return OAUTH_URL + '?' + p.toString();
 }
 
-/* Called when GIS script has fully loaded */
+/* Save pending like video index before redirect so we can resume after */
+function saveOAuthPending(videoIdx){
+  try {
+    sessionStorage.setItem('mk_oauth_pending', videoIdx);
+    sessionStorage.setItem('mk_oauth_ts', Date.now());
+  } catch(_) {}
+}
+
+function loadOAuthPending(){
+  try {
+    const ts  = parseInt(sessionStorage.getItem('mk_oauth_ts') || '0', 10);
+    const idx = parseInt(sessionStorage.getItem('mk_oauth_pending') || '-1', 10);
+    // Only valid if redirect happened within last 5 minutes
+    if(Date.now() - ts < 5 * 60 * 1000 && idx >= 0) return idx;
+  } catch(_) {}
+  return -1;
+}
+
+function clearOAuthPending(){
+  try {
+    sessionStorage.removeItem('mk_oauth_pending');
+    sessionStorage.removeItem('mk_oauth_ts');
+  } catch(_) {}
+}
+
+/* ── Check URL hash for OAuth token on page load ── */
+function checkOAuthReturn(){
+  const hash = window.location.hash;
+  if(!hash || !hash.includes('access_token')) return false;
+
+  // Parse hash fragment: #access_token=...&token_type=...&expires_in=...
+  const params = {};
+  hash.slice(1).split('&').forEach(pair => {
+    const [k, v] = pair.split('=');
+    params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+  });
+
+  if(!params.access_token) return false;
+
+  // Store token in memory
+  ytToken = params.access_token;
+
+  // Clean URL — remove hash without reloading page
+  history.replaceState(null, '', window.location.pathname);
+
+  // Fetch profile to show avatar
+  fetchGoogleProfile();
+
+  // Resume the pending like
+  const pendingIdx = loadOAuthPending();
+  clearOAuthPending();
+  if(pendingIdx >= 0){
+    // Small delay to let the page fully re-render first
+    setTimeout(() => callYTLike(pendingIdx), 400);
+  }
+
+  return true;
+}
+
+/* Initialise GIS (kept as fallback for desktop browsers that support popups) */
+function initGIS(){
+  if(!window.google || !window.google.accounts) return;
+  try {
+    tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: YT_CLIENT_ID,
+      scope:     YT_SCOPE,
+      callback: (resp) => {
+        if(resp.error){ onLikeFailed('Sign-in cancelled'); return; }
+        ytToken = resp.access_token;
+        fetchGoogleProfile();
+        callYTLike(st.idx);
+      },
+    });
+  } catch(_) {}
+}
+
 window.addEventListener('load', () => {
-  /* GIS may load async — poll until ready */
   const waitGIS = setInterval(() => {
     if(window.google && window.google.accounts){
       clearInterval(waitGIS);
@@ -936,7 +1016,7 @@ window.addEventListener('load', () => {
   }, 200);
 });
 
-/* Fetch user's Google profile (name + avatar) */
+/* Fetch Google profile (name + avatar) */
 async function fetchGoogleProfile(){
   if(!ytToken) return;
   try {
@@ -951,34 +1031,48 @@ async function fetchGoogleProfile(){
   } catch(_) {}
 }
 
-/* Sign out — clear token and avatar */
+/* Sign out */
 EL.gStatus.addEventListener('click', () => {
   if(!confirm('Sign out of Google?')) return;
   ytToken = null;
   ytUser  = null;
   EL.gStatus.style.display = 'none';
-  if(window.google && window.google.accounts && window.google.accounts.oauth2){
-    window.google.accounts.oauth2.revoke(ytToken, () => {});
-  }
 });
 
-/* Main entry point — call this when user taps Like */
+/* ── Main entry: user taps Like ── */
 function requestLike(videoIdx){
-  if(isLiked(videoIdx)){
-    /* Already liked on this device — nothing to do */
+  if(isLiked(videoIdx)) return;
+
+  if(ytToken){
+    callYTLike(videoIdx);
     return;
   }
 
-  if(ytToken){
-    /* Already have a token — go straight to like */
-    callYTLike(videoIdx);
-  } else {
-    /* Need to sign in first — show Google popup */
-    if(!tokenClient){ onLikeFailed('Google sign-in not ready yet. Please try again.'); return; }
+  // Detect mobile — use redirect, desktop can try popup first
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+
+  if(!isMobile && tokenClient){
+    // Desktop: try GIS popup
     setLikeBtnState('signing-in');
-    tokenClient.requestAccessToken({ prompt: '' });
-    /* callback() on tokenClient handles the rest */
+    try {
+      tokenClient.requestAccessToken({ prompt: '' });
+    } catch(_) {
+      // Popup blocked — fall back to redirect
+      doOAuthRedirect(videoIdx);
+    }
+  } else {
+    // Mobile: always use redirect
+    doOAuthRedirect(videoIdx);
   }
+}
+
+function doOAuthRedirect(videoIdx){
+  setLikeBtnState('signing-in');
+  saveOAuthPending(videoIdx);
+  // Small delay so user sees "Signing in…" feedback before redirect
+  setTimeout(() => {
+    window.location.href = buildOAuthURL('like_' + videoIdx);
+  }, 300);
 }
 
 /* POST to YouTube API to like the video */
@@ -988,30 +1082,24 @@ async function callYTLike(videoIdx){
   try {
     const r = await fetch(`${YT_LIKE_URL}?rating=like&id=${videoId}`, {
       method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + ytToken,
-        'Content-Type': 'application/json',
-      }
+      headers: { Authorization: 'Bearer ' + ytToken },
     });
 
     if(r.status === 204 || r.ok){
-      /* ✅ Successfully liked on YouTube */
       onLikeSuccess(videoIdx);
     } else if(r.status === 401){
-      /* Token expired — request a new one */
       ytToken = null;
-      tokenClient.requestAccessToken({ prompt: '' });
+      doOAuthRedirect(videoIdx);
     } else {
-      const err = await r.json().catch(()=>({}));
+      const err = await r.json().catch(() => ({}));
       onLikeFailed(err?.error?.message || 'YouTube error ' + r.status);
     }
   } catch(e){
-    onLikeFailed('Network error. Check your connection.');
+    onLikeFailed('Network error. Check connection.');
   }
 }
 
 function onLikeSuccess(videoIdx){
-  /* Mark as liked locally */
   if(!st.liked.includes(videoIdx)){
     st.liked.push(videoIdx);
     saveState();
@@ -1019,11 +1107,9 @@ function onLikeSuccess(videoIdx){
   setLikeBtnState('liked');
   updateUI();
 
-  /* Pulse animation */
   EL.likeBtn.style.transform = 'scale(1.3)';
   setTimeout(() => EL.likeBtn.style.transform = '', 300);
 
-  /* If triggered from overlay, proceed to pending video */
   if(EL.likeOverlay.classList.contains('visible')){
     EL.likeOvBtn.className = 'btn btn-red liked';
     EL.likeOvLabel.textContent = '❤️ Liked on YouTube! Unlocking…';
@@ -1032,7 +1118,7 @@ function onLikeSuccess(videoIdx){
       const goTo = pendingIdx !== null ? pendingIdx : st.idx;
       pendingIdx = null;
       EL.likeOvBtn.className = 'btn btn-red';
-      EL.likeOvLabel.textContent = 'Like This Video';
+      EL.likeOvLabel.textContent = 'Like This Video on YouTube';
       if(goTo !== st.idx) playVideo(goTo, autoplay);
     }, 900);
   }
@@ -1040,42 +1126,28 @@ function onLikeSuccess(videoIdx){
 
 function onLikeFailed(msg){
   setLikeBtnState('error');
-  /* Show brief error in like overlay if open, else in like button */
   if(EL.likeOverlay.classList.contains('visible')){
     EL.likeOvLabel.textContent = '⚠️ ' + (msg || 'Try again');
     setTimeout(() => {
-      EL.likeOvLabel.textContent = 'Like This Video';
+      EL.likeOvLabel.textContent = 'Like This Video on YouTube';
       setLikeBtnState(isLiked(st.idx) ? 'liked' : 'idle');
     }, 2500);
   } else {
-    const prev = EL.likeCt.textContent;
-    EL.likeCt.textContent = '⚠️ Try again';
-    setTimeout(() => {
-      EL.likeCt.textContent = prev;
-      setLikeBtnState(isLiked(st.idx) ? 'liked' : 'idle');
-    }, 2500);
+    EL.likeCt.textContent = '⚠️ Error';
+    setTimeout(() => setLikeBtnState(isLiked(st.idx) ? 'liked' : 'idle'), 2500);
   }
 }
 
 function setLikeBtnState(state){
-  const btn = EL.likeBtn;
-  if(state === 'idle'){
-    btn.className = 'like-btn'; EL.likeCt.textContent = 'Like';
-  } else if(state === 'signing-in'){
-    btn.className = 'like-btn'; EL.likeCt.textContent = 'Signing in…';
-  } else if(state === 'liking'){
-    btn.className = 'like-btn'; EL.likeCt.textContent = 'Liking…';
-  } else if(state === 'liked'){
-    btn.className = 'like-btn liked'; EL.likeCt.textContent = 'Liked ❤️';
-  } else if(state === 'error'){
-    btn.className = 'like-btn'; EL.likeCt.textContent = '⚠️ Error';
-  }
+  if(state === 'idle')      { EL.likeBtn.className='like-btn';       EL.likeCt.textContent='Like'; }
+  else if(state==='signing-in') { EL.likeBtn.className='like-btn';   EL.likeCt.textContent='Opening Google…'; }
+  else if(state==='liking') { EL.likeBtn.className='like-btn';       EL.likeCt.textContent='Liking…'; }
+  else if(state==='liked')  { EL.likeBtn.className='like-btn liked'; EL.likeCt.textContent='Liked ❤️'; }
+  else if(state==='error')  { EL.likeBtn.className='like-btn';       EL.likeCt.textContent='⚠️ Error'; }
 }
 
 /* ── Like button in controls bar ── */
-EL.likeBtn.addEventListener('click', () => {
-  requestLike(st.idx);
-});
+EL.likeBtn.addEventListener('click', () => requestLike(st.idx));
 
 /* ── Like button inside the like overlay ── */
 EL.likeOvBtn.addEventListener('click', () => {
@@ -1317,7 +1389,10 @@ async function fetchTitles(){
    INIT
 ══════════════════════════════════════════════════════════════════ */
 (function init(){
-  // Load first video
+  // Check if Google just redirected back with a token in URL hash
+  checkOAuthReturn();
+
+  // Load current video
   const v = VIDEOS[st.idx];
   EL.iframe.src = `https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1`;
 
