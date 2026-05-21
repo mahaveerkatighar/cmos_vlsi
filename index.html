@@ -3218,6 +3218,7 @@
       // 1. Check if user is authenticated with Google
       if (!ytToken) {
         EL.modalSub.classList.remove('visible');
+        sessionStorage.setItem('vlsi_pending_sub', 'true');
         initiateGoogleLogin();
         showToast("Please sign in with Google to subscribe! 🔑", "🔑");
         return;
@@ -3732,6 +3733,15 @@
         // Load live YouTube comments
         loadLiveYouTubeComments(VIDEOS[st.idx].id);
         updateSystemUI();
+        
+        // Auto-resume pending subscription if flagged
+        if (sessionStorage.getItem('vlsi_pending_sub') === 'true') {
+          sessionStorage.removeItem('vlsi_pending_sub');
+          setTimeout(() => {
+            showSubscribeModal();
+            executeInDashboardSubscribe();
+          }, 1000);
+        }
       } catch (_) {
         handleTokenExpired();
       }
