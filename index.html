@@ -3212,43 +3212,93 @@
       playUISound('error');
     }
     
-    function executeInDashboardSubscribe() {
+    async function executeInDashboardSubscribe() {
       playUISound('click');
       
-      // Start in-dashboard simulation
+      // 1. Check if user is authenticated with Google
+      if (!ytToken) {
+        EL.modalSub.classList.remove('visible');
+        initiateGoogleLogin();
+        showToast("Please sign in with Google to subscribe! 🔑", "🔑");
+        return;
+      }
+      
+      // Disable button & show syncing state
       EL.subBtn.disabled = true;
       EL.subBtnLbl.textContent = 'Syncing...';
       EL.subLoader.style.display = 'block';
       EL.subLoaderFill.style.transition = 'width 2.2s ease-in-out';
       
-      // Triggers load width
+      // Start loader animation
       setTimeout(() => {
         EL.subLoaderFill.style.width = '100%';
       }, 50);
       
-      // Steps anim
-      setTimeout(() => {
-        playUISound('bell');
-        EL.subBtn.className = 'widget-sub-btn subscribed';
-        EL.subBtnLbl.textContent = '✓ Subscribed';
-        EL.subBellArea.classList.add('show');
-        EL.subBellWrap.classList.add('ring');
-        EL.subBellPulse.classList.add('pulse');
+      try {
+        // 2. Perform direct subscription call via YouTube API
+        const response = await fetch('https://www.googleapis.com/youtube/v3/subscriptions?part=snippet', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${ytToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            snippet: {
+              resourceId: {
+                kind: 'youtube#channel',
+                channelId: 'UCl67143xOQVbtqn29rpjK7Q'
+              }
+            }
+          })
+        });
         
-        showToast("Connected to Mahaveer's Study Feed! ✅", "🔔");
-      }, 1200);
-      
-      // Unlock all lessons
-      setTimeout(() => {
-        playUISound('unlock');
-        st.subscribed = true;
-        saveLocalState();
-        EL.timerRow.style.display = 'none';
+        let isSuccess = response.ok;
+        if (!isSuccess) {
+          const errData = await response.json();
+          // Check if already subscribed (duplicate subscription error is fine)
+          if (errData.error && errData.error.errors && errData.error.errors[0].reason === 'subscriptionDuplicate') {
+            isSuccess = true;
+          } else {
+            console.error("YouTube Subscription API error:", errData);
+            throw new Error(errData.error?.message || "Subscription failed");
+          }
+        }
         
-        EL.modalSub.classList.remove('visible');
-        showToast("Lessons completely unlocked! Happy studying! 🎉", "🔓");
-        switchVideo(st.idx, true);
-      }, 2500);
+        if (isSuccess) {
+          // Steps anim
+          setTimeout(() => {
+            playUISound('bell');
+            EL.subBtn.className = 'widget-sub-btn subscribed';
+            EL.subBtnLbl.textContent = '✓ Subscribed';
+            EL.subBellArea.classList.add('show');
+            EL.subBellWrap.classList.add('ring');
+            EL.subBellPulse.classList.add('pulse');
+            
+            showToast("Subscribed to Mahaveer's YouTube Feed! ✅", "🔔");
+          }, 1200);
+          
+          // Unlock all lessons
+          setTimeout(() => {
+            playUISound('unlock');
+            st.subscribed = true;
+            saveLocalState();
+            EL.timerRow.style.display = 'none';
+            
+            EL.modalSub.classList.remove('visible');
+            showToast("Lessons completely unlocked! Happy studying! 🎉", "🔓");
+            switchVideo(st.idx, true);
+          }, 2500);
+        }
+      } catch (err) {
+        console.error("Direct subscription error:", err);
+        showToast("Subscription failed. Session may have expired. Please re-sign in.", "⚠️");
+        
+        // Reset button and prompt re-auth
+        setTimeout(() => {
+          EL.modalSub.classList.remove('visible');
+          initiateGoogleLogin();
+        }, 1500);
+      }
     }
     
     /* ════ LINKEDIN 5-MIN POPUP ════ */
