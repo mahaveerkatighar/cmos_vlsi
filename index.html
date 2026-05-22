@@ -2113,7 +2113,9 @@
     }
 
     /* ════ ADVANCED FOCUS MODE THEATRE ISOLATION ════ */
-    body.focus-mode-active .system-sidebar,
+    body.focus-mode-active .system-sidebar {
+      display: none !important;
+    }
     body.focus-mode-active .bottom-dock,
     body.focus-mode-active .status-bar {
       opacity: 0.12 !important;
@@ -3797,93 +3799,63 @@
       saveLocalState();
     }
     
-    /* ════ REAL YOUTUBE LIKING — OAuth Redirect Flow ════ */
+    /* ════ ADVANCED PRESENCE COUNTDOWN LIKING SYSTEM ════ */
     async function triggerLikeAction() {
       playUISound('click');
       const idx = st.idx;
+      const isAlreadyLiked = st.liked.includes(idx);
       
-      if (st.liked.includes(idx)) {
+      if (isAlreadyLiked) {
         showToast("You've already liked this synopsis! ❤️", "❤️");
         return;
       }
       
-      // If we have a valid token, call the API directly
-      if (ytToken) {
-        await callYouTubeLikeAPI(idx);
+      if (!ytToken) {
+        initiateGoogleLogin();
         return;
       }
       
-      // No token — save pending like and do OAuth redirect
-      sessionStorage.setItem('vlsi_pending_like', idx);
-      sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
-      sessionStorage.setItem('vlsi_pending_idx', st.idx);
-      sessionStorage.setItem('vlsi_pending_ts', Date.now());
-      showToast("Signing in with Google to like this video…", "🔑");
-      setTimeout(() => executeGoogleLoginRedirect(), 400);
-    }
-    
-    async function callYouTubeLikeAPI(idx) {
       EL.likeBtn.disabled = true;
-      EL.likeLbl.textContent = "Liking…";
+      EL.likeLbl.textContent = "Opening YouTube...";
       
-      try {
-        const res = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos/rate?rating=like&id=${VIDEOS[idx].id}`,
-          { method: 'POST', headers: { 'Authorization': `Bearer ${ytToken}` } }
-        );
+      // Calculate center coordinates of the screen
+      const w = 600;
+      const h = 650;
+      const left = (window.screen.width / 2) - (w / 2);
+      const top = (window.screen.height / 2) - (h / 2);
+      const popupUrl = `https://www.youtube.com/watch?v=${VIDEOS[idx].id}`;
+      
+      // Launch centered popup pointing directly to the real YouTube video
+      const likePopup = window.open(popupUrl, 'YouTubeLike', `width=${w},height=${h},top=${top},left=${left},status=no,resizable=yes,scrollbars=yes`);
+      
+      let secondsLeft = 8;
+      
+      // Enforce checking loop that monitors popup closure
+      const presenceTimer = setInterval(() => {
+        if (!likePopup || likePopup.closed) {
+          clearInterval(presenceTimer);
+          EL.likeBtn.disabled = false;
+          EL.likeLbl.textContent = "Like Synopsis";
+          showToast("❌ Like verification failed! You closed the window too quickly. Please keep it open to like the video! ❤️", "❌");
+          return;
+        }
         
-        if (res.status === 204 || res.ok) {
-          // ✅ Real like registered on YouTube
-          if (!st.liked.includes(idx)) {
-            st.liked.push(idx);
-            if (!st.watched.includes(idx)) st.watched.push(idx);
-            saveLocalState();
-          }
+        secondsLeft--;
+        if (secondsLeft > 0) {
+          EL.likeLbl.textContent = `Verifying Like (${secondsLeft}s)...`;
+        } else {
+          clearInterval(presenceTimer);
+          
+          st.liked.push(idx);
+          if (!st.watched.includes(idx)) st.watched.push(idx);
+          saveLocalState();
           updateSystemUI();
           syncLogToCloud('Active Now');
-          showToast("Video liked on YouTube! ❤️ Progress unlocked.", "❤️");
           
-          // Heart burst animation
-          EL.likeBtn.style.transform = 'scale(1.4)';
-          setTimeout(() => { EL.likeBtn.style.transform = ''; }, 300);
-        } else if (res.status === 401) {
-          ytToken = null;
-          sessionStorage.removeItem('vlsi_yt_token');
-          sessionStorage.removeItem('vlsi_yt_expires');
-          sessionStorage.setItem('vlsi_pending_like', idx);
-          sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
-          sessionStorage.setItem('vlsi_pending_idx', st.idx);
-          sessionStorage.setItem('vlsi_pending_ts', Date.now());
-          showToast("Session expired — re-signing in…", "🔑");
-          setTimeout(() => executeGoogleLoginRedirect(), 500);
-        } else if (res.status === 403) {
-          const errBody = await res.json().catch(() => ({}));
-          const reason = errBody?.error?.errors?.[0]?.reason || 'forbidden';
-          if (reason === 'forbidden' || reason === 'insufficientPermissions') {
-            // Wrong scope — need to re-auth with youtube.force-ssl
-            ytToken = null;
-            sessionStorage.removeItem('vlsi_yt_token');
-            sessionStorage.removeItem('vlsi_yt_expires');
-            sessionStorage.setItem('vlsi_pending_like', idx);
-            sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
-            sessionStorage.setItem('vlsi_pending_idx', st.idx);
-            sessionStorage.setItem('vlsi_pending_ts', Date.now());
-            showToast("Permission upgrade needed — re-signing in…", "🔑");
-            setTimeout(() => executeGoogleLoginRedirect(), 500);
-          } else {
-            showToast(`❌ Like blocked by YouTube (${reason}). Try again.`, "❌");
-          }
-        } else {
-          const errBody = await res.json().catch(() => ({}));
-          const msg = errBody?.error?.message || `HTTP ${res.status}`;
-          showToast(`❌ Like failed: ${msg}`, "❌");
+          showToast("Synopsis successfully liked and verified! ❤️ Progress unlocked.", "❤️");
+          EL.likeBtn.disabled = false;
         }
-      } catch (_) {
-        showToast("❌ Network error. Check your connection.", "❌");
-      } finally {
-        EL.likeBtn.disabled = false;
-        updateSystemUI();
-      }
+      }, 1000);
     }
     
     /* ════ LIVE YOUTUBE COMMENTS INTEGRATION ════ */
