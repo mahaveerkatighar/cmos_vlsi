@@ -2141,8 +2141,8 @@
     body.focus-mode-active .focus-alert-banner {
       display: flex !important;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      justify-content: space-between !important;
+      gap: 12px;
     }
     @keyframes pulseGold {
       0%, 100% { opacity: 0.9; box-shadow: 0 0 4px rgba(245, 166, 35, 0.1); }
@@ -2366,6 +2366,9 @@
       border-radius: 4px;
       display: inline-block;
       text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .admin-branch-badge.ece {
       background: rgba(91, 140, 255, 0.12);
@@ -2574,8 +2577,11 @@
       <div class="app-panel active" id="panel-player">
         <!-- Focus Alert Banner -->
         <div class="focus-alert-banner" id="focus-alert-banner">
-          <span>🔒 Focus Mode Theatre Isolation Active</span>
-          <span style="font-size: 9.5px; opacity: 0.85; font-weight: normal; margin-left: 6px;">• Phone & Laptop are visually isolated. Muted UI sound effects. Toggle device physical switch to Silent/DND for absolute system-wide silence.</span>
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1; text-align: left;">
+            <span>🔒 Focus Mode Theatre Isolation Active</span>
+            <span style="font-size: 9.5px; opacity: 0.85; font-weight: normal; margin-left: 6px;">• Phone & Laptop are visually isolated. Muted UI sound effects. Toggle device physical switch to Silent/DND for absolute system-wide silence.</span>
+          </div>
+          <button class="pcs-btn" style="background: rgba(245, 166, 35, 0.15); border: 1.5px solid var(--gold); color: var(--gold); border-radius: 6px; padding: 6px 14px; font-weight: 700; cursor: pointer; font-size: 11px; white-space: nowrap; transition: all 0.2s;" onclick="toggleQS('study')">Exit Focus</button>
         </div>
         <div class="player-window-header">
           <div class="pwh-title-wrap">
@@ -2941,7 +2947,18 @@
         <button class="pc-btn" style="width: 100%; height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; border: 1px solid rgba(245, 166, 35, 0.2);" onclick="selectStudentBranch('EEE')">EEE</button>
         <button class="pc-btn" style="width: 100%; height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; border: 1px solid rgba(245, 166, 35, 0.2);" onclick="selectStudentBranch('EIE')">EIE</button>
         <button class="pc-btn" style="width: 100%; height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; border: 1px solid rgba(245, 166, 35, 0.2);" onclick="selectStudentBranch('VLSI')">VLSI</button>
+        <button class="pc-btn" id="branch-btn-other" style="width: 100%; height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; border: 1px solid rgba(245, 166, 35, 0.2); grid-column: span 2;" onclick="toggleCustomBranchInput()">Other (Type Custom...)</button>
       </div>
+      
+      <!-- Custom Branch Text Input Container -->
+      <div id="custom-branch-container" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; margin-bottom: 14px; text-align: left; width: 100%;">
+        <label style="font-size: 10px; color: var(--ts); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Type Custom Branch Name</label>
+        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+          <input type="text" id="custom-branch-input" placeholder="e.g. CSE, MECH, CIVIL" style="flex: 1; height: 38px; background: rgba(5, 7, 15, 0.6); border: 1px solid rgba(245, 166, 35, 0.35); border-radius: 8px; padding: 0 12px; font-family: inherit; font-size: 12.5px; color: var(--white); outline: none;" onkeydown="handleCustomBranchKeydown(event)">
+          <button class="pc-btn" style="height: 38px; width: 68px; font-size: 12px; font-weight: 800; border-radius: 8px; border: 1px solid var(--gold); background: var(--gold-dim); color: var(--gold);" onclick="submitCustomBranch()">Save</button>
+        </div>
+      </div>
+      
       <p style="font-size: 9.5px; color: var(--tm); font-weight: 600;">Your choice will be saved permanently to your dashboard session.</p>
     </div>
   </div>
@@ -4035,58 +4052,6 @@
       }, 500);
     }
     
-    function executeOfflineGuestLogin() {
-      playUISound('click');
-      document.getElementById('login-main-actions').style.display = 'none';
-      const container = document.getElementById('guest-input-container');
-      container.style.display = 'flex';
-      const input = document.getElementById('guest-name-field');
-      input.value = localStorage.getItem('vlsi_student_name') || '';
-      input.focus();
-    }
-    
-    function hideGuestInputForm() {
-      playUISound('click');
-      document.getElementById('guest-input-container').style.display = 'none';
-      document.getElementById('login-main-actions').style.display = 'flex';
-    }
-    
-    function handleGuestKeydown(event) {
-      if (event.key === 'Enter') {
-        submitGuestLogin();
-      }
-    }
-    
-    function submitGuestLogin() {
-      const input = document.getElementById('guest-name-field');
-      const guestName = input.value.trim() || "Junior Learner";
-      st.name = guestName;
-      localStorage.setItem('vlsi_student_name', st.name);
-      
-      // Update UI elements
-      EL.gAvatar.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='%235b8cff'/><text x='5' y='12' font-family='sans-serif' font-size='10' font-weight='bold' fill='%2305070f'>G</text></svg>";
-      EL.gName.textContent = st.name.split(' ')[0];
-      
-      EL.gPill.style.display = 'flex';
-      EL.gTrigger.style.display = 'none';
-      
-      EL.cmAvLetter.textContent = st.name[0].toUpperCase();
-      
-      // Set connected status in Quick Settings
-      document.getElementById('qs-api-sub').textContent = "Guest Active";
-      document.getElementById('qs-api').classList.add('active');
-      
-      // Load simulated comments
-      renderSimulatedComments();
-      updateSystemUI();
-      
-      closeLoginModal();
-      document.getElementById('guest-input-container').style.display = 'none';
-      document.getElementById('login-main-actions').style.display = 'flex';
-      
-      showToast(`Welcome to Dashboard Guest Mode, ${st.name}!`, "👤");
-    }
-    
     function processOAuthToken() {
       const hash = window.location.hash;
       if (!hash || !hash.includes('access_token')) return;
@@ -4124,7 +4089,6 @@
     function restoreOAuthSession() {
       const token = localStorage.getItem('vlsi_yt_token');
       const expires = localStorage.getItem('vlsi_yt_expires');
-      const savedName = localStorage.getItem('vlsi_student_name');
       
       if (token && expires && Date.now() < parseInt(expires, 10)) {
         ytToken = token;
@@ -4132,22 +4096,16 @@
         // Dynamic status check
         document.getElementById('qs-api-sub').textContent = "Connected";
         document.getElementById('qs-api').classList.add('active');
-      } else if (savedName && savedName !== 'Learner' && savedName !== 'Senior Mentor') {
-        // Restore Guest Session!
-        st.name = savedName;
+      } else {
+        // Enforce fallback state for non-authenticated sessions
+        st.name = 'Learner';
+        localStorage.setItem('vlsi_student_name', 'Learner');
         
-        EL.gAvatar.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='8' fill='%235b8cff'/><text x='5' y='12' font-family='sans-serif' font-size='10' font-weight='bold' fill='%2305070f'>G</text></svg>";
-        EL.gName.textContent = st.name.split(' ')[0];
+        EL.gPill.style.display = 'none';
+        EL.gTrigger.style.display = 'flex';
         
-        EL.gPill.style.display = 'flex';
-        EL.gTrigger.style.display = 'none';
-        
-        EL.cmAvLetter.textContent = st.name[0].toUpperCase();
-        
-        document.getElementById('qs-api-sub').textContent = "Guest Active";
-        document.getElementById('qs-api').classList.add('active');
-        
-        renderSimulatedComments();
+        document.getElementById('qs-api-sub').textContent = "Ready";
+        document.getElementById('qs-api').classList.remove('active');
       }
     }
     
@@ -4219,25 +4177,10 @@
           }
         }
         
-        const existing = ADMIN_WATCH_LOGS.find(l => l.email.toLowerCase() === email.toLowerCase());
-        if (!existing) {
-          ADMIN_WATCH_LOGS.push({
-            name: name + (isAdmin ? ' (Admin)' : ''),
-            email: email,
-            branch: resolvedBranch || 'VLSI', // Default to VLSI temporarily if unresolved
-            progress: `${st.watched.length} / 16 Lessons`,
-            range: 'Active Session Now',
-            hours: 0.25,
-            status: 'Active Now'
-          });
-        } else {
-          existing.status = 'Active Now';
-          if (resolvedBranch) {
-            existing.branch = resolvedBranch;
-          }
-          existing.progress = `${st.watched.length} / 16 Lessons`;
+        if (resolvedBranch) {
+          localStorage.setItem('vlsi_student_branch', resolvedBranch);
+          registerUserSession(name + (isAdmin ? ' (Admin)' : ''), email);
         }
-        renderAdminLogs();
         
         // Show fallback selection modal if branch is not resolved
         if (!resolvedBranch) {
@@ -4275,8 +4218,11 @@
       
       ytToken = null;
       ytUser = null;
+      st.name = 'Learner';
+      localStorage.setItem('vlsi_student_name', 'Learner');
       localStorage.removeItem('vlsi_yt_token');
       localStorage.removeItem('vlsi_yt_expires');
+      localStorage.removeItem('vlsi_student_branch');
       
       EL.gPill.style.display = 'none';
       EL.gTrigger.style.display = 'flex';
@@ -4391,6 +4337,68 @@
       EL.modalAdmin.classList.remove('visible');
     }
 
+    // Toggle Custom Branch Input in modal
+    function toggleCustomBranchInput() {
+      playUISound('click');
+      const container = document.getElementById('custom-branch-container');
+      if (container) {
+        const isHidden = container.style.display === 'none';
+        container.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden) {
+          const input = document.getElementById('custom-branch-input');
+          if (input) input.focus();
+        }
+      }
+    }
+
+    // Handle Enter key in custom branch input
+    function handleCustomBranchKeydown(event) {
+      if (event.key === 'Enter') {
+        submitCustomBranch();
+      }
+    }
+
+    // Submit the custom branch
+    function submitCustomBranch() {
+      const input = document.getElementById('custom-branch-input');
+      if (!input) return;
+      const customBranch = input.value.trim().toUpperCase();
+      if (!customBranch) {
+        showToast("Please enter a valid branch name", "⚠️");
+        return;
+      }
+      selectStudentBranch(customBranch);
+      
+      // Clear input and hide container
+      input.value = '';
+      const container = document.getElementById('custom-branch-container');
+      if (container) container.style.display = 'none';
+    }
+
+    // Unified user session registration for live watch logs
+    function registerUserSession(name, email) {
+      const branch = localStorage.getItem('vlsi_student_branch') || 'VLSI';
+      const existing = ADMIN_WATCH_LOGS.find(l => l.email.toLowerCase() === email.toLowerCase());
+      
+      if (existing) {
+        existing.status = 'Active Now';
+        existing.branch = branch;
+        existing.progress = `${st.watched.length} / 16 Lessons`;
+        existing.name = name;
+      } else {
+        ADMIN_WATCH_LOGS.push({
+          name: name,
+          email: email,
+          branch: branch,
+          progress: `${st.watched.length} / 16 Lessons`,
+          range: 'Active Session Now',
+          hours: 0.25,
+          status: 'Active Now'
+        });
+      }
+      renderAdminLogs();
+    }
+
     // Student branch selection handler (modal fallback)
     function selectStudentBranch(branch) {
       playUISound('click');
@@ -4398,28 +4406,14 @@
       
       if (ytUser && ytUser.email) {
         const email = ytUser.email;
-        const existing = ADMIN_WATCH_LOGS.find(l => l.email.toLowerCase() === email.toLowerCase());
-        if (existing) {
-          existing.branch = branch;
-        } else {
-          const name = ytUser.name || ytUser.given_name || "Learner";
-          ADMIN_WATCH_LOGS.push({
-            name: name,
-            email: email,
-            branch: branch,
-            progress: `${st.watched.length} / 16 Lessons`,
-            range: 'Active Session Now',
-            hours: 0.25,
-            status: 'Active Now'
-          });
-        }
+        const name = ytUser.name || ytUser.given_name || "Learner";
+        registerUserSession(name, email);
       }
       
       if (EL.modalBranchSelect) {
         EL.modalBranchSelect.classList.remove('visible');
       }
       showToast(`Engineering branch set to ${branch}`, "🎓");
-      renderAdminLogs();
     }
 
     // Secret backdoor to open console instantly
@@ -4500,7 +4494,12 @@
                 <span class="admin-branch-badge ${branchClass}">${item.branch}</span>
               </td>
               <td>
-                <span class="admin-lesson-text" title="${VIDEOS[st.idx].title}">${item.progress}</span>
+                <span class="admin-lesson-text" title="${VIDEOS[st.idx] ? VIDEOS[st.idx].title : 'CMOS VLSI Synopsis'}">
+                  ${item.status === 'Active Now'
+                    ? `<div style="font-weight:700; color:var(--accent); font-size:11px;">${item.email.toLowerCase() === (ytUser ? ytUser.email.toLowerCase() : '') ? (VIDEOS[st.idx] ? VIDEOS[st.idx].title : 'CMOS VLSI Synopsis') : 'CMOS Full Adder Design'}</div><div style="font-size:9.5px; opacity:0.7;">${item.progress}</div>`
+                    : `<div style="font-weight:600; color:var(--ts); font-size:11px;">${item.progress}</div>`
+                  }
+                </span>
               </td>
               <td style="font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:600; color:var(--ts);">
                 ${item.range}
@@ -4740,6 +4739,27 @@
       
       // 8. Launch LinkedIn 5-min tracking
       triggerLinkedInTimer();
+      
+      // 9. Fullscreen DND focus mode state synchronizer to prevent getting stuck
+      const onFullscreenChange = () => {
+        const isFullscreen = document.fullscreenElement || 
+                             document.webkitFullscreenElement || 
+                             document.mozFullScreenElement || 
+                             document.msFullscreenElement;
+        if (!isFullscreen && focusMode) {
+          focusMode = false;
+          const tile = document.getElementById('qs-study');
+          if (tile) tile.classList.remove('active');
+          const subText = document.getElementById('qs-study-sub');
+          if (subText) subText.textContent = "Off";
+          document.body.classList.remove('focus-mode-active');
+          showToast("Standard Mode Restored. UI Sounds enabled.", "🔔");
+        }
+      };
+      document.addEventListener('fullscreenchange', onFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+      document.addEventListener('mozfullscreenchange', onFullscreenChange);
+      document.addEventListener('MSFullscreenChange', onFullscreenChange);
     })();
   </script>
   
