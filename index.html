@@ -4504,6 +4504,14 @@
 
     function showAdminModal() {
       playUISound('click');
+      
+      // Strict Admin Access Control - strictly restricted to mahaveerkatighar05@gmail.com
+      if (!ytUser || !ytUser.email || ytUser.email.toLowerCase() !== 'mahaveerkatighar05@gmail.com') {
+        showToast("❌ Unauthorized: Admin Console is strictly reserved for mahaveerkatighar05@gmail.com!", "❌");
+        playUISound('error');
+        return;
+      }
+      
       EL.modalAdmin.classList.add('visible');
       pullLogsFromCloud(); // Pull immediately
       
@@ -4606,6 +4614,11 @@
 
     // Secret backdoor to open console instantly
     function triggerAdminBackdoor() {
+      if (!ytUser || !ytUser.email || ytUser.email.toLowerCase() !== 'mahaveerkatighar05@gmail.com') {
+        showToast("❌ Unauthorized Developer Action: Access denied!", "❌");
+        playUISound('error');
+        return;
+      }
       playUISound('unlock');
       showToast("Developer Backdoor Activated: Instantly Unlocking Admin Console", "Unlock");
       EL.adminTriggerPill.style.display = 'flex';
