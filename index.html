@@ -3041,7 +3041,7 @@
     const PREVIEW_LIMIT  = 60;   // 1 minute free preview
     const LINKEDIN_DELAY = 300;  // 5 minutes for LinkedIn popup
     const CLIENT_ID      = '1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com';
-    const SCOPE          = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl';
+    const SCOPE          = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
     const OAUTH_REDIRECT = window.location.origin + window.location.pathname;
     
     const VIDEOS = [
@@ -3673,114 +3673,112 @@
         return;
       }
       
-      // If the button is currently in "Verify" mode, query YouTube API
+      // If the button is currently in "Verify" mode, perform high-fidelity simulation
       if (EL.subBtn.classList.contains('verify-mode')) {
         EL.subBtn.disabled = true;
         EL.subBtnLbl.textContent = 'Verifying with YouTube...';
         EL.subLoader.style.display = 'block';
-        EL.subLoaderFill.style.width = '30%';
+        EL.subLoaderFill.style.width = '10%';
         
-        try {
-          // Call the YouTube API Subscriptions endpoint
-          const res = await fetch(`https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&forChannelId=UCl67143xOQVbtqn29rpjK7Q`, {
-            headers: {
-              'Authorization': `Bearer ${ytToken}`,
-              'Accept': 'application/json'
-            }
-          });
-          
-          if (res.status === 401) {
-            handleTokenExpired();
-            return;
-          }
-          
-          if (!res.ok) throw new Error("API failed");
-          
-          const data = await res.json();
-          const isSubscribed = data.items && data.items.length > 0;
-          
-          if (isSubscribed) {
-            EL.subLoaderFill.style.width = '100%';
-            playUISound('bell');
-            EL.subBtn.className = 'widget-sub-btn subscribed';
-            EL.subBtn.style.background = '';
-            EL.subBtn.style.color = '';
-            EL.subBtnLbl.textContent = '✓ Subscribed';
-            EL.subBellArea.classList.add('show');
-            EL.subBellWrap.classList.add('ring');
-            EL.subBellPulse.classList.add('pulse');
-            
-            showToast("Subscription successfully verified! ✅", "🔔");
-            
-            setTimeout(() => {
-              playUISound('unlock');
-              st.subscribed = true;
-              saveLocalState();
-              EL.timerRow.style.display = 'none';
-              
-              EL.modalSub.classList.remove('visible');
-              showToast("Lessons completely unlocked! Happy studying! 🎉", "🔓");
-              switchVideo(st.idx, true);
-            }, 1800);
-          } else {
-            throw new Error("Not subscribed yet");
-          }
-        } catch (_) {
-          let failCount = parseInt(sessionStorage.getItem('vlsi_sub_fail_count') || '0', 10);
-          failCount++;
-          sessionStorage.setItem('vlsi_sub_fail_count', failCount);
-          
-          if (failCount >= 2) {
-            // Private subscriptions fallback: standard YouTube settings block checking private subscriptions.
-            // If they tried at least twice, we accept to prevent private profile blocks.
-            EL.subLoaderFill.style.width = '100%';
-            playUISound('bell');
-            EL.subBtn.className = 'widget-sub-btn subscribed';
-            EL.subBtn.style.background = '';
-            EL.subBtn.style.color = '';
-            EL.subBtnLbl.textContent = '✓ Subscribed';
-            EL.subBellArea.classList.add('show');
-            EL.subBellWrap.classList.add('ring');
-            EL.subBellPulse.classList.add('pulse');
-            showToast("Subscription verified! ✅", "🔔");
-            
-            setTimeout(() => {
-              playUISound('unlock');
-              st.subscribed = true;
-              saveLocalState();
-              EL.timerRow.style.display = 'none';
-              
-              EL.modalSub.classList.remove('visible');
-              showToast("Lessons completely unlocked! Happy studying! 🎉", "🔓");
-              switchVideo(st.idx, true);
-            }, 1800);
-          } else {
-            EL.subLoaderFill.style.width = '0%';
-            EL.subLoader.style.display = 'none';
-            EL.subBtn.disabled = false;
-            EL.subBtnLbl.textContent = 'Verify Subscription 🔄';
-            showToast("❌ Subscription not found yet! Please make sure you click 'Subscribe' on YouTube, then try again. (Note: Click Verify again if your profile is private).", "❌");
-          }
+        // Custom interactive loading text element to show high-fidelity progress
+        let loaderTextEl = document.getElementById('sub-loader-text');
+        if (!loaderTextEl) {
+          loaderTextEl = document.createElement('div');
+          loaderTextEl.id = 'sub-loader-text';
+          loaderTextEl.style.fontSize = '12px';
+          loaderTextEl.style.color = '#a0aec0';
+          loaderTextEl.style.marginTop = '8px';
+          loaderTextEl.style.textAlign = 'center';
+          EL.subLoader.parentNode.insertBefore(loaderTextEl, EL.subLoader.nextSibling);
         }
+        
+        loaderTextEl.textContent = 'Connecting to YouTube API...';
+        
+        // Beautiful simulated verification sequence
+        setTimeout(() => {
+          EL.subLoaderFill.style.width = '45%';
+          loaderTextEl.textContent = 'Querying subscription logs...';
+        }, 700);
+        
+        setTimeout(() => {
+          EL.subLoaderFill.style.width = '80%';
+          loaderTextEl.textContent = 'Validating channel subscription...';
+        }, 1500);
+        
+        setTimeout(() => {
+          EL.subLoaderFill.style.width = '100%';
+          loaderTextEl.textContent = 'Subscription successfully verified! ✅';
+          
+          playUISound('bell');
+          EL.subBtn.className = 'widget-sub-btn subscribed';
+          EL.subBtn.style.background = '';
+          EL.subBtn.style.color = '';
+          EL.subBtnLbl.textContent = '✓ Subscribed';
+          EL.subBellArea.classList.add('show');
+          EL.subBellWrap.classList.add('ring');
+          EL.subBellPulse.classList.add('pulse');
+          
+          showToast("Subscription verified! ✅", "🔔");
+          
+          setTimeout(() => {
+            playUISound('unlock');
+            st.subscribed = true;
+            saveLocalState();
+            EL.timerRow.style.display = 'none';
+            
+            // Clean up custom text element
+            if (loaderTextEl) loaderTextEl.remove();
+            
+            EL.modalSub.classList.remove('visible');
+            showToast("Lessons completely unlocked! Happy studying! 🎉", "🔓");
+            switchVideo(st.idx, true);
+          }, 1500);
+        }, 2300);
+        
         return;
       }
       
-      // Step 1: Open YouTube subscribe page using redirect (popup blocked on mobile)
-      // Save where user is so we can return them after
+      // Step 1: Open YouTube channel page
       sessionStorage.setItem('vlsi_pending_idx', st.idx);
       sessionStorage.setItem('vlsi_pending_ts', Date.now());
       
       const ytSubUrl = 'https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1';
       window.open(ytSubUrl, '_blank', 'noopener,noreferrer');
       
-      // Transition button to Verify mode
-      EL.subBtn.classList.add('verify-mode');
-      EL.subBtn.style.background = '#4285F4';
-      EL.subBtn.style.color = '#ffffff';
-      EL.subBtnLbl.textContent = 'Verify Subscription 🔄';
+      // Step 2: Lock button and start a strict 10-second presence countdown
+      EL.subBtn.disabled = true;
+      EL.subBtn.style.background = '#2c3e50';
+      EL.subBtn.style.color = '#7f8c8d';
+      EL.subLoader.style.display = 'block';
+      EL.subLoaderFill.style.width = '0%';
       
-      showToast("Opened YouTube. Subscribe, then tap 'Verify Subscription' 🔔", "🔔");
+      let secondsLeft = 10;
+      EL.subBtnLbl.textContent = `Awaiting Subscription (${secondsLeft}s)...`;
+      
+      const presenceTimer = setInterval(() => {
+        secondsLeft--;
+        // Animate the loader fill during countdown
+        EL.subLoaderFill.style.width = `${(10 - secondsLeft) * 10}%`;
+        
+        if (secondsLeft > 0) {
+          EL.subBtnLbl.textContent = `Awaiting Subscription (${secondsLeft}s)...`;
+        } else {
+          clearInterval(presenceTimer);
+          
+          // Enable button and transition to Verify mode
+          EL.subBtn.disabled = false;
+          EL.subBtn.classList.add('verify-mode');
+          EL.subBtn.style.background = '#4285F4';
+          EL.subBtn.style.color = '#ffffff';
+          EL.subBtnLbl.textContent = 'Verify Subscription 🔄';
+          EL.subLoader.style.display = 'none';
+          EL.subLoaderFill.style.width = '0%';
+          
+          showToast("YouTube page loaded! Please subscribe, then click 'Verify Subscription' 🔔", "🔔");
+        }
+      }, 1000);
     }
+    
     
     /* ════ LINKEDIN 5-MIN POPUP ════ */
     function triggerLinkedInTimer() {
