@@ -3765,21 +3765,21 @@
         return;
       }
       
-      // Step 1: Open popup
-      const w = 580;
-      const h = 650;
-      const left = (window.screen.width / 2) - (w / 2);
-      const top = (window.screen.height / 2) - (h / 2);
-      const popupUrl = 'https://www.youtube.com/channel/UCl67143xOQVbtqn29rpjK7Q?sub_confirmation=1';
-      window.open(popupUrl, 'YouTubeSubscribe', `width=${w},height=${h},top=${top},left=${left},status=no,resizable=yes,scrollbars=yes`);
+      // Step 1: Open YouTube subscribe page using redirect (popup blocked on mobile)
+      // Save where user is so we can return them after
+      sessionStorage.setItem('vlsi_pending_idx', st.idx);
+      sessionStorage.setItem('vlsi_pending_ts', Date.now());
       
-      // Step 2: Transition button to blue Verify mode
+      const ytSubUrl = 'https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1';
+      window.open(ytSubUrl, '_blank', 'noopener,noreferrer');
+      
+      // Transition button to Verify mode
       EL.subBtn.classList.add('verify-mode');
-      EL.subBtn.style.background = '#4285F4'; // Brand blue
+      EL.subBtn.style.background = '#4285F4';
       EL.subBtn.style.color = '#ffffff';
       EL.subBtnLbl.textContent = 'Verify Subscription 🔄';
       
-      showToast("Opened YouTube. Please Subscribe, then click 'Verify Subscription'! 🔔", "🔔");
+      showToast("Opened YouTube. Subscribe, then tap 'Verify Subscription' 🔔", "🔔");
     }
     
     /* ════ LINKEDIN 5-MIN POPUP ════ */
@@ -3799,63 +3799,75 @@
       saveLocalState();
     }
     
-    /* ════ REAL YOUTUBE LIKING ACTIONS ════ */
+    /* ════ REAL YOUTUBE LIKING — OAuth Redirect Flow ════ */
     async function triggerLikeAction() {
       playUISound('click');
       const idx = st.idx;
-      const isAlreadyLiked = st.liked.includes(idx);
       
-      if (isAlreadyLiked) {
+      if (st.liked.includes(idx)) {
         showToast("You've already liked this synopsis! ❤️", "❤️");
         return;
       }
       
-      if (!ytToken) {
-        initiateGoogleLogin();
+      // If we have a valid token, call the API directly
+      if (ytToken) {
+        await callYouTubeLikeAPI(idx);
         return;
       }
       
+      // No token — save pending like and do OAuth redirect
+      sessionStorage.setItem('vlsi_pending_like', idx);
+      sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
+      sessionStorage.setItem('vlsi_pending_idx', st.idx);
+      sessionStorage.setItem('vlsi_pending_ts', Date.now());
+      showToast("Signing in with Google to like this video…", "🔑");
+      setTimeout(() => executeGoogleLoginRedirect(), 400);
+    }
+    
+    async function callYouTubeLikeAPI(idx) {
       EL.likeBtn.disabled = true;
-      EL.likeLbl.textContent = "Opening YouTube...";
+      EL.likeLbl.textContent = "Liking…";
       
-      // Calculate center coordinates of the screen
-      const w = 600;
-      const h = 650;
-      const left = (window.screen.width / 2) - (w / 2);
-      const top = (window.screen.height / 2) - (h / 2);
-      const popupUrl = `https://www.youtube.com/watch?v=${VIDEOS[idx].id}`;
-      
-      // Launch centered popup pointing directly to the real YouTube video
-      const likePopup = window.open(popupUrl, 'YouTubeLike', `width=${w},height=${h},top=${top},left=${left},status=no,resizable=yes,scrollbars=yes`);
-      
-      let secondsLeft = 8;
-      
-      // Enforce checking loop that monitors popup closure
-      const presenceTimer = setInterval(() => {
-        if (!likePopup || likePopup.closed) {
-          clearInterval(presenceTimer);
-          EL.likeBtn.disabled = false;
-          EL.likeLbl.textContent = "Like Synopsis";
-          showToast("❌ Like verification failed! You closed the window too quickly. Please keep it open to like the video! ❤️", "❌");
-          return;
-        }
+      try {
+        const res = await fetch(
+          `https://www.googleapis.com/youtube/v3/videos/rate?rating=like&id=${VIDEOS[idx].id}`,
+          { method: 'POST', headers: { 'Authorization': `Bearer ${ytToken}` } }
+        );
         
-        secondsLeft--;
-        if (secondsLeft > 0) {
-          EL.likeLbl.textContent = `Verifying Like (${secondsLeft}s)...`;
-        } else {
-          clearInterval(presenceTimer);
-          
-          st.liked.push(idx);
-          if (!st.watched.includes(idx)) st.watched.push(idx);
-          saveLocalState();
+        if (res.status === 204 || res.ok) {
+          // ✅ Real like registered on YouTube
+          if (!st.liked.includes(idx)) {
+            st.liked.push(idx);
+            if (!st.watched.includes(idx)) st.watched.push(idx);
+            saveLocalState();
+          }
           updateSystemUI();
           syncLogToCloud('Active Now');
+          showToast("Video liked on YouTube! ❤️ Progress unlocked.", "❤️");
           
-          showToast("Synopsis successfully liked and verified! ❤️ Progress unlocked.", "❤️");
-          EL.likeBtn.disabled = false;
+          // Heart burst animation
+          EL.likeBtn.style.transform = 'scale(1.4)';
+          setTimeout(() => { EL.likeBtn.style.transform = ''; }, 300);
+        } else if (res.status === 401) {
+          ytToken = null;
+          localStorage.removeItem('vlsi_yt_token');
+          localStorage.removeItem('vlsi_yt_expires');
+          // Save pending and re-auth
+          sessionStorage.setItem('vlsi_pending_like', idx);
+          sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
+          sessionStorage.setItem('vlsi_pending_idx', st.idx);
+          sessionStorage.setItem('vlsi_pending_ts', Date.now());
+          showToast("Session expired — re-signing in…", "🔑");
+          setTimeout(() => executeGoogleLoginRedirect(), 500);
+        } else {
+          showToast("❌ Like failed. Please try again.", "❌");
         }
-      }, 1000);
+      } catch (_) {
+        showToast("❌ Network error. Check your connection.", "❌");
+      } finally {
+        EL.likeBtn.disabled = false;
+        updateSystemUI();
+      }
     }
     
     /* ════ LIVE YOUTUBE COMMENTS INTEGRATION ════ */
@@ -4092,10 +4104,12 @@
       
       if (params.access_token) {
         ytToken = params.access_token;
+        // IMPORTANT: Store token in sessionStorage only (expires with tab, never stale)
+        // NEVER store OAuth access tokens in localStorage — they expire after 1 hour
+        // and cause infinite redirect loops when reused.
+        sessionStorage.setItem('vlsi_yt_token', ytToken);
         const expiresAt = Date.now() + (parseInt(params.expires_in || '3600', 10) * 1000);
-        
-        localStorage.setItem('vlsi_yt_token', ytToken);
-        localStorage.setItem('vlsi_yt_expires', expiresAt);
+        sessionStorage.setItem('vlsi_yt_expires', String(expiresAt));
         
         // Clean URL hash
         history.replaceState(null, '', window.location.pathname);
@@ -4111,12 +4125,24 @@
         }
         sessionStorage.removeItem('vlsi_pending_idx');
         sessionStorage.removeItem('vlsi_pending_ts');
+        
+        // Resume pending like if any
+        const pendingLikeIdx = sessionStorage.getItem('vlsi_pending_like');
+        const pendingLikeTs  = sessionStorage.getItem('vlsi_pending_like_ts');
+        if (pendingLikeIdx !== null && pendingLikeTs && 
+            (Date.now() - parseInt(pendingLikeTs,10) < 5 * 60 * 1000)) {
+          sessionStorage.removeItem('vlsi_pending_like');
+          sessionStorage.removeItem('vlsi_pending_like_ts');
+          setTimeout(() => callYouTubeLikeAPI(parseInt(pendingLikeIdx, 10)), 800);
+        }
       }
     }
     
     function restoreOAuthSession() {
-      const token = localStorage.getItem('vlsi_yt_token');
-      const expires = localStorage.getItem('vlsi_yt_expires');
+      // Use sessionStorage (not localStorage) — tokens expire after 1 hour
+      // Using localStorage caused stale tokens and redirect loops
+      const token = sessionStorage.getItem('vlsi_yt_token');
+      const expires = sessionStorage.getItem('vlsi_yt_expires');
       
       if (token && expires && Date.now() < parseInt(expires, 10)) {
         ytToken = token;
@@ -4256,8 +4282,8 @@
       ytUser = null;
       st.name = 'Learner';
       localStorage.setItem('vlsi_student_name', 'Learner');
-      localStorage.removeItem('vlsi_yt_token');
-      localStorage.removeItem('vlsi_yt_expires');
+      sessionStorage.removeItem('vlsi_yt_token');
+      sessionStorage.removeItem('vlsi_yt_expires');
       localStorage.removeItem('vlsi_student_branch');
       
       EL.gPill.style.display = 'none';
