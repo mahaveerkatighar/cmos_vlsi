@@ -3041,7 +3041,7 @@
     const PREVIEW_LIMIT  = 60;   // 1 minute free preview
     const LINKEDIN_DELAY = 300;  // 5 minutes for LinkedIn popup
     const CLIENT_ID      = '1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com';
-    const SCOPE          = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.readonly';
+    const SCOPE          = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl';
     const OAUTH_REDIRECT = window.location.origin + window.location.pathname;
     
     const VIDEOS = [
@@ -3850,17 +3850,35 @@
           setTimeout(() => { EL.likeBtn.style.transform = ''; }, 300);
         } else if (res.status === 401) {
           ytToken = null;
-          localStorage.removeItem('vlsi_yt_token');
-          localStorage.removeItem('vlsi_yt_expires');
-          // Save pending and re-auth
+          sessionStorage.removeItem('vlsi_yt_token');
+          sessionStorage.removeItem('vlsi_yt_expires');
           sessionStorage.setItem('vlsi_pending_like', idx);
           sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
           sessionStorage.setItem('vlsi_pending_idx', st.idx);
           sessionStorage.setItem('vlsi_pending_ts', Date.now());
           showToast("Session expired — re-signing in…", "🔑");
           setTimeout(() => executeGoogleLoginRedirect(), 500);
+        } else if (res.status === 403) {
+          const errBody = await res.json().catch(() => ({}));
+          const reason = errBody?.error?.errors?.[0]?.reason || 'forbidden';
+          if (reason === 'forbidden' || reason === 'insufficientPermissions') {
+            // Wrong scope — need to re-auth with youtube.force-ssl
+            ytToken = null;
+            sessionStorage.removeItem('vlsi_yt_token');
+            sessionStorage.removeItem('vlsi_yt_expires');
+            sessionStorage.setItem('vlsi_pending_like', idx);
+            sessionStorage.setItem('vlsi_pending_like_ts', Date.now());
+            sessionStorage.setItem('vlsi_pending_idx', st.idx);
+            sessionStorage.setItem('vlsi_pending_ts', Date.now());
+            showToast("Permission upgrade needed — re-signing in…", "🔑");
+            setTimeout(() => executeGoogleLoginRedirect(), 500);
+          } else {
+            showToast(`❌ Like blocked by YouTube (${reason}). Try again.`, "❌");
+          }
         } else {
-          showToast("❌ Like failed. Please try again.", "❌");
+          const errBody = await res.json().catch(() => ({}));
+          const msg = errBody?.error?.message || `HTTP ${res.status}`;
+          showToast(`❌ Like failed: ${msg}`, "❌");
         }
       } catch (_) {
         showToast("❌ Network error. Check your connection.", "❌");
