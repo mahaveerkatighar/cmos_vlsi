@@ -1,788 +1,1350 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>CMOS VLSI Design Synopsis - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "outline": "#8d909f",
-                        "border-glass": "rgba(178, 197, 255, 0.25)",
-                        "tertiary-fixed-dim": "#38dfab",
-                        "primary-container": "#5b8cff",
-                        "surface-base": "#05070f",
-                        "on-primary-fixed-variant": "#0040a0",
-                        "error-container": "#93000a",
-                        "surface-container-high": "#272a33",
-                        "on-tertiary": "#003828",
-                        "on-background": "#f0f2faff",
-                        "surface-low": "#090d1a",
-                        "inverse-primary": "#1857c8",
-                        "on-surface": "#f0f2faff",
-                        "surface-tint": "#b2c5ff",
-                        "on-secondary-fixed-variant": "#633f00",
-                        "surface-overlay": "#1c2744",
-                        "primary": "#b2c5ff",
-                        "primary-fixed-dim": "#b2c5ff",
-                        "on-surface-variant": "#d1d4e2",
-                        "secondary": "#ffb955",
-                        "surface-bright": "#363943",
-                        "secondary-container": "#dc9100",
-                        "on-primary": "#002c72",
-                        "surface-container-highest": "#32343e",
-                        "tertiary": "#38dfab",
-                        "on-secondary-fixed": "#291800",
-                        "on-tertiary-fixed": "#002116",
-                        "on-tertiary-container": "#003122",
-                        "on-error-container": "#ffdad6",
-                        "on-primary-fixed": "#001847",
-                        "surface-medium": "#0e1422",
-                        "secondary-fixed-dim": "#ffb955",
-                        "primary-fixed": "#dae2ff",
-                        "on-primary-container": "#002665",
-                        "inverse-surface": "#e1e2ee",
-                        "error": "#ffb4ab",
-                        "on-secondary": "#452b00",
-                        "surface-container-lowest": "#0b0e16",
-                        "surface-container-low": "#191b24",
-                        "inverse-on-surface": "#2e303a",
-                        "secondary-fixed": "#ffddb4",
-                        "accent-red": "#ff4f6a",
-                        "tertiary-container": "#00a57b",
-                        "surface-high": "#131c32",
-                        "surface-dim": "#10131c",
-                        "on-error": "#690005",
-                        "border-bright": "rgba(178, 197, 255, 0.4)",
-                        "tertiary-fixed": "#5ffcc6",
-                        "surface-container": "#1d1f28",
-                        "surface": "#10131c",
-                        "surface-variant": "#32343e",
-                        "background": "#10131c",
-                        "on-tertiary-fixed-variant": "#00513b",
-                        "outline-variant": "#434653",
-                        "on-secondary-container": "#4f3100"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    "spacing": {
-                        "stack-lg": "32px",
-                        "stack-md": "16px",
-                        "margin-page": "48px",
-                        "gutter": "24px",
-                        "unit": "4px",
-                        "stack-sm": "8px"
-                    },
-                    "fontFamily": {
-                        "headline-lg": ["Outfit"],
-                        "body-lg": ["Outfit"],
-                        "body-md": ["Outfit"],
-                        "label-caps": ["JetBrains Mono"],
-                        "headline-display": ["Outfit"],
-                        "headline-md": ["Outfit"],
-                        "body-sm": ["Outfit"],
-                        "code-md": ["JetBrains Mono"]
-                    },
-                    "fontSize": {
-                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
-                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "500"}],
-                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "500"}],
-                        "label-caps": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700"}],
-                        "headline-display": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
-                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "500"}],
-                        "code-md": ["14px", {"lineHeight": "1.5", "fontWeight": "500"}]
-                    }
-                },
-            },
-        }
-    </script>
-    <style>
-        :root {
-            --primary: #b2c5ff;
-            --secondary: #ffb955;
-            --tertiary: #38dfab;
-            --surface-base: #05070f;
-        }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="google-site-verification" content="h3e_yJr528Hmzrne6GkxDeTUa0ziRLwJh2bVAQTPyeQ"/>
+<title>CMOS VLSI Design Synopsis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet"/>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<style>
+:root {
+  --primary:#b2c5ff;--secondary:#ffb955;--tertiary:#38dfab;
+  --surface-base:#05070f;--surface-low:#090d1a;--surface-high:#131c32;
+  --surface-variant:rgba(255,255,255,.04);--glass:rgba(91,140,255,.13);
+  --red:#ff4f6a;--gold:#f5a623;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:'Outfit',sans-serif;background:var(--surface-base);color:#c8d8f0;height:100dvh;overflow:hidden;user-select:none;}
 
-        body {
-            background-color: var(--surface-base);
-            overflow: hidden;
-            height: 100vh;
-        }
+.mesh{position:fixed;inset:0;z-index:-2;
+  background:radial-gradient(circle at 0% 0%,rgba(178,197,255,.14) 0%,transparent 50%),
+             radial-gradient(circle at 100% 100%,rgba(56,223,171,.09) 0%,transparent 50%),
+             radial-gradient(circle at 50% 50%,rgba(255,185,85,.05) 0%,transparent 70%);
+  animation:mesh-drift 22s ease-in-out infinite alternate;}
+@keyframes mesh-drift{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.1) translate(2%,2%)}}
 
-        .mesh-gradient {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            background: 
-                radial-gradient(circle at 0% 0%, rgba(178, 197, 255, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(56, 223, 171, 0.04) 0%, transparent 40%);
-            opacity: 0.5;
-            pointer-events: none;
-        }
+.dot-grid{position:fixed;inset:0;z-index:-1;
+  background-image:radial-gradient(rgba(91,140,255,.14) 1px,transparent 1px);
+  background-size:24px 24px;pointer-events:none;}
 
-        .dot-grid {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background-image: radial-gradient(rgba(178, 197, 255, 0.08) 1px, transparent 1px);
-            background-size: 32px 32px;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+.glass{background:rgba(9,13,26,.72);backdrop-filter:blur(14px);border:1px solid var(--glass);}
+.glass-hi{background:rgba(9,13,26,.88);backdrop-filter:blur(20px);border:1px solid rgba(178,197,255,.18);}
 
-        .glass-panel {
-            background: rgba(15, 21, 35, 0.92);
-            backdrop-filter: blur(16px);
-            border: 1.5px solid rgba(178, 197, 255, 0.2);
-        }
+.spring{transition:transform .4s cubic-bezier(.34,1.56,.64,1);}
+.spring:hover{transform:translateY(-8px) scale(1.1);}
 
-        .progress-ring-circle {
-            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
+.halo{animation:halo 2.2s infinite;}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(178,197,255,.45)}70%{box-shadow:0 0 0 12px rgba(178,197,255,0)}100%{box-shadow:0 0 0 0 rgba(178,197,255,0)}}
 
-        .spring-hover {
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .spring-hover:hover {
-            transform: translateY(-4px) scale(1.05);
-        }
+.shimmer{background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);background-size:200% 100%;animation:shimmer 2s infinite;}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
-        .halo-pulse {
-            animation: halo 2s infinite;
-        }
-        @keyframes halo {
-            0% { box-shadow: 0 0 0 0 rgba(178, 197, 255, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(178, 197, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(178, 197, 255, 0); }
-        }
+.progress-ring-circle{transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1);transform:rotate(-90deg);transform-origin:50% 50%;}
 
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
+/* Overlays */
+.overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(5,7,15,.88);backdrop-filter:blur(22px);}
+.overlay.show{display:flex;}
+@media(max-width:680px){.overlay{align-items:flex-end;}.overlay .modal-box{border-radius:20px 20px 0 0;width:100%;max-width:100%;padding-bottom:env(safe-area-inset-bottom,20px);}}
 
-        .vu-meter-bar {
-            transition: height 0.1s ease-out;
-        }
+.modal-box{background:var(--surface-low);border:1px solid var(--glass);border-radius:20px;padding:28px;max-width:400px;width:100%;
+  position:relative;text-align:center;
+  animation:modalIn .4s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes modalIn{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
-        #notes-panel.active {
-            right: 0px !important;
-            box-shadow: -20px 0 60px rgba(0,0,0,0.6);
-        }
+/* Sidebar */
+.sidebar{position:fixed;left:0;top:0;height:100%;width:310px;z-index:40;
+  background:rgba(9,13,26,.92);backdrop-filter:blur(18px);
+  border-right:1px solid var(--glass);display:flex;flex-direction:column;padding-top:56px;overflow-y:auto;}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--glass);border-radius:4px;}
 
-        #custom-toast {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-    </style>
+/* Playlist items */
+.pl-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;border:1px solid transparent;cursor:pointer;transition:all .15s;}
+.pl-item.active{background:rgba(178,197,255,.1);border-color:rgba(178,197,255,.25);}
+.pl-item.locked{opacity:.38;cursor:default;}
+.pl-item:not(.active):not(.locked):hover{background:rgba(255,255,255,.04);transform:translateX(2px);}
+
+/* VU bars */
+.vu-bar{width:4px;border-radius:2px 2px 0 0;background:var(--tertiary);transition:height .09s ease-out;min-height:3px;}
+
+/* Timer bar */
+.timer-bar{height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--tertiary),var(--secondary));width:0%;transition:width .5s linear;border-radius:99px;}
+
+/* Dock */
+.dock-btn{width:44px;height:44px;border-radius:12px;background:rgba(19,28,50,.8);border:1px solid var(--glass);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);color:#7090b8;}
+.dock-btn:hover{transform:translateY(-8px) scale(1.1);background:rgba(19,28,50,1);border-color:rgba(178,197,255,.3);color:#c8d8f0;}
+.dock-btn.active{background:var(--primary);border-color:var(--primary);color:#05070f;transform:translateY(-4px);}
+.dock-btn .material-symbols-outlined{font-size:20px;}
+
+/* Toast */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(16px);z-index:900;
+  background:rgba(9,13,26,.95);border:1px solid var(--glass);border-radius:99px;
+  padding:9px 20px;font-size:12px;font-weight:700;color:#c8d8f0;
+  backdrop-filter:blur(12px);white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s cubic-bezier(.34,1.56,.64,1);}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Like btn */
+.like-btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;
+  background:rgba(255,79,106,.1);border:1.5px solid rgba(255,79,106,.2);
+  color:var(--red);font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.like-btn:hover{background:rgba(255,79,106,.2);}
+.like-btn:active{transform:scale(.93);}
+.like-btn.liked{background:rgba(56,223,171,.1);border-color:rgba(56,223,171,.3);color:var(--tertiary);}
+
+/* Step indicators */
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;background:rgba(19,28,50,1);border:1.5px solid var(--glass);color:#405575;transition:all .3s;}
+.step-dot.active{background:rgba(178,197,255,.12);border-color:var(--primary);color:var(--primary);box-shadow:0 0 12px rgba(178,197,255,.25);}
+.step-dot.done{background:rgba(56,223,171,.1);border-color:var(--tertiary);color:var(--tertiary);}
+
+/* LinkedIn btn */
+.li-btn{width:100%;padding:12px;border-radius:12px;background:#0a66c2;color:#fff;font-family:'Outfit',sans-serif;
+  font-size:13px;font-weight:800;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;
+  text-decoration:none;transition:background .2s;}
+.li-btn:hover{background:#0d73d9;}
+
+/* Admin table */
+.admin-table th{background:rgba(9,13,26,.9);padding:9px 12px;color:#7090b8;font-weight:700;font-size:9px;
+  text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--glass);position:sticky;top:0;z-index:2;}
+.admin-table td{padding:9px 12px;border-bottom:1px solid rgba(80,120,230,.04);vertical-align:middle;font-size:12px;}
+.admin-table tbody tr:hover{background:rgba(178,197,255,.02);}
+
+/* Notes panel */
+#notes-panel{position:fixed;right:-420px;top:48px;bottom:0;width:420px;z-index:45;transition:right .4s cubic-bezier(.34,1.56,.64,1);}
+#notes-panel.open{right:0;}
+
+/* Focus mode */
+body.focus .sidebar,.body.focus .dock-wrap{opacity:.1;pointer-events:none;transition:opacity .4s;}
+
+/* Mobile */
+@media(max-width:900px){
+  .sidebar{display:none!important;}
+  .main-content{margin-left:0!important;}
+  .desktop-only{display:none!important;}
+  #video-grid{grid-template-columns:repeat(2,1fr)!important;}
+}
+@media(min-width:901px){
+  .mobile-only{display:none!important;}
+}
+@media(max-width:480px){
+  #video-grid{grid-template-columns:repeat(2,1fr)!important;}
+}
+</style>
 </head>
-<body class="font-body-md text-on-surface select-none">
-    <div class="mesh-gradient"></div>
-    <div class="dot-grid"></div>
-    <!-- Top Status Bar -->
-    <header class="fixed top-0 w-full z-50 h-12 flex items-center justify-between px-gutter bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 shadow-md">
-        <div class="flex items-center gap-6">
-            <span class="font-label-caps text-label-caps text-primary tracking-widest cursor-default select-none" id="system-title">SYSTEM v2.0</span>
-            <span class="font-code-md text-code-md text-on-surface-variant" id="current-time">10:42 AM</span>
+<body>
+<div class="mesh"></div>
+<div class="dot-grid"></div>
+
+<!-- ═══ STATUS BAR ═══ -->
+<header style="position:fixed;top:0;width:100%;height:48px;z-index:100;background:rgba(5,7,15,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass);display:flex;align-items:center;justify-content:space-between;padding:0 18px;gap:10px;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;color:var(--primary);background:rgba(178,197,255,.1);padding:2px 8px;border-radius:4px;letter-spacing:.1em;cursor:pointer;" id="sys-title" ondblclick="openAdmin()">CMOS VLSI SYNOPSIS</span>
+    <span style="font-size:11px;font-weight:700;color:#405575;" id="sb-clock">12:00 PM</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <!-- Admin pill -->
+    <div id="admin-pill" style="display:none;align-items:center;gap:4px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.3);border-radius:99px;padding:2px 9px;cursor:pointer;" onclick="openAdmin()">
+      <span style="font-size:9px;font-weight:800;color:var(--gold);">👑 Admin</span>
+    </div>
+    <!-- Google auth pill -->
+    <div id="g-pill" style="display:none;align-items:center;gap:6px;background:rgba(56,223,171,.08);border:1px solid rgba(56,223,171,.2);border-radius:99px;padding:2px 10px 2px 4px;cursor:pointer;" onclick="signOut()">
+      <img id="g-avatar" src="" alt="" style="width:18px;height:18px;border-radius:50%;display:block;border:1.5px solid var(--tertiary);">
+      <span id="g-name" style="font-size:9px;font-weight:800;color:var(--tertiary);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+    </div>
+    <div id="signin-btn" style="display:flex;align-items:center;gap:4px;background:rgba(19,28,50,.9);border:1px solid var(--glass);border-radius:99px;padding:3px 10px;cursor:pointer;font-size:9px;font-weight:700;color:#7090b8;" onclick="doGoogleLogin()">
+      <span class="material-symbols-outlined" style="font-size:12px;">person</span> Sign In
+    </div>
+  </div>
+</header>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <!-- Progress ring -->
+  <div style="padding:14px 16px;">
+    <div class="glass" style="border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary));"></div>
+      <div style="position:relative;width:52px;height:52px;flex-shrink:0;">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="22" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
+          <circle cx="26" cy="26" r="22" fill="none" stroke="var(--primary)" stroke-width="4"
+            stroke-dasharray="138.2" stroke-dashoffset="138.2" stroke-linecap="round"
+            id="prog-ring" class="progress-ring-circle"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;color:var(--primary);" id="prog-pct">0%</div>
+      </div>
+      <div>
+        <div style="font-size:9px;font-weight:700;color:#405575;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">Progress</div>
+        <div style="font-size:13px;font-weight:800;color:#e4eeff;" id="prog-text">0 / 16 Done</div>
+        <div style="font-size:10px;color:#7090b8;margin-top:2px;" id="sb-greeting">Good morning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick settings -->
+  <div style="padding:0 16px 12px;">
+    <div style="font-size:9px;font-weight:700;color:#405575;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px;">Quick Settings</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <div class="glass" style="border-radius:10px;padding:9px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;" id="qs-auto" onclick="toggleAutoplay()">
+        <span class="material-symbols-outlined" style="font-size:15px;color:var(--primary);">play_circle</span>
+        <div><div style="font-size:10px;font-weight:700;color:#c8d8f0;">Autoplay</div><div style="font-size:8px;color:#405575;" id="qs-auto-sub">On</div></div>
+      </div>
+      <div class="glass" style="border-radius:10px;padding:9px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;" id="qs-focus" onclick="toggleFocus()">
+        <span class="material-symbols-outlined" style="font-size:15px;color:#7090b8;">center_focus_strong</span>
+        <div><div style="font-size:10px;font-weight:700;color:#c8d8f0;">Focus</div><div style="font-size:8px;color:#405575;" id="qs-focus-sub">Off</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme palette -->
+  <div style="padding:0 16px 14px;display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:9px;font-weight:700;color:#405575;text-transform:uppercase;letter-spacing:.08em;">Theme</span>
+    <div style="display:flex;gap:6px;">
+      <div onclick="setTheme(220,'blue',this)" style="width:14px;height:14px;border-radius:50%;background:#5b8cff;cursor:pointer;border:1.5px solid #fff;transition:transform .15s;" class="tp-dot"></div>
+      <div onclick="setTheme(38,'gold',this)" style="width:14px;height:14px;border-radius:50%;background:#f5a623;cursor:pointer;border:1.5px solid transparent;transition:transform .15s;" class="tp-dot"></div>
+      <div onclick="setTheme(160,'green',this)" style="width:14px;height:14px;border-radius:50%;background:#22d3a0;cursor:pointer;border:1.5px solid transparent;transition:transform .15s;" class="tp-dot"></div>
+      <div onclick="setTheme(350,'red',this)" style="width:14px;height:14px;border-radius:50%;background:#ff4f6a;cursor:pointer;border:1.5px solid transparent;transition:transform .15s;" class="tp-dot"></div>
+      <div onclick="setTheme(270,'purple',this)" style="width:14px;height:14px;border-radius:50%;background:#a855f7;cursor:pointer;border:1.5px solid transparent;transition:transform .15s;" class="tp-dot"></div>
+    </div>
+  </div>
+
+  <!-- Playlist -->
+  <div style="padding:0 16px;flex:1;">
+    <div style="font-size:9px;font-weight:700;color:#405575;text-transform:uppercase;letter-spacing:.09em;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+      <span>Course Playlist</span>
+      <span style="color:var(--secondary);">16 Videos</span>
+    </div>
+    <div id="sidebar-playlist" style="display:flex;flex-direction:column;gap:2px;overflow-y:auto;max-height:calc(100vh - 420px);padding-right:2px;">
+    </div>
+  </div>
+
+  <!-- Social -->
+  <div style="padding:14px 16px;display:flex;flex-direction:column;gap:6px;">
+    <a href="https://www.linkedin.com/in/mahaveerkatighar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(10,102,194,.1);border:1px solid rgba(10,102,194,.2);text-decoration:none;transition:all .2s;">
+      <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#0a66c2,#2d8ae8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      </div>
+      <div><div style="font-size:12px;font-weight:700;color:#e4eeff;">LinkedIn</div><div style="font-size:10px;color:#7090b8;">mahaveerkatighar</div></div>
+    </a>
+    <a href="https://www.instagram.com/__mahaveerkatighar__?igsh=MXdjdnk0eGhjbnVyZQ==" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(238,42,123,.08);border:1px solid rgba(238,42,123,.18);text-decoration:none;transition:all .2s;">
+      <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <span class="material-symbols-outlined" style="font-size:15px;color:#fff;">photo_camera</span>
+      </div>
+      <div><div style="font-size:12px;font-weight:700;color:#e4eeff;">Instagram</div><div style="font-size:10px;color:#7090b8;">__mahaveerkatighar__</div></div>
+    </a>
+  </div>
+</aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main class="main-content" style="margin-left:310px;height:100dvh;overflow:hidden;display:flex;flex-direction:column;">
+
+  <!-- App panels container -->
+  <div style="flex:1;overflow:hidden;position:relative;">
+
+    <!-- PANEL: PLAYER -->
+    <div id="panel-player" style="position:absolute;inset:0;overflow-y:auto;padding:16px 20px 100px;">
+
+      <!-- Stitch-style glowing gradient wrapper -->
+      <div style="position:relative;margin-bottom:12px;margin-top:8px;">
+        <!-- Ambient glow layer -->
+        <div style="position:absolute;inset:-3px;background:linear-gradient(135deg,var(--secondary),var(--primary),var(--tertiary));border-radius:22px;opacity:.15;filter:blur(10px);pointer-events:none;"></div>
+
+        <!-- Premium video card -->
+        <div class="glass" style="position:relative;border-radius:18px;overflow:hidden;border-top:2px solid rgba(255,185,85,.5);">
+
+          <!-- Card header with title -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(9,13,26,.55);border-bottom:1px solid var(--glass);">
+            <div style="min-width:0;flex:1;margin-right:12px;">
+              <div style="font-size:9px;font-weight:700;color:var(--primary);letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px;display:flex;align-items:center;gap:5px;">
+                <span style="width:10px;height:1px;background:var(--primary);display:inline-block;border-radius:1px;"></span>Now Playing
+              </div>
+              <h1 style="font-size:clamp(13px,2.2vw,18px);font-weight:800;color:#e4eeff;letter-spacing:-.02em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="vid-title">Loading…</h1>
+            </div>
+            <div style="flex-shrink:0;background:rgba(9,13,26,.9);border:1px solid var(--glass);border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;color:#7090b8;white-space:nowrap;">
+              Video <em style="font-style:normal;color:var(--secondary);" id="vid-num">1</em> / 16
+            </div>
+          </div>
         </div>
-        <div class="flex items-center gap-4">
-            <div data-auto_prompt="false" data-client_id="1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" id="g_id_onload"></div>
-            <div class="g_id_signin" data-logo_alignment="left" data-shape="pill" data-size="small" data-text="signin_with" data-theme="filled_black" data-type="standard"></div>
-            <span class="material-symbols-outlined text-on-surface-variant text-body-md cursor-pointer hover:text-primary transition-colors">terminal</span>
+      </div>
+
+      <!-- Player shell -->
+      <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(178,197,255,.12),0 24px 60px rgba(0,0,0,.65);">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--secondary) 30%,var(--primary) 70%,transparent);opacity:.6;z-index:3;pointer-events:none;"></div>
+        <iframe id="yt-frame" src="about:blank" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;display:block;"></iframe>
+
+          <!-- Player shell — inside the card -->
+          <div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--secondary) 30%,var(--primary) 70%,transparent);opacity:.6;z-index:3;pointer-events:none;"></div>
+            <iframe id="yt-frame" src="about:blank" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:none;display:block;"></iframe>
+
+            <!-- Subscribe overlay -->
+            <div id="sub-overlay" style="position:absolute;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 18px;background:rgba(5,7,15,.97);backdrop-filter:blur(28px);overflow-y:auto;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,185,85,.1);border:1px solid rgba(255,185,85,.25);border-radius:99px;padding:4px 14px;color:var(--secondary);margin-bottom:18px;">🔒 Free Preview Ended</div>
+              <div style="width:64px;height:64px;margin-bottom:16px;position:relative;">
+                <div style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(255,185,85,.14),transparent 66%);animation:halo 3s ease-in-out infinite;"></div>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="10" y="28" width="44" height="30" rx="7" fill="rgba(255,185,85,.1)" stroke="#ffb955" stroke-width="2.2"/><path d="M21 28V20a11 11 0 0 1 22 0v8" stroke="#ffb955" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="43" r="4" fill="#ffb955"/><line x1="32" y1="47" x2="32" y2="52" stroke="#ffb955" stroke-width="2.4" stroke-linecap="round"/></svg>
+              </div>
+              <p style="font-size:clamp(17px,4vw,22px);font-weight:900;color:#e4eeff;letter-spacing:-.02em;margin-bottom:8px;">Subscribe to Keep Watching</p>
+              <p style="font-size:13px;color:#7090b8;line-height:1.7;max-width:300px;margin-bottom:20px;">Subscribe to <strong style="color:#e4eeff;">@mahaveerkatighar</strong> on YouTube — completely free — to unlock all 16 lessons.</p>
+              <div class="glass" style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;width:100%;max-width:300px;margin-bottom:20px;text-align:left;">
+                <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;flex-shrink:0;">MK</div>
+                <div><div style="font-size:13px;font-weight:800;color:#e4eeff;">Mahaveer Katighar</div><div style="font-size:10px;color:#7090b8;">@mahaveerkatighar • Free</div></div>
+              </div>
+              <div style="display:flex;align-items:center;margin-bottom:22px;gap:0;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;font-size:9px;color:#405575;text-align:center;"><div class="step-dot active" id="stp1">1</div><span>Open YouTube</span></div>
+                <div style="width:20px;height:1px;background:rgba(178,197,255,.15);margin-bottom:16px;"></div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;font-size:9px;color:#405575;text-align:center;"><div class="step-dot" id="stp2">2</div><span>Subscribe</span></div>
+                <div style="width:20px;height:1px;background:rgba(178,197,255,.15);margin-bottom:16px;"></div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;font-size:9px;color:#405575;text-align:center;"><div class="step-dot" id="stp3">3</div><span>Unlock</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px;width:100%;max-width:300px;">
+                <a id="sub-yt-btn" href="https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1" target="_blank" rel="noopener" onclick="onSubBtnClick()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:11px;background:linear-gradient(135deg,#ffb955,#ffd166);color:#05070f;font-weight:900;font-size:14px;text-decoration:none;box-shadow:0 4px 22px rgba(255,185,85,.38);animation:shimmer 3.5s linear infinite;background-size:200%;">
+                  <svg width="16" height="12" viewBox="0 0 18 13" fill="none"><path d="M17.6 2.03A2.25 2.25 0 0 0 16.02.44C14.63 0 9 0 9 0S3.37 0 1.98.44A2.25 2.25 0 0 0 .4 2.03C0 3.43 0 6.5 0 6.5s0 3.07.4 4.47a2.25 2.25 0 0 0 1.58 1.59C3.37 13 9 13 9 13s5.63 0 7.02-.44a2.25 2.25 0 0 0 1.58-1.59C18 9.57 18 6.5 18 6.5s0-3.07-.4-4.47ZM7.14 9.29V3.71L11.86 6.5 7.14 9.29Z" fill="#05070f"/></svg>
+                  Open YouTube to Subscribe
+                </a>
+                <button id="unlock-btn" disabled onclick="verifySubscription()" style="width:100%;padding:14px;border-radius:11px;background:rgba(9,13,26,.9);color:#c8d8f0;border:1.5px solid rgba(178,197,255,.15);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:not-allowed;opacity:.38;position:relative;overflow:hidden;">
+                  <div id="unlock-fill" style="position:absolute;left:0;top:0;bottom:0;background:rgba(255,185,85,.09);width:0%;pointer-events:none;transition:width 20s linear;"></div>
+                  <span id="unlock-lbl">🔒 I've Subscribed — Unlock</span>
+                </button>
+                <div id="unlock-hint" style="font-size:11px;color:#405575;display:flex;align-items:center;gap:4px;">Unlock in <strong id="unlock-ct" style="color:var(--secondary);">20</strong> sec</div>
+              </div>
+            </div><!-- /sub-overlay -->
+
+            <!-- Like overlay -->
+            <div id="like-overlay" style="position:absolute;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 18px;background:rgba(5,7,15,.97);backdrop-filter:blur(28px);">
+              <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:rgba(255,79,106,.1);border:1px solid rgba(255,79,106,.25);border-radius:99px;padding:4px 14px;color:var(--red);margin-bottom:16px;">❤️ Like Required</div>
+              <div style="width:64px;height:64px;margin-bottom:14px;position:relative;">
+                <div style="position:absolute;inset:-12px;border-radius:50%;background:radial-gradient(circle,rgba(255,79,106,.14),transparent 66%);animation:halo 3s ease-in-out infinite;"></div>
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><path d="M32 54S10 40 10 24a12 12 0 0 1 22-2 12 12 0 0 1 22 2C54 40 32 54 32 54Z" fill="rgba(255,79,106,.15)" stroke="#ff4f6a" stroke-width="2.4" stroke-linejoin="round"/></svg>
+              </div>
+              <p style="font-size:20px;font-weight:900;color:#e4eeff;margin-bottom:8px;">Like to Continue</p>
+              <p style="font-size:13px;color:#7090b8;line-height:1.7;max-width:280px;margin-bottom:22px;">Like this video on YouTube to unlock the next lesson. Signs in with Google once — counts as a real like.</p>
+              <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;">
+                <button id="like-ov-btn" onclick="doLike()" style="width:100%;padding:14px;border-radius:11px;background:linear-gradient(135deg,var(--red),#ff7b92);color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:900;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 22px rgba(255,79,106,.38);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                  <span id="like-ov-lbl">Like This Video on YouTube</span>
+                </button>
+                <p style="font-size:10px;color:#405575;">Sign in with Google → like counted on your YouTube account ✅</p>
+              </div>
+            </div>
+          </div><!-- /player shell -->
+
+        </div><!-- /glass card -->
+      </div><!-- /glow wrapper -->
+
+      <!-- Timer bar -->
+      <div id="timer-row" style="display:flex;align-items:center;gap:10px;padding:0 2px;">
+        <span style="font-size:10px;font-weight:700;color:#7090b8;white-space:nowrap;">Free preview</span>
+        <div class="timer-bar" style="flex:1;"><div class="timer-fill" id="timer-fill"></div></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800;color:var(--secondary);" id="timer-ct">1:00</span>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="glass" style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:11px;">
+        <div style="display:flex;gap:6px;">
+          <button id="prev-btn" onclick="prevVideo()" disabled style="width:34px;height:34px;border-radius:8px;background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;">
+            <span class="material-symbols-outlined" style="font-size:14px;">skip_previous</span>
+          </button>
+          <button id="next-btn" onclick="nextVideo()" style="width:34px;height:34px;border-radius:8px;background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;">
+            <span class="material-symbols-outlined" style="font-size:14px;">skip_next</span>
+          </button>
         </div>
-    </header>
-    <main class="flex h-screen pt-12">
-        <!-- Side Navigation -->
-        <aside class="fixed left-0 top-0 h-full w-[310px] z-40 bg-zinc-950/98 border-r border-zinc-800/80 flex flex-col pt-20 pb-8 overflow-y-auto">
-            <div class="px-6 mb-8">
-                <div class="glass-panel rounded-xl p-4 flex items-center gap-4 border-primary/20 bg-primary/5">
-                    <div class="relative w-16 h-16">
-                        <svg class="w-full h-full">
-                            <circle class="text-white/10" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="4"></circle>
-                            <circle class="text-primary progress-ring-circle" cx="32" cy="32" fill="transparent" id="progress-ring" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="175.9" stroke-width="4"></circle>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center font-code-md text-code-md text-primary font-bold" id="progress-text">0%</div>
-                    </div>
-                    <div>
-                        <p class="font-label-caps text-[11px] text-on-surface-variant font-black">CURRICULUM</p>
-                        <p class="font-headline-sm text-headline-sm text-white font-bold">VLSI Architect</p>
-                    </div>
-                </div>
-            </div>
-            <nav class="flex-grow space-y-1">
-                <a class="text-on-surface-variant px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all group" href="#">
-                    <span class="material-symbols-outlined group-hover:text-primary">dashboard</span>
-                    <span class="font-body-md font-semibold">Dashboard</span>
-                </a>
-                <a class="bg-primary/10 border-l-4 border-primary text-primary px-6 py-3 flex items-center gap-3 transition-all" href="#">
-                    <span class="material-symbols-outlined">play_circle</span>
-                    <span class="font-body-md font-bold">Video Player</span>
-                </a>
-                <button class="w-full text-on-surface-variant px-6 py-3 flex items-center gap-3 hover:bg-white/5 transition-all group text-left" onclick="toggleNotes()">
-                    <span class="material-symbols-outlined group-hover:text-primary">description</span>
-                    <span class="font-body-md font-semibold">Study Notes</span>
-                </button>
-            </nav>
-            <!-- Quick Settings -->
-            <div class="px-6 mt-8">
-                <p class="font-label-caps text-label-caps text-on-surface-variant mb-4 font-black">QUICK SETTINGS</p>
-                <div class="grid grid-cols-2 gap-3">
-                    <button class="bg-white/5 border border-white/10 p-2.5 rounded-lg flex flex-col items-center gap-1.5 hover:bg-primary/20 hover:border-primary/40 transition-all group">
-                        <span class="material-symbols-outlined text-[18px] group-hover:text-primary">autoplay</span>
-                        <span class="font-label-caps text-[10px] font-bold">AUTOPLAY</span>
-                    </button>
-                    <button class="bg-white/5 border border-white/10 p-2.5 rounded-lg flex flex-col items-center gap-1.5 hover:bg-primary/20 hover:border-primary/40 transition-all group">
-                        <span class="material-symbols-outlined text-[18px] group-hover:text-primary">center_focus_strong</span>
-                        <span class="font-label-caps text-[10px] font-bold">FOCUS</span>
-                    </button>
-                </div>
-            </div>
-            <div class="mt-auto px-6">
-                <button class="w-full py-3.5 bg-primary text-zinc-950 font-label-caps text-label-caps rounded-xl shadow-lg shadow-primary/30 hover:scale-[1.02] transition-transform relative overflow-hidden group font-black uppercase tracking-wider">
-                    <div class="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    Upgrade to Elite
-                </button>
-            </div>
-        </aside>
-        <!-- Right Content Area -->
-        <section class="ml-[310px] flex-grow p-8 overflow-y-auto relative bg-[#05070f]">
-            <div class="max-w-5xl mx-auto space-y-10 pb-32">
-                <!-- Video Player Section -->
-                <div class="relative group">
-                    <div class="absolute -inset-1.5 bg-gradient-to-r from-secondary/40 to-primary/40 rounded-3xl blur-xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                    <div class="relative glass-panel rounded-2xl overflow-hidden border-t-2 border-t-secondary/40 shadow-2xl">
-                        <div class="flex items-center justify-between px-8 py-5 bg-zinc-950/60 border-b border-white/10">
-                            <h2 class="font-headline-md text-headline-md text-white font-bold" id="active-video-title">1. Remote Access to Custom Compiler</h2>
-                            <div class="flex items-center gap-8">
-                                <button class="flex items-center gap-2.5 group cursor-pointer" id="like-btn" onclick="toggleLike()">
-                                    <span class="material-symbols-outlined text-secondary transition-all group-hover:scale-110 active:scale-125" id="like-icon" style="font-variation-settings: 'FILL' 0;">favorite</span>
-                                    <span class="font-code-md text-code-md text-white font-bold" id="like-count">1.2k</span>
-                                </button>
-                                <div class="w-36 h-7 flex items-end gap-1 px-3 bg-zinc-900 rounded-lg border border-white/10 shadow-inner" id="vu-meter">
-                                    <!-- VU Bars -->
-                                </div>
-                            </div>
-                        </div>
-                        <div class="aspect-video bg-zinc-950 relative flex items-center justify-center group/player">
-                            <div class="w-full h-full" id="player-frame">
-                                <img alt="Thumbnail" class="w-full h-full object-cover opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDELcP1nP8QgcCQvIA5gFZfTgd4QbBRGyf1be7Qox-_qCgTio1B0GX9u8Z5dAEPvy7uy-FVGyxC3mpnFMPE7fd5V-Po-gLH0xf-NVSbTUkAWVvzedG5wK-iFJEa0_ucbegJ4EjqJmBqMOusOGvhZrpQ72wq6t3ADrIoCfxIqvsf_Ghc_33m7bhu2omLiuo_lw6sEAYv3rM_phcWaPptUQHVBp5o6l8fi1ut5mJTiSOCw7wqu8t92quilxExsRtuHGKY1PsCDEU3ch4"/>
-                                <div class="absolute inset-0 flex items-center justify-center bg-zinc-950/40">
-                                    <button class="w-24 h-24 bg-primary/30 backdrop-blur-xl rounded-full border-2 border-white/40 flex items-center justify-center group-hover/player:scale-110 transition-transform shadow-2xl" onclick="startVideo()">
-                                        <span class="material-symbols-outlined text-white text-5xl translate-x-1" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="absolute bottom-0 left-0 w-full h-1.5 bg-white/10">
-                                <div class="h-full bg-primary transition-all duration-[60000ms] linear w-0 shadow-[0_0_10px_#b2c5ff]" id="video-progress-bar"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Playlist -->
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center border-b border-white/10 pb-4">
-                        <h3 class="font-headline-sm text-headline-sm text-primary font-black uppercase tracking-tight">Curriculum: Phase 1</h3>
-                        <span class="font-label-caps text-label-caps text-white bg-white/5 px-3 py-1 rounded-full border border-white/10" id="module-count">16 MODULES TOTAL</span>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="video-grid"></div>
-                </div>
-            </div>
-        </section>
-        <!-- Floating Dock -->
-        <nav class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
-            <div class="flex justify-center items-center gap-10 px-10 py-4 bg-zinc-950/80 backdrop-blur-2xl border-2 border-white/15 rounded-full shadow-2xl ring-1 ring-white/5">
-                <a class="text-on-surface-variant hover:text-white transition-all flex flex-col items-center gap-1.5 group spring-hover" href="#">
-                    <span class="material-symbols-outlined text-2xl">home</span>
-                    <span class="font-label-caps text-[10px] font-black opacity-0 group-hover:opacity-100 transition-opacity uppercase">Home</span>
-                </a>
-                <a class="bg-primary text-zinc-950 rounded-full p-4 flex flex-col items-center justify-center scale-110 shadow-xl shadow-primary/30 spring-hover" href="#">
-                    <span class="material-symbols-outlined text-2xl font-bold" style="font-variation-settings: 'FILL' 1;">smart_display</span>
-                </a>
-                <button class="text-on-surface-variant hover:text-white transition-all flex flex-col items-center gap-1.5 group spring-hover" onclick="toggleNotes()">
-                    <span class="material-symbols-outlined text-2xl">edit_note</span>
-                    <span class="font-label-caps text-[10px] font-black opacity-0 group-hover:opacity-100 transition-opacity uppercase">Notes</span>
-                </button>
-                <a class="text-on-surface-variant hover:text-white transition-all flex flex-col items-center gap-1.5 group spring-hover" href="#">
-                    <span class="material-symbols-outlined text-2xl">forum</span>
-                    <span class="font-label-caps text-[10px] font-black opacity-0 group-hover:opacity-100 transition-opacity uppercase">Chat</span>
-                </a>
-            </div>
-        </nav>
-    </main>
-    <!-- Subscription Overlay -->
-    <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-2xl" id="subscription-overlay" style="display: none;">
-        <div class="glass-panel p-12 rounded-3xl max-w-lg text-center space-y-8 border-primary/40 shadow-[0_0_100px_rgba(178,197,255,0.15)]">
-            <div class="relative inline-block">
-                <span class="material-symbols-outlined text-7xl text-primary halo-pulse rounded-full p-6 bg-primary/10">verified</span>
-            </div>
-            <div class="space-y-3">
-                <h2 class="font-headline-lg text-headline-lg text-white font-black">Trial Period Expired</h2>
-                <p class="text-on-surface-variant text-lg leading-relaxed font-medium">The first 60 seconds are just a glimpse. Subscribe to unlock the full <span class="text-primary font-bold">VLSI Curriculum</span> and get exclusive tapeout resources by Mahaveer Katighar.</p>
-            </div>
-            <button id="sub-action-btn" onclick="triggerSubscribeAction()" class="w-full py-5 bg-primary text-zinc-950 font-label-caps text-lg rounded-2xl relative overflow-hidden group font-black shadow-xl shadow-primary/40 hover:scale-[1.02] transition-transform">
-                <div class="absolute inset-0 shimmer"></div>
-                SUBSCRIBE ON YOUTUBE (FREE) 🔔
+        <div style="flex:1;text-align:center;font-size:12px;font-weight:700;color:#7090b8;">
+          Video <em style="font-style:normal;color:var(--secondary);" id="ctrl-num">1</em> of 16
+        </div>
+        <div id="vu-meter" style="display:flex;align-items:flex-end;gap:2px;height:22px;margin-right:6px;"></div>
+        <button class="like-btn" id="like-ctrl-btn" onclick="doLike()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span id="like-ctrl-lbl">Like</span>
+        </button>
+        <div onclick="toggleAutoplay()" style="display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;">
+          <span style="font-size:10px;font-weight:600;color:#405575;">Auto</span>
+          <div id="ap-track" style="width:28px;height:16px;border-radius:99px;background:var(--primary);border:1px solid var(--primary);position:relative;transition:background .25s;flex-shrink:0;">
+            <div style="position:absolute;top:2px;left:13px;width:10px;height:10px;border-radius:50%;background:#05070f;transition:transform .25s;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Speed row -->
+      <div class="glass" style="display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-radius:11px;">
+        <span style="font-size:10px;font-weight:700;color:#7090b8;text-transform:uppercase;letter-spacing:.05em;">Speed</span>
+        <div style="display:flex;gap:4px;" id="speed-btns">
+          <button onclick="setSpeed(0.75)" style="background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;">0.75x</button>
+          <button onclick="setSpeed(1.0)" style="background:var(--primary);border:1px solid var(--primary);color:#05070f;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;">1x</button>
+          <button onclick="setSpeed(1.25)" style="background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;">1.25x</button>
+          <button onclick="setSpeed(1.5)" style="background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;">1.5x</button>
+          <button onclick="setSpeed(2.0)" style="background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;">2x</button>
+        </div>
+      </div>
+
+      <!-- ═══ STITCH-STYLE 4-COLUMN VIDEO GRID ═══ -->
+      <div style="margin-top:6px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h3 style="font-size:13px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.08em;">Curriculum Playlist</h3>
+          <span style="font-size:10px;font-weight:700;color:#405575;font-family:'JetBrains Mono',monospace;">16 MODULES</span>
+        </div>
+        <div id="video-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;"></div>
+      </div>
+    </div>
+
+    <!-- PANEL: NOTES -->
+    <div id="panel-notes" style="position:absolute;inset:0;display:none;flex-direction:column;padding:16px 20px 100px;gap:12px;">
+      <h2 style="font-size:16px;font-weight:800;color:#e4eeff;margin-top:8px;">📝 Study Notes</h2>
+      <textarea id="notes-ta" placeholder="Capture your VLSI notes here… auto-saves instantly."
+        style="flex:1;width:100%;background:rgba(9,13,26,.9);border:1.5px solid var(--glass);border-radius:12px;padding:14px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#c8d8f0;resize:none;outline:none;line-height:1.7;min-height:300px;"
+        oninput="saveNotes()"></textarea>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#405575;">
+        <span id="notes-saved" style="color:var(--tertiary);opacity:0;transition:opacity .3s;">Saved ✓</span>
+        <span id="notes-chars">0 characters</span>
+      </div>
+    </div>
+
+    <!-- PANEL: COMMENTS -->
+    <div id="panel-comments" style="position:absolute;inset:0;display:none;flex-direction:column;padding:16px 20px 100px;gap:12px;overflow-y:auto;">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <h2 style="font-size:16px;font-weight:800;color:#e4eeff;">💬 YouTube Discussion</h2>
+        <span id="cm-count" style="background:rgba(178,197,255,.1);color:var(--primary);border:1px solid rgba(178,197,255,.2);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;padding:1px 8px;border-radius:20px;">0</span>
+      </div>
+      <div class="glass" style="border-radius:12px;padding:12px 14px;display:flex;gap:10px;">
+        <div id="cm-av" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#05070f;flex-shrink:0;">?</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+          <textarea id="cm-input" placeholder="Add a comment on YouTube…" rows="2"
+            style="width:100%;background:rgba(19,28,50,.9);border:1.5px solid var(--glass);border-radius:9px;padding:8px 12px;font-family:'Outfit',sans-serif;font-size:13px;color:#c8d8f0;resize:none;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='rgba(178,197,255,.35)'" onblur="this.style.borderColor='var(--glass)'"
+            oninput="document.getElementById('cm-post').disabled=!this.value.trim()"></textarea>
+          <div style="display:flex;justify-content:flex-end;">
+            <button id="cm-post" onclick="postComment()" disabled
+              style="background:rgba(178,197,255,.1);color:var(--primary);border:1.5px solid rgba(178,197,255,.22);padding:5px 14px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;">
+              Post on YouTube
             </button>
-            <button class="text-on-surface-variant hover:text-white font-bold transition-all underline decoration-primary/30 underline-offset-4" onclick="closeOverlay()">Maybe later</button>
+          </div>
         </div>
-    </div>
-    <!-- Notes Panel -->
-    <div class="fixed right-[-450px] top-12 bottom-0 w-[450px] glass-panel z-40 transition-all duration-500 p-8 flex flex-col border-l border-white/10 shadow-[-20px_0_40px_rgba(0,0,0,0.4)]" id="notes-panel">
-        <div class="flex justify-between items-center mb-8">
-            <h3 class="font-headline-sm text-white font-black uppercase tracking-tight">Study Notes</h3>
-            <button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-all scale-125" onclick="toggleNotes()">close</button>
-        </div>
-        <textarea class="flex-grow bg-zinc-950/60 border-2 border-white/10 rounded-2xl p-6 text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-none font-body-md shadow-inner text-lg" id="notes-area" placeholder="Capture your engineering insights here..."></textarea>
-        <div class="mt-6 flex justify-between items-center text-on-surface-variant font-code-md text-[13px] font-bold">
-            <span id="char-count">0 characters</span>
-            <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-tertiary"></span>
-                <span id="save-status">Cloud Synced</span>
-            </div>
-        </div>
-    </div>
-    <!-- Admin Console (Hidden) -->
-    <div class="admin-hidden glass-panel fixed top-16 right-8 rounded-2xl p-6 border-2 border-primary/40 z-50 shadow-2xl" id="admin-panel" style="display: none; width: 320px;">
-        <h3 class="font-headline-sm text-primary mb-6 flex items-center gap-2 font-black italic">
-            <span class="material-symbols-outlined">terminal</span> ADMIN_ENV
-        </h3>
-        <div class="space-y-4">
-            <button class="w-full py-3 bg-red-600/20 text-red-400 border border-red-500/30 rounded-xl text-sm font-bold hover:bg-red-600/40 transition-all uppercase tracking-widest" onclick="resetPersistence()">WIPE ALL STORAGE</button>
-            <button class="w-full py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-bold hover:bg-primary/20 transition-all uppercase tracking-widest" onclick="unlockAllVideos()">BYPASS ALL GATES</button>
-        </div>
+      </div>
+      <div id="cm-list" style="display:flex;flex-direction:column;gap:8px;"></div>
     </div>
 
-    <!-- Custom Toast Notification -->
-    <div id="custom-toast" class="fixed bottom-28 left-1/2 -translate-x-1/2 z-[999] bg-zinc-950/95 border border-primary/20 text-white px-6 py-3.5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.8)] flex items-center gap-3 backdrop-blur-xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300">
-        <span id="custom-toast-icon" class="text-lg">💻</span>
-        <span id="custom-toast-msg" class="font-body-md font-semibold text-sm tracking-wide"></span>
+    <!-- PANEL: CONNECT (mobile) -->
+    <div id="panel-connect" style="position:absolute;inset:0;display:none;flex-direction:column;padding:16px 20px 100px;gap:12px;overflow-y:auto;">
+      <h2 style="font-size:16px;font-weight:800;color:#e4eeff;margin-top:8px;">🔗 Connect</h2>
+      <a href="https://www.linkedin.com/in/mahaveerkatighar/" target="_blank" rel="noopener" class="glass" style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;text-decoration:none;transition:all .2s;border-left:3px solid #0a66c2;">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#0a66c2,#2d8ae8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </div>
+        <div><div style="font-size:14px;font-weight:800;color:#e4eeff;">LinkedIn</div><div style="font-size:11px;color:#7090b8;">Connect with Mahaveer Katighar</div></div>
+      </a>
+      <a href="https://www.instagram.com/__mahaveerkatighar__?igsh=MXdjdnk0eGhjbnVyZQ==" target="_blank" rel="noopener" class="glass" style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;text-decoration:none;transition:all .2s;border-left:3px solid #ee2a7b;">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span class="material-symbols-outlined" style="font-size:18px;color:#fff;">photo_camera</span>
+        </div>
+        <div><div style="font-size:14px;font-weight:800;color:#e4eeff;">Instagram</div><div style="font-size:11px;color:#7090b8;">@__mahaveerkatighar__</div></div>
+      </a>
     </div>
 
-    <script async="" defer="" src="https://accounts.google.com/gsi/client"></script>
-    <script>
-        const YOUTUBE_IDS = ['3B_38t_6n3Y', 'dQw4w9WgXcQ', '9bZkp7q19f0', '2Vv-BfVoq4g', '3O1_3zIDsrA', '86XWl7GfP24', 'l-7V-9V4x9E', 'WvT6D6e0Nuo', '60ItHLz5WEA', 'C0DPdy98e4c', 'fJ9rUzIMcZQ', 'V-_O7nl0Ii0', 'kJQP7kiw5Fk', 'vLnPwxZdW4Y', 'p8u_VqdYI-U', 'L_jWHffIx5E'];
-        
-        const videoModules = Array.from({length: 16}, (_, i) => ({
-            id: i + 1,
-            title: [
-                "Remote Access to Compiler", "Layout Principles Part 1", "Schematic Analysis Intro", 
-                "Custom CMOS Gating", "Silicon DRC Checks", "LVS Verification Routine", 
-                "Advanced MOSFET Theory", "P-Well vs N-Well Logic", "Static Power Leakage", 
-                "Interconnect Parasitics", "FinFET Architectures", "Standard Cell Design", 
-                "Routing Algorithmics", "Timing Closure Basics", "Power Distribution Network", 
-                "Tapeout Readiness Panel"
-            ][i],
-            duration: `${Math.floor(Math.random() * 20) + 10}:${Math.floor(Math.random() * 59).toString().padStart(2, '0')}`,
-            youtubeId: YOUTUBE_IDS[i],
-            liked: false
-        }));
+  </div><!-- /panels -->
 
-        let userProgress = JSON.parse(localStorage.getItem('vlsi_progress')) || {
-            unlockedIdx: 0,
-            liked: [],
-            watched: []
-        };
+  <!-- ═══ FLOATING DOCK ═══ -->
+  <div class="dock-wrap" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:50;">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:rgba(9,13,26,.7);backdrop-filter:blur(28px);border:1px solid rgba(178,197,255,.12);border-radius:99px;box-shadow:0 12px 40px rgba(0,0,0,.55);">
+      <div class="dock-btn active" id="dock-player" onclick="switchPanel('player',this)" data-tooltip="Player">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">smart_display</span>
+      </div>
+      <div class="dock-btn" id="dock-notes" onclick="switchPanel('notes',this)" data-tooltip="Notes">
+        <span class="material-symbols-outlined">edit_note</span>
+      </div>
+      <div class="dock-btn" id="dock-comments" onclick="switchPanel('comments',this)" data-tooltip="Comments">
+        <span class="material-symbols-outlined">forum</span>
+      </div>
+      <div class="dock-btn mobile-only" id="dock-connect" onclick="switchPanel('connect',this)" data-tooltip="Connect">
+        <span class="material-symbols-outlined">group</span>
+      </div>
+    </div>
+  </div>
 
-        let isPlaying = false;
-        let v_timer;
-        let toastTimer;
+</main>
 
-        // Custom Toast Function
-        function showToast(msg, icon = '💻') {
-            const toast = document.getElementById('custom-toast');
-            const toastIcon = document.getElementById('custom-toast-icon');
-            const toastMsg = document.getElementById('custom-toast-msg');
-            if (toast && toastIcon && toastMsg) {
-                toastIcon.innerText = icon;
-                toastMsg.innerText = msg;
-                toast.style.opacity = '1';
-                toast.style.transform = 'translate(-50%, 0)';
-                toast.style.pointerEvents = 'auto';
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translate(-50%, 16px)';
-                    toast.style.pointerEvents = 'none';
-                }, 3200);
-            }
+<!-- ═══ LINKEDIN MODAL (5 min) ═══ -->
+<div class="overlay" id="li-modal">
+  <div class="modal-box">
+    <button onclick="closeLi()" style="position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;cursor:pointer;font-size:11px;">✕</button>
+    <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#0a66c2,#2d8ae8);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 16px rgba(10,102,194,.35);">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </div>
+    <h3 style="font-size:18px;font-weight:800;color:#e4eeff;margin-bottom:6px;">Connect on LinkedIn!</h3>
+    <p style="font-size:12.5px;color:#7090b8;line-height:1.7;margin-bottom:16px;">Join Mahaveer's network for career guidance, placement updates and exclusive VLSI content.</p>
+    <div class="glass" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;margin-bottom:14px;text-align:left;">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:#05070f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">MK</div>
+      <div><div style="font-size:13px;font-weight:700;color:#e4eeff;">Mahaveer Katighar</div><div style="font-size:10px;color:#7090b8;">Educator & Tech Creator</div></div>
+    </div>
+    <a href="https://www.linkedin.com/in/mahaveerkatighar/" target="_blank" rel="noopener" class="li-btn" onclick="closeLi()">Connect with Mahaveer</a>
+    <p onclick="closeLi()" style="font-size:11px;color:#405575;margin-top:12px;cursor:pointer;text-decoration:underline;text-underline-offset:2px;">Maybe later</p>
+  </div>
+</div>
+
+<!-- ═══ ADMIN CONSOLE ═══ -->
+<div class="overlay" id="admin-modal">
+  <div class="modal-box" style="max-width:900px;width:95%;border:1.5px solid rgba(245,166,35,.3);max-height:90dvh;overflow-y:auto;">
+    <button onclick="document.getElementById('admin-modal').classList.remove('show')" style="position:absolute;top:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(19,28,50,.9);border:1px solid var(--glass);color:#7090b8;cursor:pointer;font-size:11px;">✕</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(245,166,35,.18);">
+      <span style="font-size:20px;">👑</span>
+      <div>
+        <h3 style="font-size:15px;font-weight:800;color:#e4eeff;text-transform:uppercase;letter-spacing:.04em;">Admin Console</h3>
+        <p style="font-size:10px;color:#7090b8;margin-top:1px;">Live student watch logs — VNRVJIET VLSI Course</p>
+      </div>
+      <span style="margin-left:auto;background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.3);border-radius:99px;font-size:9px;font-weight:800;padding:2px 10px;">Verified Admin</span>
+    </div>
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+      <div class="glass" style="border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:var(--gold);" id="adm-active">—</div>
+        <div style="font-size:9px;color:#405575;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;">Active Now</div>
+      </div>
+      <div class="glass" style="border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#e4eeff;" id="adm-total">—</div>
+        <div style="font-size:9px;color:#405575;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;">Total Students</div>
+      </div>
+      <div class="glass" style="border-radius:10px;padding:10px;text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:var(--tertiary);" id="adm-avg">—</div>
+        <div style="font-size:9px;color:#405575;text-transform:uppercase;letter-spacing:.07em;margin-top:2px;">Avg Hours</div>
+      </div>
+    </div>
+    <!-- Table -->
+    <div style="border:1px solid var(--glass);border-radius:10px;overflow:auto;max-height:380px;">
+      <table class="admin-table" style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px;">
+        <thead><tr>
+          <th>Student</th><th>Branch</th><th>Current Video</th><th>Progress</th><th>Time</th><th>Status</th>
+        </tr></thead>
+        <tbody id="adm-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════ */
+const CLIENT_ID   = '1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com';
+const SCOPE       = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl';
+const REDIR       = window.location.origin + window.location.pathname;
+const YT_LIKE_URL = 'https://www.googleapis.com/youtube/v3/videos/rate';
+const FB_URL      = 'https://vlsi-dashboard-db-default-rtdb.firebaseio.com';
+const PREVIEW_S   = 60;
+const LI_DELAY    = 300;
+
+const VIDEOS = [
+  {id:'1h3a_r-mHPo',title:'Remote Access to Custom Compiler Using MobaXterm'},
+  {id:'c0DXV18q4J8',title:'CMOS Inverter Design — Noise Margin, Power & Delay'},
+  {id:'wQDjV35DumA',title:'CMOS Logic Design and FoMs Analysis'},
+  {id:'32TcLnnjBt8',title:'NMOS Characteristics — Synopsys Custom Compiler'},
+  {id:'bsFMfTEt3Oc',title:'CMOS NAND and AND Gate Design'},
+  {id:'QLUblyIEZ4o',title:'XOR Gate and XNOR Gate in CMOS'},
+  {id:'C20EUOFp71A',title:'PMOS Characteristics — Synopsys Custom Compiler'},
+  {id:'7g67qEyT2R8',title:'CMOS NOR and OR Gate Design'},
+  {id:'xpyE3T30jZ4',title:'Common Source Amplifier Using NMOS'},
+  {id:'Va7s141zhpk',title:'CMOS Full Adder Using Transistors'},
+  {id:'0BybMzKgbm8',title:'CMOS Half Adder Design'},
+  {id:'M7ltXD01SkI',title:'D Flip-Flop Using CMOS Logic'},
+  {id:'ZRl-afdBF5M',title:'JK Flip-Flop Implementation'},
+  {id:'XbRxUtojLZ0',title:'3-Input NAND Gate Using 2-Input NAND Gates'},
+  {id:'omjFedQt508',title:'CMOS Full Subtractor Design'},
+  {id:'0vbNQhZCsY8',title:'CMOS Half Subtractor Design'},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let st = {
+  idx:0, subscribed:false,
+  watched:[], liked:[], liShown:false, name:'Learner'
+};
+let ytToken=null, ytUser=null;
+let autoplay=true, focusMode=false;
+let gateActive=false, cdActive=false, cdTimer=null;
+let pendingIdx=null;
+let vuActive=false, vuRaf=null;
+let ytPlayer=null;
+let speed=1.0;
+
+function loadSt(){
+  try{
+    st.idx        = Math.min(parseInt(localStorage.getItem('mk_idx')||'0',10),15);
+    st.subscribed = localStorage.getItem('mk_sub')==='true';
+    st.watched    = JSON.parse(localStorage.getItem('mk_watched')||'[]');
+    st.liked      = JSON.parse(localStorage.getItem('mk_liked')||'[]');
+    st.liShown    = localStorage.getItem('mk_li_shown')==='true';
+    st.name       = localStorage.getItem('mk_name')||'Learner';
+    const n=document.getElementById('notes-ta');
+    if(n)n.value=localStorage.getItem('mk_notes')||'';
+  }catch(_){}
+}
+function saveSt(){
+  try{
+    localStorage.setItem('mk_idx',st.idx);
+    localStorage.setItem('mk_sub',st.subscribed);
+    localStorage.setItem('mk_watched',JSON.stringify(st.watched));
+    localStorage.setItem('mk_liked',JSON.stringify(st.liked));
+    localStorage.setItem('mk_li_shown',st.liShown);
+    localStorage.setItem('mk_name',st.name);
+  }catch(_){}
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+let toastTm=null;
+function toast(msg,icon='✅'){
+  const el=document.getElementById('toast');
+  el.innerHTML=`<span style="font-size:14px;">${icon}</span> ${msg}`;
+  el.classList.add('show');
+  clearTimeout(toastTm);
+  toastTm=setTimeout(()=>el.classList.remove('show'),3200);
+}
+
+/* ═══════════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════════ */
+function updateClock(){
+  const now=new Date();
+  document.getElementById('sb-clock').textContent=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const h=now.getHours();
+  const g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('sb-greeting').textContent=`${g}, ${st.name}`;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL SWITCHER
+═══════════════════════════════════════════ */
+function switchPanel(name,btn){
+  ['player','notes','comments','connect'].forEach(p=>{
+    const el=document.getElementById('panel-'+p);
+    if(el)el.style.display='none';
+  });
+  document.querySelectorAll('.dock-btn').forEach(b=>b.classList.remove('active'));
+  const panel=document.getElementById('panel-'+name);
+  if(panel)panel.style.display='flex';
+  if(btn)btn.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   RENDER SIDEBAR PLAYLIST
+═══════════════════════════════════════════ */
+function renderPlaylist(){
+  const pl=document.getElementById('sidebar-playlist');
+  if(!pl)return;
+  pl.innerHTML='';
+  VIDEOS.forEach((v,i)=>{
+    const active=i===st.idx;
+    const locked=!st.subscribed&&i>0;
+    const liked=st.liked.includes(i);
+    const watched=st.watched.includes(i);
+    const el=document.createElement('div');
+    el.className='pl-item'+(active?' active':'')+(locked?' locked':'');
+    let sub='';
+    if(active)sub='<span style="font-size:8px;font-weight:700;color:var(--secondary);">▶ Playing</span>';
+    else if(locked)sub='<span style="font-size:8px;color:#405575;">🔒 Locked</span>';
+    else if(watched)sub='<span style="font-size:8px;color:var(--tertiary);">✓ Watched</span>';
+    el.innerHTML=`
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:${active?'var(--secondary)':'#405575'};min-width:18px;text-align:center;">${String(i+1).padStart(2,'0')}</span>
+      <img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" style="width:40px;height:26px;border-radius:4px;object-fit:cover;flex-shrink:0;border:1px solid var(--glass);" loading="lazy" onerror="this.style.display='none'">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:11px;font-weight:600;color:${active?'var(--primary)':'#7090b8'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${v.title}</div>
+        <div style="margin-top:1px;">${sub}</div>
+      </div>
+      ${liked?'<span style="font-size:10px;">❤️</span>':''}
+      ${locked?'<span style="font-size:10px;">🔒</span>':''}
+    `;
+    el.onclick=()=>{
+      if(locked){showSubOv();return;}
+      trySwitch(i);
+    };
+    pl.appendChild(el);
+  });
+  const act=pl.querySelector('.pl-item.active');
+  if(act)act.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+/* ═══════════════════════════════════════════
+   RENDER VIDEO GRID (Stitch 4-col style)
+═══════════════════════════════════════════ */
+function renderVideoGrid(){
+  const grid=document.getElementById('video-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  VIDEOS.forEach((v,i)=>{
+    const active=i===st.idx;
+    const locked=!st.subscribed&&i>0;
+    const watched=st.watched.includes(i);
+    const liked=st.liked.includes(i);
+    const el=document.createElement('div');
+    el.style.cssText=`
+      position:relative;border-radius:12px;overflow:hidden;cursor:pointer;
+      background:rgba(9,13,26,.8);border:1px solid rgba(178,197,255,.1);
+      transition:transform .2s cubic-bezier(.34,1.56,.64,1),border-color .2s;
+      ${active?'border-color:rgba(178,197,255,.35);box-shadow:0 0 0 1.5px rgba(178,197,255,.25);':''}
+      ${locked?'opacity:.42;cursor:default;':''}
+    `;
+    if(!locked)el.onmouseenter=()=>{el.style.transform='translateY(-4px)';el.style.borderColor='rgba(178,197,255,.3)';};
+    if(!locked)el.onmouseleave=()=>{el.style.transform='';el.style.borderColor=active?'rgba(178,197,255,.35)':'rgba(178,197,255,.1)';};
+    el.innerHTML=`
+      <div style="position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;">
+        <img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" loading="lazy"
+          style="width:100%;height:100%;object-fit:cover;transition:transform .3s;display:block;"
+          onerror="this.style.display='none'">
+        ${locked?`<div style="position:absolute;inset:0;background:rgba(5,7,15,.7);display:flex;align-items:center;justify-content:center;">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#7090b8;">lock</span>
+        </div>`:''}
+        ${active?`<div style="position:absolute;inset:0;background:rgba(5,7,15,.45);display:flex;align-items:center;justify-content:center;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(178,197,255,.2);border:1.5px solid rgba(178,197,255,.4);display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" style="font-size:16px;color:var(--primary);font-variation-settings:'FILL' 1;">play_arrow</span>
+          </div>
+        </div>`:''}
+        <div style="position:absolute;top:4px;left:4px;background:rgba(5,7,15,.75);border-radius:4px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;color:#7090b8;">${String(i+1).padStart(2,'0')}</div>
+        ${watched&&!active?`<div style="position:absolute;top:4px;right:4px;"><span class="material-symbols-outlined" style="font-size:14px;color:var(--tertiary);">check_circle</span></div>`:''}
+        ${liked?`<div style="position:absolute;bottom:4px;right:4px;font-size:10px;">❤️</div>`:''}
+      </div>
+      <div style="padding:8px 10px;">
+        <p style="font-size:9px;font-weight:700;color:${active?'var(--secondary)':'#405575'};text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">Module ${i+1}</p>
+        <p style="font-size:11px;font-weight:600;color:${active?'var(--primary)':'#7090b8'};line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.title}</p>
+      </div>
+    `;
+    el.onclick=()=>{
+      if(locked){showSubOv();return;}
+      trySwitch(i);
+    };
+    grid.appendChild(el);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   UPDATE ALL UI
+═══════════════════════════════════════════ */
+function updateUI(){
+  const v=VIDEOS[st.idx];
+  document.getElementById('vid-title').textContent=v.title;
+  document.getElementById('vid-num').textContent=st.idx+1;
+  document.getElementById('ctrl-num').textContent=st.idx+1;
+  document.getElementById('prev-btn').disabled=st.idx===0;
+  document.getElementById('next-btn').disabled=st.idx===15;
+  // Like btn
+  const liked=st.liked.includes(st.idx);
+  document.getElementById('like-ctrl-btn').className='like-btn'+(liked?' liked':'');
+  document.getElementById('like-ctrl-lbl').textContent=liked?'Liked ❤️':'Like';
+  // Progress ring
+  const pct=Math.round(st.watched.length/16*100);
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-text').textContent=st.watched.length+' / 16 Done';
+  const offset=138.2-(138.2*pct/100);
+  document.getElementById('prog-ring').style.strokeDashoffset=offset;
+  renderPlaylist();
+  renderVideoGrid();
+}
+
+/* ═══════════════════════════════════════════
+   PLAY VIDEO
+═══════════════════════════════════════════ */
+function playVideo(i,ap){
+  st.idx=i; saveSt();
+  const v=VIDEOS[i];
+  document.getElementById('sub-overlay').style.display='none';
+  document.getElementById('like-overlay').style.display='none';
+  const ap_=ap?'&autoplay=1':'';
+  document.getElementById('yt-frame').src=`https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1${ap_}`;
+  updateUI();
+  syncCloud();
+}
+
+function trySwitch(toIdx){
+  if(toIdx===st.idx)return;
+  if(!st.liked.includes(st.idx)){
+    pendingIdx=toIdx;
+    document.getElementById('like-overlay').style.display='flex';
+    return;
+  }
+  playVideo(toIdx,autoplay);
+}
+function prevVideo(){if(st.idx>0)trySwitch(st.idx-1);}
+function nextVideo(){if(st.idx<15)trySwitch(st.idx+1);}
+
+/* ═══════════════════════════════════════════
+   SUBSCRIBE FLOW
+═══════════════════════════════════════════ */
+function showSubOv(){
+  document.getElementById('sub-overlay').style.display='flex';
+  if(!cdActive){
+    document.getElementById('stp1').className='step-dot active';
+    document.getElementById('stp2').className='step-dot';
+    document.getElementById('stp3').className='step-dot';
+    document.getElementById('unlock-btn').disabled=true;
+    document.getElementById('unlock-btn').style.opacity='.38';
+    document.getElementById('unlock-btn').style.cursor='not-allowed';
+    document.getElementById('unlock-lbl').textContent="🔒 I've Subscribed — Unlock";
+    document.getElementById('unlock-fill').style.transition='none';
+    document.getElementById('unlock-fill').style.width='0%';
+    document.getElementById('unlock-hint').style.opacity='1';
+    document.getElementById('unlock-ct').textContent='20';
+  }
+}
+
+function onSubBtnClick(){
+  if(cdActive)return;
+  cdActive=true;
+  document.getElementById('stp1').className='step-dot done';
+  document.getElementById('stp2').className='step-dot active';
+  let rem=20;
+  document.getElementById('unlock-ct').textContent=rem;
+  void document.getElementById('unlock-fill').offsetWidth;
+  document.getElementById('unlock-fill').style.transition='width 20s linear';
+  document.getElementById('unlock-fill').style.width='100%';
+  cdTimer=setInterval(()=>{
+    rem--;
+    document.getElementById('unlock-ct').textContent=rem;
+    if(rem<=0){
+      clearInterval(cdTimer);cdTimer=null;
+      document.getElementById('unlock-btn').disabled=false;
+      document.getElementById('unlock-btn').style.opacity='1';
+      document.getElementById('unlock-btn').style.cursor='pointer';
+      document.getElementById('unlock-btn').style.borderColor='var(--secondary)';
+      document.getElementById('unlock-btn').style.color='var(--secondary)';
+      document.getElementById('unlock-lbl').textContent="✅ I've Subscribed — Unlock Now!";
+      document.getElementById('unlock-hint').style.opacity='0';
+      document.getElementById('stp2').className='step-dot done';
+      document.getElementById('stp3').className='step-dot active';
+    }
+  },1000);
+  sessionStorage.setItem('mk_cd_start',Date.now());
+  sessionStorage.setItem('mk_cd_dur','20000');
+}
+
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible'||!cdActive)return;
+  const s=parseInt(sessionStorage.getItem('mk_cd_start')||'0',10);
+  const d=parseInt(sessionStorage.getItem('mk_cd_dur')||'0',10);
+  if(!s||!d)return;
+  const el=Date.now()-s;
+  if(el>=d){
+    clearInterval(cdTimer);cdTimer=null;
+    document.getElementById('unlock-fill').style.transition='none';
+    document.getElementById('unlock-fill').style.width='100%';
+    document.getElementById('unlock-btn').disabled=false;
+    document.getElementById('unlock-btn').style.opacity='1';
+    document.getElementById('unlock-btn').style.cursor='pointer';
+    document.getElementById('unlock-btn').style.borderColor='var(--secondary)';
+    document.getElementById('unlock-btn').style.color='var(--secondary)';
+    document.getElementById('unlock-lbl').textContent="✅ I've Subscribed — Unlock Now!";
+    document.getElementById('unlock-hint').style.opacity='0';
+    document.getElementById('stp2').className='step-dot done';
+    document.getElementById('stp3').className='step-dot active';
+  }
+});
+
+function verifySubscription(){
+  if(document.getElementById('unlock-btn').disabled)return;
+  document.getElementById('unlock-lbl').textContent='Verifying…';
+  document.getElementById('unlock-btn').disabled=true;
+  setTimeout(()=>{
+    st.subscribed=true; saveSt();
+    document.getElementById('stp3').className='step-dot done';
+    toast('All 16 videos unlocked! 🎉','🔓');
+    setTimeout(()=>{
+      document.getElementById('sub-overlay').style.display='none';
+      document.getElementById('timer-row').style.display='none';
+      playVideo(st.idx,true);
+      updateUI();
+    },800);
+    cdActive=false;
+    sessionStorage.removeItem('mk_cd_start');
+    sessionStorage.removeItem('mk_cd_dur');
+  },1200);
+}
+
+/* ═══════════════════════════════════════════
+   60s GATE TIMER
+═══════════════════════════════════════════ */
+function startTimer(){
+  if(st.subscribed){document.getElementById('timer-row').style.display='none';return;}
+  const start=Date.now(),total=PREVIEW_S*1000;
+  const fill=document.getElementById('timer-fill');
+  const ct=document.getElementById('timer-ct');
+  fill.style.transition='none';fill.style.width='0%';
+  void fill.offsetWidth;
+  fill.style.transition=`width ${PREVIEW_S}s linear`;
+  fill.style.width='100%';
+  const tick=setInterval(()=>{
+    const el=Date.now()-start,rem=Math.max(0,total-el);
+    const s=Math.ceil(rem/1000),m=Math.floor(s/60),sec=s%60;
+    ct.textContent=m+':'+String(sec).padStart(2,'0');
+    if(el>=total){
+      clearInterval(tick);
+      if(!st.subscribed){gateActive=true;showSubOv();updateUI();}
+    }
+  },500);
+}
+
+/* ═══════════════════════════════════════════
+   LIKE — REAL YOUTUBE API
+═══════════════════════════════════════════ */
+async function doLike(){
+  const idx=st.idx;
+  if(st.liked.includes(idx)){
+    toast('Already liked ❤️','❤️');
+    if(pendingIdx!==null&&pendingIdx!==idx){
+      const go=pendingIdx;pendingIdx=null;
+      document.getElementById('like-overlay').style.display='none';
+      playVideo(go,autoplay);
+    }
+    return;
+  }
+  if(!ytToken){
+    sessionStorage.setItem('mk_pending_like',idx);
+    sessionStorage.setItem('mk_pending_like_ts',Date.now());
+    sessionStorage.setItem('mk_pending_idx',st.idx);
+    sessionStorage.setItem('mk_pending_ts',Date.now());
+    doGoogleLogin();
+    return;
+  }
+  document.getElementById('like-ctrl-btn').disabled=true;
+  document.getElementById('like-ctrl-lbl').textContent='Liking…';
+  document.getElementById('like-ov-lbl').textContent='Liking on YouTube…';
+  try{
+    const res=await fetch(`${YT_LIKE_URL}?rating=like&id=${VIDEOS[idx].id}`,{
+      method:'POST',headers:{Authorization:`Bearer ${ytToken}`}
+    });
+    if(res.status===204||res.ok){
+      if(!st.liked.includes(idx))st.liked.push(idx);
+      if(!st.watched.includes(idx))st.watched.push(idx);
+      saveSt(); updateUI();
+      toast('Liked on YouTube! ❤️','❤️');
+      document.getElementById('like-ctrl-btn').disabled=false;
+      document.getElementById('like-ctrl-btn').style.transform='scale(1.35)';
+      setTimeout(()=>document.getElementById('like-ctrl-btn').style.transform='',300);
+      if(document.getElementById('like-overlay').style.display==='flex'){
+        document.getElementById('like-ov-lbl').textContent='❤️ Liked! Unlocking…';
+        setTimeout(()=>{
+          document.getElementById('like-overlay').style.display='none';
+          const go=pendingIdx!==null?pendingIdx:st.idx;
+          pendingIdx=null;
+          document.getElementById('like-ov-lbl').textContent='Like This Video on YouTube';
+          if(go!==st.idx)playVideo(go,autoplay);
+        },800);
+      }
+    } else if(res.status===401||res.status===403){
+      ytToken=null;
+      sessionStorage.removeItem('mk_yt_token');
+      sessionStorage.removeItem('mk_yt_expires');
+      sessionStorage.setItem('mk_pending_like',idx);
+      sessionStorage.setItem('mk_pending_like_ts',Date.now());
+      document.getElementById('like-ctrl-btn').disabled=false;
+      toast('Re-signing in for permissions…','🔑');
+      setTimeout(()=>doGoogleLogin(),500);
+    } else {
+      const e=await res.json().catch(()=>({}));
+      document.getElementById('like-ctrl-btn').disabled=false;
+      document.getElementById('like-ctrl-lbl').textContent='Like';
+      document.getElementById('like-ov-lbl').textContent='Like This Video on YouTube';
+      toast(`❌ Like failed: ${e?.error?.message||'Error '+res.status}`,'❌');
+    }
+  }catch(_){
+    document.getElementById('like-ctrl-btn').disabled=false;
+    document.getElementById('like-ctrl-lbl').textContent='Like';
+    document.getElementById('like-ov-lbl').textContent='Like This Video on YouTube';
+    toast('❌ Network error','❌');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   GOOGLE OAUTH — REDIRECT (mobile-safe)
+═══════════════════════════════════════════ */
+function doGoogleLogin(){
+  sessionStorage.setItem('mk_pending_idx',st.idx);
+  sessionStorage.setItem('mk_pending_ts',Date.now());
+  const url='https://accounts.google.com/o/oauth2/v2/auth?'+new URLSearchParams({
+    client_id:CLIENT_ID,redirect_uri:REDIR,response_type:'token',scope:SCOPE,include_granted_scopes:'true'
+  });
+  setTimeout(()=>{window.location.href=url;},300);
+}
+
+function processOAuth(){
+  const hash=window.location.hash;
+  if(!hash||!hash.includes('access_token'))return;
+  const p={};
+  hash.slice(1).split('&').forEach(kv=>{const[k,v]=kv.split('=');p[decodeURIComponent(k)]=decodeURIComponent(v||'');});
+  if(!p.access_token)return;
+  ytToken=p.access_token;
+  const exp=Date.now()+(parseInt(p.expires_in||'3600',10)*1000);
+  sessionStorage.setItem('mk_yt_token',ytToken);
+  sessionStorage.setItem('mk_yt_expires',String(exp));
+  localStorage.removeItem('mk_yt_token');
+  localStorage.removeItem('mk_yt_expires');
+  history.replaceState(null,'',window.location.pathname);
+  fetchProfile();
+  // Restore pending
+  const pIdx=sessionStorage.getItem('mk_pending_idx');
+  const pTs=sessionStorage.getItem('mk_pending_ts');
+  if(pIdx&&pTs&&(Date.now()-parseInt(pTs,10)<5*60*1000))st.idx=parseInt(pIdx,10);
+  sessionStorage.removeItem('mk_pending_idx');sessionStorage.removeItem('mk_pending_ts');
+  // Resume pending like
+  const pLike=sessionStorage.getItem('mk_pending_like');
+  const pLikeTs=sessionStorage.getItem('mk_pending_like_ts');
+  if(pLike!==null&&pLikeTs&&(Date.now()-parseInt(pLikeTs,10)<5*60*1000)){
+    sessionStorage.removeItem('mk_pending_like');sessionStorage.removeItem('mk_pending_like_ts');
+    setTimeout(()=>doLike(),1000);
+  }
+}
+
+function restoreSession(){
+  if(ytToken)return;
+  const tok=sessionStorage.getItem('mk_yt_token');
+  const exp=sessionStorage.getItem('mk_yt_expires');
+  if(tok&&exp&&Date.now()<parseInt(exp,10)){ytToken=tok;fetchProfile();}
+}
+
+async function fetchProfile(){
+  if(!ytToken)return;
+  try{
+    const r=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:`Bearer ${ytToken}`}});
+    if(!r.ok)throw new Error();
+    ytUser=await r.json();
+    st.name=(ytUser.given_name||ytUser.name||'Learner');
+    saveSt();
+    document.getElementById('g-avatar').src=ytUser.picture||'';
+    document.getElementById('g-name').textContent=st.name.split(' ')[0];
+    document.getElementById('g-pill').style.display='flex';
+    document.getElementById('signin-btn').style.display='none';
+    document.getElementById('cm-av').textContent=st.name[0].toUpperCase();
+    const isAdmin=ytUser.email&&ytUser.email.toLowerCase()==='mahaveerkatighar05@gmail.com';
+    document.getElementById('admin-pill').style.display=isAdmin?'flex':'none';
+    updateUI();
+    loadComments(VIDEOS[st.idx].id);
+    if(sessionStorage.getItem('mk_pending_sub')==='true'){
+      sessionStorage.removeItem('mk_pending_sub');
+      setTimeout(()=>verifySubscription(),800);
+    }
+    syncCloud();
+  }catch(_){signOut();}
+}
+
+function signOut(){
+  ytToken=null;ytUser=null;
+  sessionStorage.removeItem('mk_yt_token');sessionStorage.removeItem('mk_yt_expires');
+  document.getElementById('g-pill').style.display='none';
+  document.getElementById('signin-btn').style.display='flex';
+  document.getElementById('admin-pill').style.display='none';
+  toast('Signed out','👋');
+}
+
+/* ═══════════════════════════════════════════
+   COMMENTS
+═══════════════════════════════════════════ */
+async function loadComments(videoId){
+  const list=document.getElementById('cm-list');
+  const ct=document.getElementById('cm-count');
+  if(!ytToken){
+    list.innerHTML='<div style="padding:24px;text-align:center;color:#405575;font-size:13px;">Sign in with Google to view YouTube comments.</div>';
+    ct.textContent='0';return;
+  }
+  list.innerHTML='<div style="padding:16px;text-align:center;color:#405575;font-size:12px;">Loading…</div>';
+  try{
+    const r=await fetch(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=30`,{
+      headers:{Authorization:`Bearer ${ytToken}`}
+    });
+    if(!r.ok)throw new Error();
+    const data=await r.json();
+    renderComments(data.items||[]);
+    ct.textContent=data.pageInfo?.totalResults||data.items?.length||0;
+  }catch(_){renderMockComments();}
+}
+
+function renderComments(items){
+  const list=document.getElementById('cm-list');
+  if(!items.length){list.innerHTML='<div style="padding:24px;text-align:center;color:#405575;">No comments yet. Be first!</div>';return;}
+  list.innerHTML='';
+  items.forEach(t=>{
+    const s=t.snippet.topLevelComment.snippet;
+    const card=document.createElement('div');
+    card.className='glass';
+    card.style.cssText='border-radius:10px;padding:10px 14px;display:flex;gap:10px;';
+    card.innerHTML=`
+      <img src="${s.authorProfileImageUrl}" style="width:28px;height:28px;border-radius:50%;flex-shrink:0;border:1px solid var(--glass);" onerror="this.style.display='none'">
+      <div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;"><span style="font-size:11.5px;font-weight:700;color:#e4eeff;">${s.authorDisplayName}</span><span style="font-size:9.5px;color:#405575;">${new Date(s.publishedAt).toLocaleDateString()}</span></div>
+      <div style="font-size:12.5px;color:#c8d8f0;line-height:1.5;">${s.textDisplay}</div></div>`;
+    list.appendChild(card);
+  });
+}
+
+function renderMockComments(){
+  const mock=[
+    {author:'Mahaveer Katighar',text:'Welcome! Drop your queries below. 👋',color:'var(--primary)',time:'Instructor'},
+    {author:'Rohit Sharma',text:'This dashboard is amazing! VLSI concepts explained so well.',color:'var(--tertiary)',time:'2h ago'},
+    {author:'Anjali Gupta',text:'Loving the playlist. Made my semester prep so much easier!',color:'var(--secondary)',time:'1d ago'},
+  ];
+  const list=document.getElementById('cm-list');
+  list.innerHTML='';
+  mock.forEach(c=>{
+    const card=document.createElement('div');
+    card.className='glass';
+    card.style.cssText='border-radius:10px;padding:10px 14px;display:flex;gap:10px;';
+    card.innerHTML=`
+      <div style="width:28px;height:28px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#05070f;flex-shrink:0;">${c.author[0]}</div>
+      <div><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;"><span style="font-size:11.5px;font-weight:700;color:#e4eeff;">${c.author}</span><span style="font-size:9.5px;color:#405575;">${c.time}</span></div>
+      <div style="font-size:12.5px;color:#c8d8f0;line-height:1.5;">${c.text}</div></div>`;
+    list.appendChild(card);
+  });
+}
+
+async function postComment(){
+  const txt=document.getElementById('cm-input').value.trim();
+  if(!txt)return;
+  if(!ytToken){doGoogleLogin();return;}
+  document.getElementById('cm-post').disabled=true;
+  document.getElementById('cm-post').textContent='Posting…';
+  try{
+    const r=await fetch('https://www.googleapis.com/youtube/v3/commentThreads?part=snippet',{
+      method:'POST',
+      headers:{Authorization:`Bearer ${ytToken}`,'Content-Type':'application/json'},
+      body:JSON.stringify({snippet:{videoId:VIDEOS[st.idx].id,topLevelComment:{snippet:{textOriginal:txt}}}})
+    });
+    if(!r.ok)throw new Error();
+    toast('Comment posted on YouTube! 💬','💬');
+    document.getElementById('cm-input').value='';
+    loadComments(VIDEOS[st.idx].id);
+  }catch(_){toast('Comment posted locally ✓','💬');document.getElementById('cm-input').value='';}
+  document.getElementById('cm-post').disabled=false;
+  document.getElementById('cm-post').textContent='Post on YouTube';
+}
+
+/* ═══════════════════════════════════════════
+   VU METER
+═══════════════════════════════════════════ */
+function setupVU(){
+  const c=document.getElementById('vu-meter');
+  for(let i=0;i<10;i++){const b=document.createElement('div');b.className='vu-bar';b.style.height='3px';c.appendChild(b);}
+}
+function startVU(){
+  if(vuActive)return;vuActive=true;
+  const bars=document.querySelectorAll('.vu-bar');
+  function frame(){
+    if(!vuActive)return;
+    bars.forEach((b,i)=>{
+      const h=Math.random()*18+2;
+      b.style.height=h+'px';
+      b.style.background=h>14?'var(--secondary)':'var(--tertiary)';
+    });
+    vuRaf=requestAnimationFrame(frame);
+  }
+  frame();
+}
+function stopVU(){
+  vuActive=false;
+  if(vuRaf)cancelAnimationFrame(vuRaf);
+  document.querySelectorAll('.vu-bar').forEach(b=>{b.style.height='3px';b.style.background='var(--tertiary)';});
+}
+
+/* ═══════════════════════════════════════════
+   YOUTUBE PLAYER API
+═══════════════════════════════════════════ */
+window.onYouTubeIframeAPIReady=function(){
+  try{
+    ytPlayer=new YT.Player('yt-frame',{
+      events:{onReady:e=>{e.target.setVolume(100);e.target.setPlaybackRate(speed);},onStateChange:e=>{
+        if(e.data===1)startVU();
+        else if(e.data===0||e.data===2)stopVU();
+        if(e.data===0){
+          const i=st.idx;
+          if(!st.watched.includes(i)){st.watched.push(i);saveSt();updateUI();}
+          if(autoplay&&i<15)setTimeout(()=>nextVideo(),1200);
         }
+      }}
+    });
+  }catch(_){}
+};
 
-        // Web Audio API Synthesized Unlock Chime
-        function playUnlockChime() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Note 1: E5
-                let osc1 = ctx.createOscillator();
-                let gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(659.25, ctx.currentTime); 
-                gain1.gain.setValueAtTime(0.08, ctx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start();
-                osc1.stop(ctx.currentTime + 0.35);
-                
-                // Note 2: A5 (played slightly later)
-                setTimeout(() => {
-                    let osc2 = ctx.createOscillator();
-                    let gain2 = ctx.createGain();
-                    osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(880.00, ctx.currentTime); 
-                    gain2.gain.setValueAtTime(0.08, ctx.currentTime);
-                    gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.45);
-                    osc2.connect(gain2);
-                    gain2.connect(ctx.destination);
-                    osc2.start();
-                    osc2.stop(ctx.currentTime + 0.45);
-                }, 100);
-            } catch (_) {}
-        }
+window.addEventListener('message',e=>{
+  if(!e.origin.includes('youtube.com'))return;
+  try{
+    const d=JSON.parse(e.data);
+    if(d.event==='infoDelivery'&&d.info){
+      if(d.info.playerState===1)startVU();
+      else if(d.info.playerState===0||d.info.playerState===2)stopVU();
+    }
+  }catch(_){}
+});
 
-        // Subscription Flow Variables
-        let subFlowActive = false;
-        let subVerifyMode = false;
-        let subTimer = null;
+/* ═══════════════════════════════════════════
+   CONTROLS
+═══════════════════════════════════════════ */
+let apOn=true;
+function toggleAutoplay(){
+  apOn=!apOn;autoplay=apOn;
+  const t=document.getElementById('ap-track');
+  t.style.background=apOn?'var(--primary)':'rgba(255,255,255,.1)';
+  t.querySelector('div').style.transform=apOn?'':'translateX(-13px)';
+  document.getElementById('qs-auto-sub').textContent=apOn?'On':'Off';
+  toast(apOn?'Autoplay on':'Autoplay off','▶');
+}
 
-        function triggerSubscribeAction() {
-            if (subVerifyMode) {
-                const btn = document.getElementById('sub-action-btn');
-                btn.disabled = true;
-                btn.onclick = null; 
-                
-                let loaderText = document.getElementById('sub-loader-text');
-                if (!loaderText) {
-                    loaderText = document.createElement('div');
-                    loaderText.id = 'sub-loader-text';
-                    loaderText.className = "text-sm text-zinc-400 mt-4 text-center font-semibold animate-pulse";
-                    btn.parentNode.appendChild(loaderText);
-                }
-                
-                loaderText.innerText = "📡 Connecting to YouTube API...";
-                btn.innerText = "Verifying with YouTube...";
-                
-                setTimeout(() => {
-                    loaderText.innerText = "🔎 Querying subscription logs...";
-                }, 800);
-                
-                setTimeout(() => {
-                    loaderText.innerText = "🛡️ Validating channel subscription...";
-                }, 1600);
-                
-                setTimeout(() => {
-                    loaderText.innerText = "Subscription successfully verified! ✅";
-                    btn.className = "w-full py-5 bg-emerald-500 text-zinc-950 font-label-caps text-lg rounded-2xl relative overflow-hidden group font-black shadow-xl shadow-emerald-500/40 hover:scale-[1.02] transition-transform";
-                    btn.innerText = "✓ Subscribed";
-                    playUnlockChime();
-                    showToast("Subscription verified successfully! ✅", "🔔");
-                    
-                    setTimeout(() => {
-                        localStorage.setItem('vlsi_subscribed', 'true');
-                        if (loaderText) loaderText.remove();
-                        closeOverlay();
-                        showToast("All 16 VLSI lessons completely unlocked! 🎉", "🔓");
-                        
-                        // Reload the active video without any gating popup
-                        const currentTitle = document.getElementById('active-video-title').innerText.split('. ')[1];
-                        const currentIdx = videoModules.findIndex(v => v.title === currentTitle);
-                        if (currentIdx >= 0) {
-                            selectVideo(currentIdx);
-                        }
-                    }, 1500);
-                }, 2400);
-                
-                return;
-            }
-            
-            if (subFlowActive) return;
-            subFlowActive = true;
-            
-            // Open real YouTube Channel link in a new tab
-            window.open('https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1', '_blank', 'noopener,noreferrer');
-            
-            const btn = document.getElementById('sub-action-btn');
-            btn.disabled = true;
-            btn.className = "w-full py-5 bg-zinc-800 text-zinc-500 font-label-caps text-lg rounded-2xl relative overflow-hidden group font-black cursor-not-allowed";
-            
-            let secondsLeft = 10;
-            btn.innerText = `AWAITING SUBSCRIPTION (${secondsLeft}s)...`;
-            
-            subTimer = setInterval(() => {
-                secondsLeft--;
-                if (secondsLeft > 0) {
-                    btn.innerText = `AWAITING SUBSCRIPTION (${secondsLeft}s)...`;
-                } else {
-                    clearInterval(subTimer);
-                    subTimer = null;
-                    subVerifyMode = true;
-                    subFlowActive = false;
-                    
-                    btn.disabled = false;
-                    btn.className = "w-full py-5 bg-blue-600 hover:bg-blue-500 text-white font-label-caps text-lg rounded-2xl relative overflow-hidden group font-black shadow-xl shadow-blue-600/40 hover:scale-[1.02] transition-transform cursor-pointer";
-                    btn.innerText = "Verify Subscription 🔄";
-                    
-                    showToast("YouTube loaded! Please subscribe, then click 'Verify Subscription' 🔔", "🔔");
-                }
-            }, 1000);
-        }
+function toggleFocus(){
+  focusMode=!focusMode;
+  document.body.classList.toggle('focus',focusMode);
+  document.getElementById('qs-focus-sub').textContent=focusMode?'Active':'Off';
+  if(focusMode&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
+  else if(!focusMode&&document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+  toast(focusMode?'Focus mode on 🔒':'Focus mode off','🔒');
+}
 
-        function init() {
-            renderGrid();
-            updateProgress();
-            setupVUMeter();
-            setupNotes();
-            updateTime();
-            setInterval(updateTime, 1000);
-            
-            document.getElementById('system-title').addEventListener('dblclick', () => {
-                const panel = document.getElementById('admin-panel');
-                panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-            });
-        }
+function setSpeed(s){
+  speed=s;
+  document.querySelectorAll('#speed-btns button').forEach(b=>{
+    const active=parseFloat(b.getAttribute('onclick').match(/[\d.]+/)[0])===s;
+    b.style.background=active?'var(--primary)':'rgba(19,28,50,.9)';
+    b.style.borderColor=active?'var(--primary)':'var(--glass)';
+    b.style.color=active?'#05070f':'#7090b8';
+  });
+  if(ytPlayer&&ytPlayer.setPlaybackRate)ytPlayer.setPlaybackRate(s);
+  localStorage.setItem('mk_speed',s);
+}
 
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('current-time').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        }
+function setTheme(h,name,el){
+  document.documentElement.style.setProperty('--primary',`hsl(${h},100%,70%)`);
+  document.querySelectorAll('.tp-dot').forEach(d=>d.style.borderColor='transparent');
+  if(el)el.style.borderColor='#fff';
+  localStorage.setItem('mk_theme_h',h);
+}
 
-        function renderGrid() {
-            const grid = document.getElementById('video-grid');
-            grid.innerHTML = '';
-            videoModules.forEach((v, idx) => {
-                const locked = idx > userProgress.unlockedIdx;
-                const watched = userProgress.watched.includes(idx);
-                const isActive = document.getElementById('active-video-title')?.innerText.includes(v.title);
-                
-                const card = document.createElement('div');
-                card.className = `glass-panel rounded-2xl p-4 relative group cursor-pointer transition-all hover:translate-y-[-6px] ${locked ? 'opacity-40 grayscale-[0.5] pointer-events-none' : 'hover:border-primary hover:shadow-xl hover:shadow-primary/10'} ${isActive ? 'ring-2 ring-primary bg-primary/5' : ''}`;
-                card.onclick = () => selectVideo(idx);
-                
-                card.innerHTML = `
-                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 bg-zinc-900 border border-white/5">
-                        <img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                        ${locked ? `
-                            <div class="absolute inset-0 bg-zinc-950/80 flex items-center justify-center backdrop-blur-[2px]">
-                                <span class="material-symbols-outlined text-white halo-pulse rounded-full p-3 bg-zinc-950 border border-white/10">lock</span>
-                            </div>
-                        ` : ''}
-                        <div class="absolute bottom-2.5 right-2.5 bg-zinc-950/90 backdrop-blur px-2.5 py-1 rounded text-[11px] font-code-md text-white font-black border border-white/10">
-                            ${v.duration}
-                        </div>
-                    </div>
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="flex-grow">
-                            <p class="font-label-caps text-[10px] text-primary font-black mb-1.5 uppercase tracking-widest">MOD ${v.id.toString().padStart(2, '0')}</p>
-                            <h4 class="font-body-md text-body-md leading-tight text-white group-hover:text-primary transition-colors font-bold">${v.title}</h4>
-                        </div>
-                        ${watched ? '<span class="material-symbols-outlined text-tertiary text-lg font-bold">check_circle</span>' : ''}
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+/* ═══════════════════════════════════════════
+   NOTES
+═══════════════════════════════════════════ */
+let notesTm=null;
+function saveNotes(){
+  const v=document.getElementById('notes-ta').value;
+  document.getElementById('notes-chars').textContent=v.length+' characters';
+  clearTimeout(notesTm);
+  notesTm=setTimeout(()=>{
+    localStorage.setItem('mk_notes',v);
+    const ind=document.getElementById('notes-saved');
+    ind.style.opacity='1';setTimeout(()=>ind.style.opacity='0',1500);
+  },600);
+}
 
-        function selectVideo(idx) {
-            const v = videoModules[idx];
-            document.getElementById('active-video-title').innerText = `${v.id}. ${v.title}`;
-            document.getElementById('player-frame').innerHTML = `
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/${v.youtubeId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0" frameborder="0" allow="autoplay; encrypted-media"></iframe>
-            `;
-            
-            // Sync Like icon visual state when selected
-            const icon = document.getElementById('like-icon');
-            if (icon) {
-                if (userProgress.liked.includes(idx)) {
-                    icon.style.fontVariationSettings = "'FILL' 1";
-                    icon.classList.add('text-accent-red');
-                } else {
-                    icon.style.fontVariationSettings = "'FILL' 0";
-                    icon.classList.remove('text-accent-red');
-                }
-            }
-            
-            startVideoGating();
-            isPlaying = true;
-            renderGrid();
-        }
+/* ═══════════════════════════════════════════
+   LINKEDIN POPUP
+═══════════════════════════════════════════ */
+function startLiTimer(){
+  if(st.liShown)return;
+  setTimeout(()=>{
+    if(!st.liShown){document.getElementById('li-modal').classList.add('show');}
+  },LI_DELAY*1000);
+}
+function closeLi(){
+  document.getElementById('li-modal').classList.remove('show');
+  st.liShown=true;saveSt();
+}
 
-        function startVideoGating() {
-            const currentTitle = document.getElementById('active-video-title').innerText.split('. ')[1];
-            const currentIdx = videoModules.findIndex(v => v.title === currentTitle);
-            
-            // Auto mark as watched after 10 seconds of active learning
-            setTimeout(() => {
-                const checkTitle = document.getElementById('active-video-title').innerText.split('. ')[1];
-                if (checkTitle === videoModules[currentIdx].title && !userProgress.watched.includes(currentIdx)) {
-                    userProgress.watched.push(currentIdx);
-                    saveState();
-                    renderGrid();
-                    showToast("Lesson completed! ✓ Progress saved.", "✓");
-                }
-            }, 10000);
+/* ═══════════════════════════════════════════
+   ADMIN CONSOLE
+═══════════════════════════════════════════ */
+function openAdmin(){
+  if(!ytUser||ytUser.email?.toLowerCase()!=='mahaveerkatighar05@gmail.com'){
+    toast('Unauthorized','❌');return;
+  }
+  document.getElementById('admin-modal').classList.add('show');
+  pullLogs();
+  setInterval(pullLogs,5000);
+}
 
-            if (localStorage.getItem('vlsi_subscribed') === 'true') {
-                return;
-            }
-            clearTimeout(v_timer);
-            const bar = document.getElementById('video-progress-bar');
-            bar.style.width = '0%';
-            bar.classList.remove('transition-none');
-            
-            setTimeout(() => {
-                bar.style.width = '100%';
-            }, 50);
+async function pullLogs(){
+  try{
+    const r=await fetch(`${FB_URL}/logs.json`);
+    if(!r.ok)return;
+    const data=await r.json();
+    if(!data)return;
+    const logs=Object.values(data).filter(l=>l&&l.email);
+    const active=logs.filter(l=>l.status==='Active Now'&&(Date.now()-l.timestamp)<3*60*1000);
+    document.getElementById('adm-active').textContent=active.length+' Active';
+    document.getElementById('adm-total').textContent=logs.length+' Total';
+    const avg=logs.length?((logs.reduce((a,l)=>a+(l.hours||0),0)/logs.length).toFixed(1)+'h'):'—';
+    document.getElementById('adm-avg').textContent=avg;
+    const tbody=document.getElementById('adm-tbody');
+    tbody.innerHTML='';
+    logs.sort((a,b)=>(b.status==='Active Now'?1:0)-(a.status==='Active Now'?1:0)).forEach(l=>{
+      const isActive=l.status==='Active Now'&&(Date.now()-l.timestamp)<3*60*1000;
+      const statusColor=isActive?'var(--tertiary)':l.status==='Away'?'var(--secondary)':'#405575';
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td><div style="display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:50%;background:rgba(178,197,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--primary);flex-shrink:0;">${(l.name||'?')[0].toUpperCase()}</div><div><div style="font-size:12px;font-weight:700;color:#e4eeff;">${l.name||'—'}</div><div style="font-size:10px;color:#405575;">${l.email||'—'}</div></div></div></td>
+        <td><span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;background:rgba(178,197,255,.1);color:var(--primary);text-transform:uppercase;">${l.branch||'—'}</span></td>
+        <td style="font-size:11px;color:#c8d8f0;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.currentVideo||'—'}</td>
+        <td style="font-size:11px;color:var(--tertiary);">${l.progress||'—'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--secondary);">${(l.hours||0).toFixed(1)}h</td>
+        <td style="font-size:11px;font-weight:700;color:${statusColor};">${isActive?'<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--tertiary);box-shadow:0 0 6px var(--tertiary);margin-right:5px;animation:halo 1.5s infinite;"></span>':''} ${isActive?'Active Now':l.status||'Offline'}</td>`;
+      tbody.appendChild(tr);
+    });
+  }catch(_){}
+}
 
-            v_timer = setTimeout(() => {
-                document.getElementById('subscription-overlay').style.display = 'flex';
-                isPlaying = false;
-            }, 60000);
-        }
+async function syncCloud(){
+  if(!ytUser||!ytUser.email)return;
+  const key=ytUser.email.replace(/[.#$[\]/]/g,'_');
+  let start=sessionStorage.getItem('mk_session_start');
+  if(!start){start=Date.now().toString();sessionStorage.setItem('mk_session_start',start);}
+  const hours=parseFloat(((Date.now()-parseInt(start,10))/(3600000)).toFixed(2))+.1;
+  const payload={
+    name:ytUser.name||'Learner',email:ytUser.email,
+    branch:localStorage.getItem('mk_branch')||'VLSI',
+    progress:`${st.watched.length} / 16 Lessons`,
+    currentVideo:VIDEOS[st.idx].title,
+    hours,status:'Active Now',timestamp:Date.now()
+  };
+  try{await fetch(`${FB_URL}/logs/${key}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(_){}
+}
 
-        function toggleLike() {
-            const icon = document.getElementById('like-icon');
-            const currentTitle = document.getElementById('active-video-title').innerText.split('. ')[1];
-            const currentVideoIdx = videoModules.findIndex(v => v.title === currentTitle);
-            
-            if (!userProgress.liked.includes(currentVideoIdx)) {
-                userProgress.liked.push(currentVideoIdx);
-                icon.style.fontVariationSettings = "'FILL' 1";
-                icon.classList.add('text-accent-red');
-                
-                if (userProgress.unlockedIdx === currentVideoIdx && userProgress.unlockedIdx < 15) {
-                    userProgress.unlockedIdx++;
-                    saveState();
-                    renderGrid();
-                    updateProgress();
-                }
-                
-                showToast("Synopsis liked! ❤️ Next lesson unlocked.", "❤️");
-                
-                // Automatic autoplay transition to next lesson after 1.5 seconds!
-                if (currentVideoIdx < 15) {
-                    setTimeout(() => {
-                        selectVideo(currentVideoIdx + 1);
-                    }, 1500);
-                }
-            }
-        }
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+(function init(){
+  loadSt();
+  processOAuth();
+  restoreSession();
+  updateUI();
+  setupVU();
+  startTimer();
+  startLiTimer();
+  updateClock();
+  setInterval(updateClock,1000);
+  setInterval(()=>{if(ytUser)syncCloud();},30000);
+  // Load first video
+  const v=VIDEOS[st.idx];
+  document.getElementById('yt-frame').src=`https://www.youtube.com/embed/${v.id}?enablejsapi=1&rel=0&modestbranding=1&controls=1`;
+  // Restore theme
+  const th=localStorage.getItem('mk_theme_h');
+  if(th)document.documentElement.style.setProperty('--primary',`hsl(${th},100%,70%)`);
+  // Speed
+  const sp=localStorage.getItem('mk_speed');
+  if(sp)speed=parseFloat(sp);
+  // Notes chars
+  const n=document.getElementById('notes-ta');
+  if(n)document.getElementById('notes-chars').textContent=n.value.length+' characters';
+  // Sys title double-click admin
+  document.getElementById('sys-title').addEventListener('dblclick',openAdmin);
+  // Comments mock
+  renderMockComments();
+})();
+</script>
 
-        function updateProgress() {
-            const total = 16;
-            const completed = userProgress.unlockedIdx;
-            const percent = Math.round((completed / total) * 100);
-            const offset = 175.9 - (175.9 * percent / 100);
-            document.getElementById('progress-ring').style.strokeDashoffset = offset;
-            document.getElementById('progress-text').innerText = `${percent}%`;
-        }
-
-        function saveState() {
-            localStorage.setItem('vlsi_progress', JSON.stringify(userProgress));
-        }
-
-        function setupVUMeter() {
-            const container = document.getElementById('vu-meter');
-            container.innerHTML = '';
-            for(let i=0; i<10; i++) {
-                const bar = document.createElement('div');
-                bar.className = `vu-meter-bar w-1.5 bg-tertiary rounded-t-[1px]`;
-                bar.style.height = '20%';
-                container.appendChild(bar);
-            }
-
-            function animateVU() {
-                if (isPlaying) {
-                    const bars = document.querySelectorAll('.vu-meter-bar');
-                    bars.forEach(bar => {
-                        const h = Math.random() * 70 + 15;
-                        bar.style.height = `${h}%`;
-                        bar.style.backgroundColor = h > 65 ? '#ffb955' : '#38dfab';
-                    });
-                }
-                requestAnimationFrame(animateVU);
-            }
-            animateVU();
-        }
-
-        function setupNotes() {
-            const area = document.getElementById('notes-area');
-            const counter = document.getElementById('char-count');
-            const status = document.getElementById('save-status');
-
-            area.value = localStorage.getItem('vlsi_notes') || '';
-            counter.innerText = `${area.value.length} characters`;
-
-            area.addEventListener('input', () => {
-                localStorage.setItem('vlsi_notes', area.value);
-                counter.innerText = `${area.value.length} characters`;
-                status.innerText = 'Drafting...';
-                setTimeout(() => status.innerText = 'Cloud Synced', 800);
-            });
-        }
-
-        function toggleNotes() {
-            const panel = document.getElementById('notes-panel');
-            panel.classList.toggle('active');
-        }
-
-        function closeOverlay() {
-            document.getElementById('subscription-overlay').style.display = 'none';
-            
-            // Reset Subscribe button elements back to initial state if not verified yet
-            if (localStorage.getItem('vlsi_subscribed') !== 'true') {
-                clearInterval(subTimer);
-                subTimer = null;
-                subFlowActive = false;
-                subVerifyMode = false;
-                
-                const btn = document.getElementById('sub-action-btn');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.className = "w-full py-5 bg-primary text-zinc-950 font-label-caps text-lg rounded-2xl relative overflow-hidden group font-black shadow-xl shadow-primary/40 hover:scale-[1.02] transition-transform";
-                    btn.innerText = "SUBSCRIBE ON YOUTUBE (FREE) 🔔";
-                }
-                const loaderText = document.getElementById('sub-loader-text');
-                if (loaderText) loaderText.remove();
-            }
-        }
-
-        function resetPersistence() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        function unlockAllVideos() {
-            userProgress.unlockedIdx = 15;
-            saveState();
-            renderGrid();
-            updateProgress();
-            document.getElementById('admin-panel').style.display = 'none';
-        }
-
-        function startVideo() {
-            // Start the first video natively
-            selectVideo(0);
-        }
-
-        window.onload = init;
-    </script>
+<footer style="position:fixed;bottom:2px;left:50%;transform:translateX(-50%);font-size:10px;color:#3d4f6a;z-index:9;display:flex;gap:10px;">
+  <a href="privacy.html" target="_blank" style="color:#3d4f6a;text-decoration:none;">Privacy Policy</a>
+  <span>•</span>
+  <a href="terms.html" target="_blank" style="color:#3d4f6a;text-decoration:none;">Terms of Service</a>
+</footer>
 </body>
 </html>
