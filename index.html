@@ -537,7 +537,8 @@ body.focus .sidebar,.body.focus .dock-wrap{opacity:.1;pointer-events:none;transi
 const CLIENT_ID   = '1060229379379-ecmi6id4256nsj9kori2332oiuj80n33.apps.googleusercontent.com';
 const SCOPE       = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/youtube.force-ssl';
 const REDIR       = window.location.origin + window.location.pathname;
-const YT_LIKE_URL = 'https://www.googleapis.com/youtube/v3/videos/rate';
+const YT_LIKE_URL    = 'https://www.googleapis.com/youtube/v3/videos/rate';
+const YT_CHANNEL_ID  = 'UCl67143xOQVbtqn29rpjK7Q'; // Mahaveer Katighar
 const FB_URL      = 'https://vlsi-dashboard-db-default-rtdb.firebaseio.com';
 const PREVIEW_S   = 60;
 const LI_DELAY    = 300;
@@ -797,7 +798,21 @@ function showSubOv(){
 }
 
 function onSubBtnClick(){
-  if(cdActive)return;
+  // If not signed in with Google yet, sign in first
+  // so we have a token ready to verify subscription when they return
+  if(!ytToken){
+    // Prevent the link from opening YouTube yet
+    const btn = document.getElementById('sub-yt-btn');
+    btn.removeAttribute('href'); // temporarily disable navigation
+    sessionStorage.setItem('mk_pending_sub_open','true');
+    sessionStorage.setItem('mk_pending_idx', st.idx);
+    sessionStorage.setItem('mk_pending_ts', Date.now());
+    toast('Sign in with Google first — then we can verify your subscription! 🔑','🔑');
+    setTimeout(()=> doGoogleLogin(), 400);
+    return;
+  }
+
+  if(cdActive) return;
   cdActive=true;
   document.getElementById('stp1').className='step-dot done';
   document.getElementById('stp2').className='step-dot active';
@@ -848,24 +863,107 @@ document.addEventListener('visibilitychange',()=>{
   }
 });
 
-function verifySubscription(){
-  if(document.getElementById('unlock-btn').disabled)return;
-  document.getElementById('unlock-lbl').textContent='Verifying…';
-  document.getElementById('unlock-btn').disabled=true;
-  setTimeout(()=>{
-    st.subscribed=true; saveSt();
-    document.getElementById('stp3').className='step-dot done';
-    toast('All 16 videos unlocked! 🎉','🔓');
-    setTimeout(()=>{
-      document.getElementById('sub-overlay').style.display='none';
-      document.getElementById('timer-row').style.display='none';
-      playVideo(st.idx,true);
-      updateUI();
-    },800);
-    cdActive=false;
-    sessionStorage.removeItem('mk_cd_start');
-    sessionStorage.removeItem('mk_cd_dur');
-  },1200);
+async function verifySubscription(){
+  if(document.getElementById('unlock-btn').disabled) return;
+
+  // Step 1 — must be signed in with Google first
+  if(!ytToken){
+    // Save that we need to verify subscription after sign-in
+    sessionStorage.setItem('mk_pending_sub_verify','true');
+    sessionStorage.setItem('mk_pending_idx', st.idx);
+    sessionStorage.setItem('mk_pending_ts', Date.now());
+    toast('Please sign in with Google first to verify your subscription 🔑','🔑');
+    setTimeout(()=> doGoogleLogin(), 600);
+    return;
+  }
+
+  // Step 2 — Call YouTube API to check if user is subscribed
+  document.getElementById('unlock-lbl').textContent = 'Checking YouTube…';
+  document.getElementById('unlock-btn').disabled = true;
+
+  try{
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/subscriptions?part=snippet&mine=true&forChannelId=${YT_CHANNEL_ID}&maxResults=1`,
+      { headers:{ 'Authorization': `Bearer ${ytToken}` } }
+    );
+
+    if(res.status === 401){
+      // Token expired — clear and re-auth
+      ytToken=null;
+      sessionStorage.removeItem('mk_yt_token');
+      sessionStorage.removeItem('mk_yt_exp');
+      sessionStorage.setItem('mk_pending_sub_verify','true');
+      sessionStorage.setItem('mk_pending_idx', st.idx);
+      sessionStorage.setItem('mk_pending_ts', Date.now());
+      toast('Session expired — please sign in again 🔑','🔑');
+      setTimeout(()=> doGoogleLogin(), 600);
+      return;
+    }
+
+    if(res.status === 403){
+      // Wrong scope — force re-auth with correct scope
+      ytToken=null;
+      sessionStorage.removeItem('mk_yt_token');
+      sessionStorage.removeItem('mk_yt_exp');
+      sessionStorage.setItem('mk_pending_sub_verify','true');
+      sessionStorage.setItem('mk_pending_idx', st.idx);
+      sessionStorage.setItem('mk_pending_ts', Date.now());
+      toast('Permission needed — signing in again 🔑','🔑');
+      setTimeout(()=> doGoogleLogin(), 600);
+      return;
+    }
+
+    if(!res.ok){
+      throw new Error('YouTube API error '+res.status);
+    }
+
+    const data = await res.json();
+    const isSubscribed = data.items && data.items.length > 0;
+
+    if(isSubscribed){
+      // ✅ CONFIRMED subscribed on YouTube
+      st.subscribed = true; saveSt();
+      cdActive = false;
+      sessionStorage.removeItem('mk_cd_start');
+      sessionStorage.removeItem('mk_cd_dur');
+      sessionStorage.removeItem('mk_pending_sub_verify');
+
+      document.getElementById('stp3').className='step-dot done';
+      document.getElementById('unlock-lbl').textContent='✅ Verified! Unlocking…';
+      document.getElementById('unlock-btn').style.borderColor='var(--tertiary)';
+      document.getElementById('unlock-btn').style.color='var(--tertiary)';
+
+      toast('Subscription verified! All 16 videos unlocked 🎉','🔓');
+
+      setTimeout(()=>{
+        document.getElementById('sub-overlay').style.display='none';
+        document.getElementById('timer-row').style.display='none';
+        gateActive=false;
+        playVideo(st.idx, true);
+        updateUI();
+      }, 900);
+
+    } else {
+      // ❌ NOT subscribed — tell them to subscribe first
+      document.getElementById('unlock-lbl').textContent="❌ Not subscribed yet — please subscribe first";
+      document.getElementById('unlock-btn').disabled = false;
+      document.getElementById('unlock-btn').style.borderColor='var(--red)';
+      document.getElementById('unlock-btn').style.color='var(--red)';
+      toast('You have not subscribed yet. Please tap the Subscribe button first! 🔔','🔔');
+
+      // Reset button after 3 seconds
+      setTimeout(()=>{
+        document.getElementById('unlock-lbl').textContent="✅ I've Subscribed — Unlock Now!";
+        document.getElementById('unlock-btn').style.borderColor='var(--secondary)';
+        document.getElementById('unlock-btn').style.color='var(--secondary)';
+      }, 3000);
+    }
+
+  }catch(err){
+    document.getElementById('unlock-lbl').textContent="⚠️ Network error — try again";
+    document.getElementById('unlock-btn').disabled=false;
+    toast('Connection error. Check your internet and try again.','⚠️');
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -1000,6 +1098,23 @@ function processOAuth(){
     sessionStorage.removeItem('mk_pending_like');sessionStorage.removeItem('mk_pending_like_ts');
     setTimeout(()=>doLike(),1000);
   }
+  // Resume pending subscription open
+  const pSubOpen=sessionStorage.getItem('mk_pending_sub_open');
+  if(pSubOpen==='true'){
+    sessionStorage.removeItem('mk_pending_sub_open');
+    setTimeout(()=>{
+      const btn=document.getElementById('sub-yt-btn');
+      btn.href='https://www.youtube.com/@mahaveerkatighar?sub_confirmation=1';
+      showSubOv();
+      toast('Signed in! Tap Subscribe Now to open YouTube D83dDd14','D83dDd14');
+    },800);
+  }
+  // Resume pending subscription verify
+  const pSubVerify=sessionStorage.getItem('mk_pending_sub_verify');
+  if(pSubVerify==='true'){
+    sessionStorage.removeItem('mk_pending_sub_verify');
+    setTimeout(()=>verifySubscription(),1000);
+  }
 }
 
 function restoreSession(){
@@ -1026,6 +1141,10 @@ async function fetchProfile(){
     document.getElementById('admin-pill').style.display=isAdmin?'flex':'none';
     updateUI();
     loadComments(VIDEOS[st.idx].id);
+    if(sessionStorage.getItem('mk_pending_sub_verify')==='true'){
+      sessionStorage.removeItem('mk_pending_sub_verify');
+      setTimeout(()=>verifySubscription(),800);
+    }
     if(sessionStorage.getItem('mk_pending_sub')==='true'){
       sessionStorage.removeItem('mk_pending_sub');
       setTimeout(()=>verifySubscription(),800);
