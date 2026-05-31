@@ -88,6 +88,15 @@ body{font-family:'Outfit',sans-serif;background:var(--surface-base);color:#c8d8f
 .modal-box{background:var(--surface-low);border:1px solid var(--glass-border);border-radius:24px;padding:32px;max-width:440px;width:100%;max-height:90dvh;overflow-y:auto;animation:scaleIn .4s cubic-bezier(.34,1.56,.64,1) both;position:relative;}
 .modal-box.wide{max-width:900px;}
 
+/* FORM INPUTS */
+.mk-input{width:100%;padding:12px 16px;background:rgba(19,28,50,.7);border:1.5px solid var(--glass-border);border-radius:12px;color:#e4eeff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;outline:none;transition:all .2s;}
+.mk-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.1);}
+.mk-input::placeholder{color:#405575;}
+.mk-label{display:block;font-size:10px;font-weight:800;color:#7090b8;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;}
+.mk-select{width:100%;padding:12px 16px;background:rgba(19,28,50,.7);border:1.5px solid var(--glass-border);border-radius:12px;color:#e4eeff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;outline:none;transition:all .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%237090b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
+.mk-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.1);}
+.mk-select option{background:#090d1a;color:#e4eeff;}
+
 /* TOAST */
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9999;background:rgba(9,13,26,.96);border:1px solid var(--glass-border);border-radius:99px;padding:10px 22px;font-size:12.5px;font-weight:700;color:#e4eeff;box-shadow:0 10px 30px rgba(0,0,0,.7);backdrop-filter:blur(10px);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;display:flex;align-items:center;gap:8px;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -646,6 +655,80 @@ body.focus footer{opacity:0;pointer-events:none;transition:opacity .5s;}
   </div>
 </div>
 
+<!-- ═══ STUDENT ONBOARDING MODAL ═══ -->
+<div class="modal-ov" id="onboard-modal">
+  <div class="modal-box" style="border:1px solid rgba(178,197,255,.25);background:linear-gradient(135deg,rgba(9,13,26,.98),rgba(14,20,34,.98));">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
+        <span class="material-symbols-outlined" style="color:#05070f;font-size:28px;">school</span>
+      </div>
+      <h3 class="text-xl font-black text-white" style="margin-bottom:4px;">Welcome to CMOS VLSI!</h3>
+      <p class="text-slate-400 text-sm">Tell us about yourself to personalize your learning experience.</p>
+    </div>
+    <form id="onboard-form" onsubmit="submitOnboarding(event)">
+      <div style="margin-bottom:14px;">
+        <label class="mk-label">Full Name</label>
+        <input type="text" id="ob-name" class="mk-input" placeholder="Your full name" required>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label class="mk-label">College / University</label>
+        <input type="text" id="ob-college" class="mk-input" placeholder="e.g. IIT Bombay, VTU, JNTU…" required>
+      </div>
+      <div style="margin-bottom:20px;">
+        <label class="mk-label">Branch / Department</label>
+        <select id="ob-branch" class="mk-select" required>
+          <option value="" disabled selected>Select your branch</option>
+          <option value="ECE">Electronics & Communication (ECE)</option>
+          <option value="EEE">Electrical & Electronics (EEE)</option>
+          <option value="CSE">Computer Science (CSE)</option>
+          <option value="IT">Information Technology (IT)</option>
+          <option value="VLSI">VLSI Design</option>
+          <option value="EI">Electronics & Instrumentation (EI)</option>
+          <option value="ME">Mechanical Engineering (ME)</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <button type="submit" class="w-full py-3.5 rounded-xl bg-primary text-black font-black text-sm hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20" style="border:none;cursor:pointer;font-family:'Outfit',sans-serif;">
+        Start Learning →
+      </button>
+    </form>
+    <p class="text-[10px] text-slate-600 text-center" style="margin-top:12px;">Your info helps us improve the course. No spam, ever.</p>
+  </div>
+</div>
+
+<!-- ═══ LINKEDIN SHARE MODAL ═══ -->
+<div class="modal-ov" id="share-modal">
+  <div class="modal-box" style="border:1px solid rgba(10,102,194,.3);background:linear-gradient(135deg,rgba(9,13,26,.98),rgba(14,20,34,.98));">
+    <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all" onclick="closeShareModal()">✕</button>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0a66c2,#2d8ae8);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(10,102,194,.3);">
+        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24" width="28" height="28"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px;background:rgba(56,223,171,.1);border:1px solid rgba(56,223,171,.25);color:var(--tertiary);">🎉 3 Videos Completed!</div>
+      <h3 class="text-xl font-black text-white" style="margin-bottom:6px;">Share Your Progress!</h3>
+      <p class="text-slate-400 text-sm" style="max-width:320px;margin:0 auto;">You’ve completed 3 modules! Share this free CMOS VLSI course with your network on LinkedIn.</p>
+    </div>
+    <div class="glass-bright rounded-xl p-4" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span class="material-symbols-outlined" style="color:#05070f;font-size:20px;">smart_display</span>
+        </div>
+        <div>
+          <p style="font-size:12px;font-weight:800;color:#e4eeff;margin-bottom:1px;">CMOS VLSI Design Synopsis</p>
+          <p style="font-size:10px;color:#7090b8;">16 Free Modules • By Mahaveer Katighar</p>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#7090b8;padding:8px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:8px;word-break:break-all;">https://mahaveerkatighar.github.io/cmos_vlsi/</div>
+    </div>
+    <a id="share-li-btn" href="" target="_blank" rel="noopener" onclick="onShareLinkedIn()"
+       style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:12px;background:#0a66c2;color:#fff;font-weight:900;font-size:14px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(10,102,194,.3);" class="hover:bg-[#0d73d9]">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      Share on LinkedIn
+    </a>
+    <p style="text-align:center;margin-top:14px;font-size:11px;color:#405575;cursor:pointer;" onclick="closeShareModal()" class="hover:text-slate-400">Maybe later</p>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -691,7 +774,7 @@ const VIDEOS = [
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
-let st={idx:0,subscribed:false,watched:[],liked:[],liShown:false,name:'Learner'};
+let st={idx:0,subscribed:false,watched:[],liked:[],liShown:false,name:'Learner',onboarded:false,shareShown:false};
 let ytToken=null,ytUser=null;
 let autoplay=true,focusMode=false;
 let gateActive=false,cdActive=false,cdTimer=null;
@@ -708,6 +791,8 @@ function loadSt(){
     st.liked=JSON.parse(localStorage.getItem('mk_liked')||'[]');
     st.liShown=localStorage.getItem('mk_li_shown')==='true';
     st.name=localStorage.getItem('mk_name')||'Learner';
+    st.onboarded=localStorage.getItem('mk_onboarded')==='true';
+    st.shareShown=localStorage.getItem('mk_shareShown')==='true';
     const n=document.getElementById('notes-ta');
     if(n)n.value=localStorage.getItem('mk_notes')||'';
   }catch(_){}
@@ -720,6 +805,8 @@ function saveSt(){
     localStorage.setItem('mk_liked',JSON.stringify(st.liked));
     localStorage.setItem('mk_li_shown',st.liShown);
     localStorage.setItem('mk_name',st.name);
+    localStorage.setItem('mk_onboarded',st.onboarded);
+    localStorage.setItem('mk_shareShown',st.shareShown);
   }catch(_){}
 }
 
@@ -1130,7 +1217,12 @@ async function fetchProfile(){
       sessionStorage.removeItem('mk_pending_sub_verify');
       setTimeout(()=>verifySubscription(),800);
     }
-    syncCloud();
+    syncCloud(); // upgrade log with real profile data
+    // Show onboarding form if not completed yet
+    if(!st.onboarded){
+      document.getElementById('ob-name').value=ytUser.name||'';
+      document.getElementById('onboard-modal').classList.add('show');
+    }
   }catch(_){signOut();}
 }
 
@@ -1246,6 +1338,7 @@ window.onYouTubeIframeAPIReady=function(){
         if(e.data===0){
           const i=st.idx;
           if(!st.watched.includes(i)){st.watched.push(i);saveSt();updateUI();}
+          checkSharePrompt();
           if(autoplay&&i<15)setTimeout(()=>nextVideo(),1200);
         }
       }
@@ -1347,6 +1440,46 @@ function startLiTimer(){
 }
 function closeLi(){document.getElementById('li-modal').classList.remove('show');st.liShown=true;saveSt();}
 
+/* ═══ STUDENT ONBOARDING ═══ */
+function submitOnboarding(e){
+  e.preventDefault();
+  const name=document.getElementById('ob-name').value.trim();
+  const college=document.getElementById('ob-college').value.trim();
+  const branch=document.getElementById('ob-branch').value;
+  if(!name||!college||!branch)return;
+  st.name=name;
+  st.onboarded=true;
+  localStorage.setItem('mk_college',college);
+  localStorage.setItem('mk_branch',branch);
+  saveSt();
+  document.getElementById('g-name').textContent=name.split(' ')[0];
+  document.getElementById('onboard-modal').classList.remove('show');
+  toast('Welcome, '+name.split(' ')[0]+'! 🎓','🎓');
+  updateClock();
+  syncCloud();
+}
+
+/* ═══ LINKEDIN SHARE PROMPT ═══ */
+const SHARE_COURSE_URL='https://mahaveerkatighar.github.io/cmos_vlsi/';
+function checkSharePrompt(){
+  if(st.shareShown)return;
+  if(st.watched.length>=3){
+    st.shareShown=true;saveSt();
+    const shareUrl=`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(SHARE_COURSE_URL)}`;
+    document.getElementById('share-li-btn').href=shareUrl;
+    setTimeout(()=>{
+      document.getElementById('share-modal').classList.add('show');
+    },1500);
+  }
+}
+function onShareLinkedIn(){
+  toast('Thanks for sharing! 🙏','💙');
+  setTimeout(()=>closeShareModal(),500);
+}
+function closeShareModal(){
+  document.getElementById('share-modal').classList.remove('show');
+}
+
 /* ═══ ADMIN CONSOLE ═══ */
 function openAdmin(){
   const admEmails=['mahaveerkatighar05@gmail.com'];
@@ -1436,19 +1569,46 @@ function exportCSV(){
   a.click();URL.revokeObjectURL(a.href);
   toast('CSV exported ✅','📄');
 }
-async function syncCloud(){
-  if(!ytUser||!ytUser.email)return;
-  const key=ytUser.email.replace(/[.#$[\]/]/g,'_');
+function getVisitorId(){
+  let vid=localStorage.getItem('mk_visitor_id');
+  if(!vid){vid='v_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('mk_visitor_id',vid);}
+  return vid;
+}
+async function syncCloud(statusOverride){
+  const vid=getVisitorId();
+  const key=ytUser&&ytUser.email?ytUser.email.replace(/[.#$[\]/]/g,'_'):vid;
   let start=sessionStorage.getItem('mk_session_start');
   if(!start){start=Date.now().toString();sessionStorage.setItem('mk_session_start',start);}
   const hours=parseFloat(((Date.now()-parseInt(start,10))/3600000).toFixed(2))+.1;
+  const payload={
+    name:ytUser?.name||st.name||'Anonymous Learner',
+    email:ytUser?.email||'anonymous@visitor',
+    branch:localStorage.getItem('mk_branch')||'VLSI',
+    progress:`${st.watched.length} / 16 Lessons`,
+    currentVideo:VIDEOS[st.idx]?.title||'—',
+    hours,
+    likes:st.liked.length,
+    status:statusOverride||'Active Now',
+    timestamp:Date.now(),
+    visitorId:vid,
+    signedIn:!!ytUser
+  };
   try{
     await fetch(`${FB_URL}/logs/${key}.json`,{
       method:'PUT',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name:ytUser.name||'Learner',email:ytUser.email,branch:localStorage.getItem('mk_branch')||'VLSI',progress:`${st.watched.length} / 16 Lessons`,currentVideo:VIDEOS[st.idx].title,hours,status:'Active Now',timestamp:Date.now()})
+      body:JSON.stringify(payload)
     });
   }catch(_){}
 }
+// Mark as away when leaving
+window.addEventListener('beforeunload',()=>{
+  const vid=getVisitorId();
+  const key=ytUser&&ytUser.email?ytUser.email.replace(/[.#$[\]/]/g,'_'):vid;
+  try{
+    navigator.sendBeacon(`${FB_URL}/logs/${key}/status.json`,'"Away"');
+    navigator.sendBeacon(`${FB_URL}/logs/${key}/timestamp.json`,String(Date.now()));
+  }catch(_){}
+});
 
 /* ═══ INIT ═══ */
 (function init(){
@@ -1461,7 +1621,8 @@ async function syncCloud(){
   startLiTimer();
   updateClock();
   setInterval(updateClock,1000);
-  setInterval(()=>{if(ytUser)syncCloud();},30000);
+  syncCloud();
+  setInterval(()=>syncCloud(),30000);
   // Load first video
   const initQParam=videoQuality!=='auto'?`&vq=${videoQuality}`:'';
   document.getElementById('yt-frame').src=`https://www.youtube.com/embed/${VIDEOS[st.idx].id}?enablejsapi=1&rel=0&modestbranding=1&controls=1${initQParam}`;
