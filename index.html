@@ -89,13 +89,19 @@ body{font-family:'Outfit',sans-serif;background:var(--surface-base);color:#c8d8f
 .modal-box.wide{max-width:900px;}
 
 /* FORM INPUTS */
-.mk-input{width:100%;padding:12px 16px;background:rgba(19,28,50,.7);border:1.5px solid var(--glass-border);border-radius:12px;color:#e4eeff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;outline:none;transition:all .2s;}
-.mk-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.1);}
-.mk-input::placeholder{color:#405575;}
-.mk-label{display:block;font-size:10px;font-weight:800;color:#7090b8;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;}
-.mk-select{width:100%;padding:12px 16px;background:rgba(19,28,50,.7);border:1.5px solid var(--glass-border);border-radius:12px;color:#e4eeff;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;outline:none;transition:all .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%237090b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
-.mk-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.1);}
-.mk-select option{background:#090d1a;color:#e4eeff;}
+.mk-input{width:100%;padding:12px 16px;background:#0b1226!important;border:1.5px solid rgba(178,197,255,.2);border-radius:12px;color:#ffffff!important;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;outline:none;transition:all .2s;-webkit-text-fill-color:#ffffff;}
+.mk-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.15);}
+.mk-input::placeholder{color:#506080!important;-webkit-text-fill-color:#506080;font-weight:400;}
+.mk-label{display:block;font-size:10px;font-weight:800;color:#8aa0c0;text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;}
+.mk-select{width:100%;padding:12px 16px;background:#0b1226!important;border:1.5px solid rgba(178,197,255,.2);border-radius:12px;color:#ffffff!important;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;outline:none;transition:all .2s;appearance:none;-webkit-text-fill-color:#ffffff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%238aa0c0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 14px center!important;cursor:pointer;}
+.mk-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(178,197,255,.15);}
+.mk-select option{background:#090d1a;color:#ffffff;}
+.mk-radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+.mk-radio-pill{display:flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;background:#0b1226;border:1.5px solid rgba(178,197,255,.15);cursor:pointer;transition:all .2s;flex:1;min-width:0;}
+.mk-radio-pill:hover{border-color:rgba(178,197,255,.3);}
+.mk-radio-pill:has(input:checked){border-color:var(--primary);background:rgba(178,197,255,.08);}
+.mk-radio-pill input[type=radio]{accent-color:var(--primary);margin:0;width:14px;height:14px;cursor:pointer;}
+.mk-radio-pill span{font-size:12px;font-weight:600;color:#c8d8f0;}
 
 /* TOAST */
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9999;background:rgba(9,13,26,.96);border:1px solid var(--glass-border);border-radius:99px;padding:10px 22px;font-size:12.5px;font-weight:700;color:#e4eeff;box-shadow:0 10px 30px rgba(0,0,0,.7);backdrop-filter:blur(10px);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;display:flex;align-items:center;gap:8px;}
@@ -657,42 +663,77 @@ body.focus footer{opacity:0;pointer-events:none;transition:opacity .5s;}
 
 <!-- ═══ STUDENT ONBOARDING MODAL ═══ -->
 <div class="modal-ov" id="onboard-modal">
-  <div class="modal-box" style="border:1px solid rgba(178,197,255,.25);background:linear-gradient(135deg,rgba(9,13,26,.98),rgba(14,20,34,.98));">
-    <div style="text-align:center;margin-bottom:24px;">
-      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));margin:0 auto 14px;display:flex;align-items:center;justify-content:center;">
-        <span class="material-symbols-outlined" style="color:#05070f;font-size:28px;">school</span>
+  <div class="modal-box" style="border:1px solid rgba(178,197,255,.25);background:linear-gradient(135deg,rgba(9,13,26,.99),rgba(10,16,30,.99));max-height:92dvh;overflow-y:auto;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+        <span class="material-symbols-outlined" style="color:#05070f;font-size:26px;">school</span>
       </div>
-      <h3 class="text-xl font-black text-white" style="margin-bottom:4px;">Welcome to CMOS VLSI!</h3>
-      <p class="text-slate-400 text-sm">Tell us about yourself to personalize your learning experience.</p>
+      <h3 style="font-size:20px;font-weight:900;color:#ffffff;margin-bottom:4px;">Welcome to CMOS VLSI!</h3>
+      <p style="font-size:13px;color:#7090b8;">Tell us about yourself to personalize your experience.</p>
     </div>
     <form id="onboard-form" onsubmit="submitOnboarding(event)">
-      <div style="margin-bottom:14px;">
+      <div style="margin-bottom:12px;">
         <label class="mk-label">Full Name</label>
         <input type="text" id="ob-name" class="mk-input" placeholder="Your full name" required>
       </div>
-      <div style="margin-bottom:14px;">
-        <label class="mk-label">College / University</label>
-        <input type="text" id="ob-college" class="mk-input" placeholder="e.g. IIT Bombay, VTU, JNTU…" required>
+      <div style="margin-bottom:12px;">
+        <label class="mk-label">Gender</label>
+        <div class="mk-radio-group">
+          <label class="mk-radio-pill"><input type="radio" name="ob-gender" value="Male" required><span>Male</span></label>
+          <label class="mk-radio-pill"><input type="radio" name="ob-gender" value="Female"><span>Female</span></label>
+          <label class="mk-radio-pill"><input type="radio" name="ob-gender" value="Other"><span>Other</span></label>
+        </div>
       </div>
-      <div style="margin-bottom:20px;">
-        <label class="mk-label">Branch / Department</label>
-        <select id="ob-branch" class="mk-select" required>
-          <option value="" disabled selected>Select your branch</option>
-          <option value="ECE">Electronics & Communication (ECE)</option>
-          <option value="EEE">Electrical & Electronics (EEE)</option>
-          <option value="CSE">Computer Science (CSE)</option>
-          <option value="IT">Information Technology (IT)</option>
-          <option value="VLSI">VLSI Design</option>
-          <option value="EI">Electronics & Instrumentation (EI)</option>
-          <option value="ME">Mechanical Engineering (ME)</option>
+      <div style="margin-bottom:12px;">
+        <label class="mk-label">College / University</label>
+        <input type="text" id="ob-college" class="mk-input" placeholder="e.g. VNRVJIET, IIT Bombay, JNTU…" required>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label class="mk-label">Program / Degree</label>
+        <select id="ob-program" class="mk-select" required>
+          <option value="" disabled selected>Select your program</option>
+          <option value="Diploma">Diploma</option>
+          <option value="B.Tech">B.Tech</option>
+          <option value="M.Tech">M.Tech</option>
+          <option value="B.E.">B.E.</option>
+          <option value="M.E.">M.E.</option>
+          <option value="Ph.D">Ph.D</option>
           <option value="Other">Other</option>
         </select>
       </div>
-      <button type="submit" class="w-full py-3.5 rounded-xl bg-primary text-black font-black text-sm hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20" style="border:none;cursor:pointer;font-family:'Outfit',sans-serif;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <label class="mk-label">Branch</label>
+          <select id="ob-branch" class="mk-select" required>
+            <option value="" disabled selected>Select branch</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="CSE">CSE</option>
+            <option value="IT">IT</option>
+            <option value="VLSI">VLSI Design</option>
+            <option value="EI">EI</option>
+            <option value="ME">Mechanical</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="mk-label">Year of Study</label>
+          <select id="ob-year" class="mk-select" required>
+            <option value="" disabled selected>Select year</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="Graduated">Graduated</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" style="width:100%;padding:14px;border-radius:12px;background:var(--primary);color:#05070f;font-weight:900;font-size:14px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:transform .15s;box-shadow:0 4px 16px rgba(178,197,255,.2);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         Start Learning →
       </button>
     </form>
-    <p class="text-[10px] text-slate-600 text-center" style="margin-top:12px;">Your info helps us improve the course. No spam, ever.</p>
+    <p style="font-size:10px;color:#405575;text-align:center;margin-top:10px;">Your info helps us improve the course. No spam, ever.</p>
   </div>
 </div>
 
@@ -748,7 +789,7 @@ const SCOPE       = 'https://www.googleapis.com/auth/userinfo.profile https://ww
 const REDIR       = window.location.origin + window.location.pathname;
 const YT_LIKE_URL = 'https://www.googleapis.com/youtube/v3/videos/rate';
 const YT_CHANNEL_ID = 'UCl67143xOQVbtqn29rpjK7Q';
-const FB_URL      = 'https://vlsi-dashboard-db-default-rtdb.firebaseio.com';
+const FB_URL      = 'https://cmos-4be75-default-rtdb.asia-southeast1.firebasedatabase.app/';
 const PREVIEW_S   = 60;
 const LI_DELAY    = 300;
 
@@ -1446,11 +1487,21 @@ function submitOnboarding(e){
   const name=document.getElementById('ob-name').value.trim();
   const college=document.getElementById('ob-college').value.trim();
   const branch=document.getElementById('ob-branch').value;
-  if(!name||!college||!branch)return;
+  const program=document.getElementById('ob-program').value;
+  const year=document.getElementById('ob-year').value;
+  const genderEl=document.querySelector('input[name="ob-gender"]:checked');
+  const gender=genderEl?genderEl.value:'';
+  if(!name||!college||!branch||!program||!year||!gender){
+    toast('Please fill all fields','⚠️');
+    return;
+  }
   st.name=name;
   st.onboarded=true;
   localStorage.setItem('mk_college',college);
   localStorage.setItem('mk_branch',branch);
+  localStorage.setItem('mk_program',program);
+  localStorage.setItem('mk_year',year);
+  localStorage.setItem('mk_gender',gender);
   saveSt();
   document.getElementById('g-name').textContent=name.split(' ')[0];
   document.getElementById('onboard-modal').classList.remove('show');
@@ -1491,10 +1542,24 @@ let adminLogsData={};
 async function pullLogs(){
   try{
     const r=await fetch(`${FB_URL}/logs.json`);
-    if(!r.ok)return;
+    if(!r.ok){
+      const errText=await r.text().catch(()=>'');
+      console.warn('pullLogs failed:',r.status,errText);
+      document.getElementById('adm-last-refresh').textContent='⚠️ DB Error: '+r.status+' — Check Firebase rules are set to public read/write';
+      document.getElementById('adm-last-refresh').style.color='var(--red)';
+      showLocalFallback();
+      return;
+    }
     const data=await r.json();
-    if(!data){adminLogsData={};renderAdminTable([]);return;}
+    if(!data||Object.keys(data).length===0){
+      adminLogsData={};
+      showLocalFallback();
+      document.getElementById('adm-last-refresh').textContent='No data in Firebase — showing local fallback';
+      document.getElementById('adm-last-refresh').style.color='var(--secondary)';
+      return;
+    }
     adminLogsData=data;
+    document.getElementById('adm-last-refresh').style.color='';
     const logs=Object.entries(data).filter(([k,l])=>l&&l.email);
     const vals=logs.map(([k,l])=>l);
     const active=vals.filter(l=>l.status==='Active Now'&&(Date.now()-l.timestamp)<3*60*1000);
@@ -1502,7 +1567,6 @@ async function pullLogs(){
     document.getElementById('adm-total').textContent=vals.length;
     const avg=vals.length?((vals.reduce((a,l)=>a+(l.hours||0),0)/vals.length).toFixed(1)+'h'):'—';
     document.getElementById('adm-avg').textContent=avg;
-    // Extra stats
     const totalWatched=vals.reduce((a,l)=>{const m=l.progress?.match(/(\d+)/);return a+(m?parseInt(m[1]):0);},0);
     document.getElementById('adm-total-watched').textContent=totalWatched;
     document.getElementById('adm-total-likes').textContent=vals.reduce((a,l)=>a+(l.likes||0),0);
@@ -1510,7 +1574,32 @@ async function pullLogs(){
     document.getElementById('adm-completion').textContent=vals.length?Math.round(completed/vals.length*100)+'%':'0%';
     document.getElementById('adm-last-refresh').textContent='Last refreshed: '+new Date().toLocaleTimeString();
     renderAdminTable(logs);
-  }catch(_){}
+  }catch(err){
+    console.warn('pullLogs error:',err);
+    document.getElementById('adm-last-refresh').textContent='⚠️ Network error — '+err.message;
+    document.getElementById('adm-last-refresh').style.color='var(--red)';
+    showLocalFallback();
+  }
+}
+function showLocalFallback(){
+  try{
+    const myLog=JSON.parse(localStorage.getItem('mk_my_log')||'null');
+    if(myLog&&myLog.data){
+      adminLogsData={[myLog.key]:myLog.data};
+      const logs=[[myLog.key,myLog.data]];
+      document.getElementById('adm-active').textContent='1';
+      document.getElementById('adm-total').textContent='1 (local)';
+      document.getElementById('adm-avg').textContent=(myLog.data.hours||0).toFixed(1)+'h';
+      document.getElementById('adm-total-watched').textContent=myLog.data.progress?.match(/(\d+)/)?.[1]||'0';
+      document.getElementById('adm-total-likes').textContent=myLog.data.likes||0;
+      document.getElementById('adm-completion').textContent='—';
+      renderAdminTable(logs);
+    } else {
+      renderAdminTable([]);
+      document.getElementById('adm-active').textContent='0';
+      document.getElementById('adm-total').textContent='0';
+    }
+  }catch(_){renderAdminTable([]);}
 }
 function renderAdminTable(logs){
   const tbody=document.getElementById('adm-tbody');
@@ -1560,8 +1649,8 @@ async function deleteAllLogs(){
 function exportCSV(){
   const logs=Object.values(adminLogsData).filter(l=>l&&l.email);
   if(!logs.length){toast('No data to export','⚠️');return;}
-  const headers=['Name','Email','Branch','Current Video','Progress','Hours','Status','Last Timestamp'];
-  const rows=logs.map(l=>[l.name||'',l.email||'',l.branch||'',l.currentVideo||'',l.progress||'',(l.hours||0).toFixed(1),l.status||'',l.timestamp?new Date(l.timestamp).toISOString():''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
+  const headers=['Name','Email','Gender','College','Program','Branch','Year','Current Video','Progress','Hours','Status','Last Timestamp'];
+  const rows=logs.map(l=>[l.name||'',l.email||'',l.gender||'',l.college||'',l.program||'',l.branch||'',l.year||'',l.currentVideo||'',l.progress||'',(l.hours||0).toFixed(1),l.status||'',l.timestamp?new Date(l.timestamp).toISOString():''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
   const csv=headers.join(',')+"\n"+rows.join("\n");
   const blob=new Blob([csv],{type:'text/csv'});
   const a=document.createElement('a');
@@ -1574,6 +1663,7 @@ function getVisitorId(){
   if(!vid){vid='v_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('mk_visitor_id',vid);}
   return vid;
 }
+let syncErrorShown=false;
 async function syncCloud(statusOverride){
   const vid=getVisitorId();
   const key=ytUser&&ytUser.email?ytUser.email.replace(/[.#$[\]/]/g,'_'):vid;
@@ -1584,6 +1674,10 @@ async function syncCloud(statusOverride){
     name:ytUser?.name||st.name||'Anonymous Learner',
     email:ytUser?.email||'anonymous@visitor',
     branch:localStorage.getItem('mk_branch')||'VLSI',
+    college:localStorage.getItem('mk_college')||'',
+    program:localStorage.getItem('mk_program')||'',
+    year:localStorage.getItem('mk_year')||'',
+    gender:localStorage.getItem('mk_gender')||'',
     progress:`${st.watched.length} / 16 Lessons`,
     currentVideo:VIDEOS[st.idx]?.title||'—',
     hours,
@@ -1593,12 +1687,28 @@ async function syncCloud(statusOverride){
     visitorId:vid,
     signedIn:!!ytUser
   };
+  // Always save locally as fallback
+  try{localStorage.setItem('mk_my_log',JSON.stringify({key,data:payload}));}catch(_){}
   try{
-    await fetch(`${FB_URL}/logs/${key}.json`,{
+    const r=await fetch(`${FB_URL}/logs/${key}.json`,{
       method:'PUT',headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
     });
-  }catch(_){}
+    if(!r.ok){
+      const errText=await r.text().catch(()=>'');
+      console.warn('syncCloud failed:',r.status,errText);
+      if(!syncErrorShown){
+        syncErrorShown=true;
+        toast('\u26a0\ufe0f DB write failed ('+r.status+'). Check Firebase rules.','\u26a0\ufe0f');
+      }
+    }
+  }catch(err){
+    console.warn('syncCloud network error:',err);
+    if(!syncErrorShown){
+      syncErrorShown=true;
+      toast('\u26a0\ufe0f Cannot reach database. Check connection.','\u26a0\ufe0f');
+    }
+  }
 }
 // Mark as away when leaving
 window.addEventListener('beforeunload',()=>{
